@@ -1,4 +1,13 @@
-# Application de touriste
+# Application pour touristes
 
-## On programme en Java
-Bonjour
+## Nos premières idées pour notre application :
+Voir fichier brainstorming.md
+
+## Méthode SCRUM
+
+## Environnement
+Java
+
+
+
+
