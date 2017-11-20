@@ -3,19 +3,21 @@
 ## Idées
 
 - comment faire pour récuperer les caractéristiques des trucs touristiques (et récupérer les trucs touristiques)
+
+## fonctionnalités "de bases"
 - Géolocalisation
 - Point A à Point B
 
-Catégories : immanquables, + curieux, saisonniers 
+Catégories : immanquables, + curieux, saisonniers, évènement, lieux touristiques
 
+## Idées autres fonctionnalités
 Optimisation des tranports
 Gérer le cas demandes impossible du mec
-
-
-Options possibles:
-Je prefère :
-- plusieurs "niveaux de tourismes"
 - checklist de ce que la personne a déjà vu
+
+### Idées d'options utilisateur pour sa visite:
+<!-- Options possibles: -->
+- plusieurs "niveaux de tourisme"
 - intérieur/exterieur
 - payant/non payant
 - avec transport/sans transport
