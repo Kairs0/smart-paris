@@ -7,10 +7,10 @@ Voir fichier brainstorming.md
 
 ## Environnement
 
-Java - intellij ->
-Android Studio 
+Java - Android studio
+
+Version android cible: Lolipop (5.1)
 
 ## Formation
 Pour l'instant on est parti sur le tuto [Open classroom](https://openclassrooms.com/courses/creez-des-applications-pour-android/l-univers-android)
-
 
