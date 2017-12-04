@@ -23,7 +23,17 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_POINTA = "com.atelierdev.itineraire.monitineraireapp.pointA";
     public static final String EXTRA_POINTB = "com.atelierdev.itineraire.monitineraireapp.pointB";
 
-    private String calculTrajetResult = new String();
+    private boolean isCallingApi = false;
+
+    public boolean isCallingApi() {
+        return isCallingApi;
+    }
+
+    public void setCallingApi(boolean callingApi) {
+        isCallingApi = callingApi;
+    }
+
+    public String calculTrajetResult = "init calcul";
 
     public String getCalculTrajetResult() {
         return calculTrajetResult;
@@ -64,15 +74,28 @@ public class MainActivity extends AppCompatActivity {
 
         callApi(pointA, pointB, "driving");
 
+        String a = getCalculTrajetResult();
 
 
-        intent.putExtra(EXTRA_POINTA, getCalculTrajetResult());
+
+        intent.putExtra(EXTRA_POINTA, a);
         intent.putExtra(EXTRA_POINTB, pointB);
+
+//        while (isCallingApi()){
+//            this.wait(5);
+//        }
+
         startActivity(intent);
 
     }
 
+
+//      https://code.tutsplus.com/tutorials/android-from-scratch-using-rest-apis--cms-27117
+
+//    https://stackoverflow.com/questions/29339565/calling-rest-api-from-an-android-app
+//    http://loopj.com/android-async-http/
     public void callApi(String pointA, String pointB, String mode) {
+        setCallingApi(true);
         RequestParams rp = new RequestParams();
         rp.add("origin", pointA);
         rp.add("destination", pointB);
@@ -80,6 +103,10 @@ public class MainActivity extends AppCompatActivity {
         GoogleApiClient.get("json?", rp, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                int a = 3;
+
+
                 if (response == null){
                     setCalculTrajetResult("Pas d'itinéraire");
                 }
@@ -113,8 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     throw new RuntimeException();
                 }
 
-
-
+                setCallingApi(false);
 
 
 
@@ -123,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {
                 setCalculTrajetResult("ONSCCESSARRAY");
+
+                setCallingApi(false);
                 // Pull out the first event on the public timeline
 //                JSONObject firstEvent = timeline.get(0);
 //                String tweetText = firstEvent.getString("text");
@@ -130,6 +158,12 @@ public class MainActivity extends AppCompatActivity {
                 // Do something with the response
 //                System.out.println(tweetText);
             }
+
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, JSONArray test){
+//
+//            }
 
         });
     }

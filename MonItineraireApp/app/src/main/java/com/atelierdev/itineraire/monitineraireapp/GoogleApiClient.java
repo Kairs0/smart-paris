@@ -1,8 +1,12 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
+import android.os.AsyncTask;
+
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
+import javax.xml.transform.Result;
 
 /**
  * Created by Arnaud on 04/12/2017.
@@ -18,10 +22,15 @@ import com.loopj.android.http.RequestParams;
  * key*
  */
 
-public class GoogleApiClient {
+public class GoogleApiClient extends AsyncTask<> {
     private static final String BASE_URL = "https://maps.googleapis.com/maps/api/directions/";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
+
+    @Override
+    public static void doInBackgroun(Params){
+        
+    }
 
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.get(getAbsoluteUrl(url), params, responseHandler);
