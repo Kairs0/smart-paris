@@ -21,6 +21,11 @@ public class DisplayInfoMonument extends AppCompatActivity {
 
         // Capture the layout's TextView and set the string as its text
         TextView textView = findViewById(R.id.resultatInformation);
-        textView.setText(monument);
+        textView.setText(fonction_débile(monument));
+    }
+
+    protected String fonction_débile(String monument) {
+        String retour = "hello Guillaume";
+        return (retour);
     }
 }
