@@ -25,7 +25,7 @@ public class DisplayInfoMonument extends AppCompatActivity {
     }
 
     protected String fonction_débile(String monument) {
-        String retour = "hello Guillaume";
+        String retour = monument + " est une très bonne idée de visite!";
         return (retour);
     }
 }
