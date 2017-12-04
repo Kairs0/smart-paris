@@ -80,8 +80,43 @@ public class MainActivity extends AppCompatActivity {
         GoogleApiClient.get("json?", rp, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected
-                setCalculTrajetResult("ONSCCESSOBJECT");
+                if (response == null){
+                    setCalculTrajetResult("Pas d'itinéraire");
+                }
+                try {
+                    JSONArray routes = response.getJSONArray("routes");
+                    if (routes == null){
+                        setCalculTrajetResult("Pas d'itinéraire");
+                    }
+                    JSONObject firstItinerary = routes.getJSONObject(0);
+                    if (firstItinerary == null) {
+                        setCalculTrajetResult("Pas d'itinéraire");
+                    }
+                    JSONArray legs = firstItinerary.getJSONArray("legs");
+                    if (legs == null) {
+                        setCalculTrajetResult("Pas d'itinéraire");
+                    }
+                    JSONObject legOne = legs.getJSONObject(0);
+                    if (legOne== null) {
+                        setCalculTrajetResult("Pas d'itinéraire");
+                    }
+                    JSONArray steps = legOne.getJSONArray("steps");
+                    if (steps == null) {
+                        setCalculTrajetResult("Pas d'itinéraire");
+                    }
+                    for (int i=0;i<steps.length();++i) {
+                        String instruct = steps.getJSONObject(i).getString("html_instructions");
+                        setCalculTrajetResult(getCalculTrajetResult() + instruct);
+                    }
+
+                } catch (JSONException e){
+                    throw new RuntimeException();
+                }
+
+
+
+
+
 
             }
 
