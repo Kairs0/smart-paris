@@ -52,6 +52,29 @@
             android:onClick="calculTrajet"
             android:text="@string/calc_button" />
 
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/monument"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/monument"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/monument_hint"
+            android:inputType="textPostalAddress" />
+
+        <Button
+            android:id="@+id/infoMonument"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:onClick="displayInfo"
+            android:text="@string/calc_button_info" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -3,9 +3,13 @@
     <string name="action_settings">Settings</string>
     <string name="point_a">Point A</string>
     <string name="point_B">Point B</string>
+    <string name="monument">Monument</string>
     <string name="point_a_hint">Point A</string>
     <string name="point_b_hint">Point B</string>
     <string name="calc_button">Calcul</string>
+    <string name="monument_hint">Monument</string>
+    <string name="calc_button_info">Infos</string>
     <string name="result_path">Resultat</string>
+    <string name="result_path_2">Something</string>
 
 </resources>

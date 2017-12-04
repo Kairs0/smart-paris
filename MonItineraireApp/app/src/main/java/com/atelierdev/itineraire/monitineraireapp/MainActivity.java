@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private String GoogleUri = "https://maps.googleapis.com/maps/api/directions/json?origin=Paris&destination=Antony&mode=driving&key=AIzaSyBM27gzMoQUs11F4Zqkc4xMaxhfZS8RS9M";
     public static final String EXTRA_POINTA = "com.atelierdev.itineraire.monitineraireapp.pointA";
     public static final String EXTRA_POINTB = "com.atelierdev.itineraire.monitineraireapp.pointB";
+    public static final String EXTRA_MONUMENT = "com.atelierdev.itineraire.monitineraireapp.monument";
 
 
     @Override
@@ -47,6 +48,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * Called when the user press calcul button
+     */
+    public void displayInfo(View view){
+        Intent intent = new Intent(this, DisplayInfoMonument.class);
+        EditText editMonument = (EditText) findViewById(R.id.monument);
+
+        String monument = editMonument.getText().toString();
+
+        String resultInfo = new String();
+
+        intent.putExtra(EXTRA_MONUMENT, monument);
+        startActivity(intent);
+    }
     /**
      * Called when the user press calcul button
      */
