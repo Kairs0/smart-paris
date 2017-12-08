@@ -6,6 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -50,6 +54,25 @@ public class DisplayInfoMonument extends AppCompatActivity {
         });
     }
 
+    public String GetStringFromGetEquipmentRequest(String result) throws JSONException {
+        JSONObject obj = new JSONObject(result);
+        if (obj == null) {
+            return("Pas d'information");
+        }
+        JSONArray data = obj.getJSONArray("data");
+        if (data == null) {
+            return("Pas d'information");
+        }
+        JSONObject information = data.getJSONObject(0);
+        if (information == null) {
+            return("Pas d'information");
+        }
+        String name = information.getString("name");
+        String address = information.getString("address");
+        String description = information.getString("description");
+        return("Nom :" + name +"\n\nAdresse :" + address + "\n\nDescription :" + Jsoup.parse(description).text);
+    }
+
     public class TestThread extends Thread
     {
         private String _monument;
@@ -92,7 +115,8 @@ public class DisplayInfoMonument extends AppCompatActivity {
 
                         Log.d("Resultat", result);
 
-                        UpdateTextView(result);
+                        String test = GetStringFromGetEquipmentRequest(result);
+                        UpdateTextView(test);
                     }
                 }
             } catch (Exception e) {
