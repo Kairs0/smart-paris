@@ -12,7 +12,7 @@ import java.net.URL;
  * Created by Guillaume on 04/12/2017.
  */
 
-public class TestThread extends Thread
+/*public class TestThread extends Thread
 {
     public String result = "";
 
@@ -57,4 +57,4 @@ public class TestThread extends Thread
             e.printStackTrace();
         }
     }
-}
+}*/
