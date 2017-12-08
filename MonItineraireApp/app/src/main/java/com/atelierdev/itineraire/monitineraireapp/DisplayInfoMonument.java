@@ -20,39 +20,48 @@ public class DisplayInfoMonument extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_monument_info);
+        TextView textView = findViewById(R.id.resultatInformation);
+        textView.setText("Chargement ...");
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
         String monument = intent.getStringExtra(MainActivity.EXTRA_MONUMENT);
 
-        Thread t1 = new TestThread("A");
+        Thread t1 = new TestThread("A", monument);
         t1.start();
-        try {
+        /*try {
             t1.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-
-        // Capture the layout's TextView and set the string as its text
-        /* TextView textView = findViewById(R.id.resultatInformation);
-        textView.setText(fonction_débile(monument));*/
+        }*/
     }
 
-    /*protected String fonction_débile(String monument) {
-        String retour = monument + " est une très bonne idée de visite!";
-        return (retour);
-    }*/
+    public void UpdateTextView(String result)
+    {
+        final String res = result;
+        //Déposer le Runnable dans la file d'attente de l'UI thread
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //code exécuté par l'UI thread
+                TextView textView = findViewById(R.id.resultatInformation);
+                textView.setText(res);
+            }
+        });
+    }
 
     public class TestThread extends Thread
     {
+        private String _monument;
         public String result = "";
 
         public String GetResult(){
             return result;
         }
 
-        public TestThread(String name){
+        public TestThread(String name, String monument){
             super(name);
+            _monument = monument;
         }
 
         @Override
@@ -61,7 +70,7 @@ public class DisplayInfoMonument extends AppCompatActivity {
                 URL url;
                 HttpURLConnection urlConnection = null;
                 try {
-                    url = new URL("https://api.paris.fr/api/data/1.0/Equipements/get_categories/?token=f6e85890f660abe2fd846df117a3cb215fc7d5bb80969d17026f3820a23728f2");
+                    url = new URL("https://api.paris.fr/api/data/1.0/Equipements/get_equipement/?token=f6e85890f660abe2fd846df117a3cb215fc7d5bb80969d17026f3820a23728f2&id=" + _monument);
 
                     urlConnection = (HttpURLConnection) url
                             .openConnection();
@@ -83,8 +92,7 @@ public class DisplayInfoMonument extends AppCompatActivity {
 
                         Log.d("Resultat", result);
 
-                        TextView textView = findViewById(R.id.resultatInformation);
-                        textView.setText(result);
+                        UpdateTextView(result);
                     }
                 }
             } catch (Exception e) {
