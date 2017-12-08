@@ -12,7 +12,9 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="149dp">
 
         <TextView
             android:layout_width="fill_parent"
@@ -52,24 +54,35 @@
             android:onClick="calculTrajet"
             android:text="@string/calc_button" />
 
+        <Button
+            android:id="@+id/displayMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="displayMap"
+            android:text="@string/display_map" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center">
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:indeterminate="true"
                 android:layout_centerHorizontal="true"
+                android:indeterminate="true"
                 android:visibility="gone" />
+
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <TextView
                     android:id="@+id/responseView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
             </ScrollView>
         </RelativeLayout>
 

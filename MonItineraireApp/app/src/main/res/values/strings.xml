@@ -7,5 +7,6 @@
     <string name="point_b_hint">Point B</string>
     <string name="calc_button">Calcul</string>
     <string name="result_path">Resultat</string>
-
+    <string name="title_activity_maps">Maps</string>
+    <string name="display_map">Afficher la carte</string>
 </resources>
