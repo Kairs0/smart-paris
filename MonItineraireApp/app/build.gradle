@@ -28,4 +28,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'org.json:json:20160212'
+    compile 'com.google.android.gms:play-services-maps:11.6.2'
+
 }

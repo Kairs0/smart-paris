@@ -11,5 +11,6 @@
     <string name="calc_button_info">Infos</string>
     <string name="result_path">Resultat</string>
     <string name="result_path_2">Something</string>
-
+    <string name="title_activity_maps">Maps</string>
+    <string name="display_map">Afficher la carte</string>
 </resources>
