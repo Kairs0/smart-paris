@@ -70,6 +70,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void displayMap(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
+
+        EditText editTextA = (EditText) findViewById(R.id.pointA);
+        EditText editTextB = (EditText) findViewById(R.id.pointB);
+        String pointA = editTextA.getText().toString();
+        String pointB = editTextB.getText().toString();
+        intent.putExtra(EXTRA_POINTA, pointA);
+        intent.putExtra(EXTRA_POINTB, pointB);
+
         startActivity(intent);
     }
 }

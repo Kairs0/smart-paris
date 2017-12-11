@@ -1,8 +1,8 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 public class DisplayPathAtoB extends AppCompatActivity {
@@ -28,10 +28,11 @@ public class DisplayPathAtoB extends AppCompatActivity {
             callThread.join();
             String result = api.getResult();
             GoogleApiResultManager manageJson = new GoogleApiResultManager(result);
-            manageJson.ManageJsonResult();
+
+            manageJson.ManageJsonResult(false);
 
             StringBuilder sb = new StringBuilder();
-            for (String instruct : manageJson.getResult()){
+            for (String instruct : manageJson.getInstructionsResult()){
                 instruct = instruct.replaceAll( "<(.|\n)*?>","");
                 sb.append(instruct);
                 sb.append("\n");
