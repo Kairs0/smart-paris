@@ -40,8 +40,7 @@ public class DisplayInfoMonument extends AppCompatActivity {
         }*/
     }
 
-    public void UpdateTextView(String result)
-    {
+    public void UpdateTextView(String result) {
         final String res = result;
         //Déposer le Runnable dans la file d'attente de l'UI thread
         runOnUiThread(new Runnable() {
@@ -57,32 +56,33 @@ public class DisplayInfoMonument extends AppCompatActivity {
     public String GetStringFromGetEquipmentRequest(String result) throws JSONException {
         JSONObject obj = new JSONObject(result);
         if (obj == null) {
-            return("Pas d'information");
+            return ("Pas d'information");
         }
         JSONArray data = obj.getJSONArray("data");
         if (data == null) {
-            return("Pas d'information");
+            return ("Pas d'information");
         }
         JSONObject information = data.getJSONObject(0);
         if (information == null) {
-            return("Pas d'information");
+            return ("Pas d'information");
         }
         String name = information.getString("name");
         String address = information.getString("address");
-        String description = information.getString("description");
-        return("Nom :" + name +"\n\nAdresse :" + address + "\n\nDescription :" + Jsoup.parse(description).text);
+        String rawdescription = information.getString("description");
+        String description = android.text.Html.fromHtml(rawdescription).toString();
+        return ("Nom :" + name + "\n\nAdresse :" + address + "\n\nDescription :" + description);
     }
 
-    public class TestThread extends Thread
-    {
+
+    public class TestThread extends Thread {
         private String _monument;
         public String result = "";
 
-        public String GetResult(){
+        public String GetResult() {
             return result;
         }
 
-        public TestThread(String name, String monument){
+        public TestThread(String name, String monument) {
             super(name);
             _monument = monument;
         }
@@ -124,8 +124,4 @@ public class DisplayInfoMonument extends AppCompatActivity {
             }
         }
     }
-
-
-
-
 }
