@@ -70,7 +70,7 @@ public class DisplayInfoMonument extends AppCompatActivity {
         String name = information.getString("name");
         String address = information.getString("address");
         String description = information.getString("description");
-        return("Nom :" + name +"\n\nAdresse :" + address + "\n\nDescription :" + Jsoup.parse(description).text);
+        return("Nom :" + name +"\n\nAdresse :" + address + "\n\nDescription :" + description);
     }
 
     public class TestThread extends Thread
