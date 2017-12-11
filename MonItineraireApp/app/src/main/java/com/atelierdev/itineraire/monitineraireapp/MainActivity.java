@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
 
         String monument = editMonument.getText().toString();
 
-        String resultInfo = new String();
-
         intent.putExtra(EXTRA_MONUMENT, monument);
         startActivity(intent);
     }
@@ -68,10 +66,6 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_POINTA, pointA);
         intent.putExtra(EXTRA_POINTB, pointB);
         startActivity(intent);
-
-
-        String urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=Paris&destination=Antony&mode=driving&key=AIzaSyBM27gzMoQUs11F4Zqkc4xMaxhfZS8RS9M";
-        String resultCalcul = new String();
     }
 
     public void displayMap(View view) {
