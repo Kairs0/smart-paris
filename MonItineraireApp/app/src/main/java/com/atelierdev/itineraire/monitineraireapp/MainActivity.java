@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         EditText editTextA = (EditText) findViewById(R.id.pointA);
         EditText editTextB = (EditText) findViewById(R.id.pointB);
 
-        //TODO arnaud: 
+        //TODO arnaud:
         // modèle pour récupérer position. A déplacer
 //        try {
 //            mFusedLocationClient.getLastLocation()
