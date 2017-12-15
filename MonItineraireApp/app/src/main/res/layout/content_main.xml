@@ -10,11 +10,15 @@
     tools:showIn="@layout/activity_main">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:id="@+id/linearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         android:orientation="vertical"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="149dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:layout_width="fill_parent"
@@ -32,6 +36,24 @@
             android:inputType="textPostalAddress" />
 
         <TextView
+            android:id="@+id/pointIntTextView"
+            android:layout_width="fill_parent"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/point_int"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/pointInt"
+            android:layout_width="fill_parent"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:hint="@string/point_int_hint"
+            android:inputType="textPostalAddress" />
+
+        <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -46,13 +68,70 @@
             android:hint="@string/point_b_hint"
             android:inputType="textPostalAddress" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/monument"
+            app:layout_constraintEnd_toEndOf="@+id/pointB"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!--<Button-->
+                <!--android:id="@+id/calculItineraire"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical|center_horizontal"-->
+                <!--android:onClick="calculTrajet"-->
+                <!--android:text="@string/calc_button" />-->
+            <Button
+                android:id="@+id/alternative_path"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:onClick="showFieldWayPoint"
+                android:text="@string/alternative_path" />
+
+
+            <CheckBox
+                android:id="@+id/checkBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_weight="1"
+                android:text="@string/use_position" />
+
+
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/monument"
+        app:layout_constraintEnd_toEndOf="@+id/pointB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
         <Button
-            android:id="@+id/calculItineraire"
-            android:layout_width="wrap_content"
+            android:id="@+id/displayMap"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
-            android:onClick="calculTrajet"
-            android:text="@string/calc_button" />
+            android:layout_weight="1"
+            android:onClick="displayMap"
+            android:text="@string/display_map" />
+    </LinearLayout>
+
+        <!--<Button-->
+            <!--android:id="@+id/calculItineraire"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical|center_horizontal"-->
+            <!--android:onClick="calculTrajet"-->
+            <!--android:text="@string/calc_button" />-->
 
         <TextView
             android:layout_width="fill_parent"
@@ -76,13 +155,6 @@
             android:layout_gravity="center_vertical|center_horizontal"
             android:onClick="displayInfo"
             android:text="@string/calc_button_info" />
-
-        <Button
-            android:id="@+id/displayMap"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="displayMap"
-            android:text="@string/display_map" />
 
 
         <RelativeLayout
@@ -113,15 +185,14 @@
     </LinearLayout>
 
 
-
     <!--<Button-->
-        <!--android:id="@+id/button"-->
-        <!--android:layout_width="91dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginEnd="152dp"-->
-        <!--android:layout_marginTop="196dp"-->
-        <!--android:text="Go !"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent" />-->
+    <!--android:id="@+id/button"-->
+    <!--android:layout_width="91dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginEnd="152dp"-->
+    <!--android:layout_marginTop="196dp"-->
+    <!--android:text="Go !"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent" />-->
 
 </android.support.constraint.ConstraintLayout>

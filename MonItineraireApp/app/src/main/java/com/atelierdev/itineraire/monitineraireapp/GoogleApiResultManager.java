@@ -43,18 +43,37 @@ public class GoogleApiResultManager {
             if (legs == null) {
                 this.instructionsResult.add("Pas d'itinéraire");
             }
-            JSONObject legOne = legs.getJSONObject(0);
-            if (legOne== null) {
-                this.instructionsResult.add("Pas d'itinéraire");
+            for (int i = 0 ; i < legs.length(); i++) {
+                JSONObject leg = legs.getJSONObject(i);
+                visiteALeg(leg, modeMap);
             }
-            JSONArray steps = legOne.getJSONArray("steps");
-            if (steps == null) {
-                this.instructionsResult.add("Pas d'itinéraire");
+
+//            JSONObject legOne = legs.getJSONObject(0);
+//            if (legOne== null) {
+//                this.instructionsResult.add("Pas d'itinéraire");
+//            }
+//            JSONArray steps = legOne.getJSONArray("steps");
+
+
+        } catch (JSONException jsonExcept){
+            this.instructionsResult.add("Pas d'itinéraire possible");
+        } catch (NullPointerException nullPointer){
+            this.instructionsResult.add("Pas d'itinéraire possible");
+        }
+
+    }
+
+    private void visiteALeg(JSONObject leg, boolean modeMap){
+        try{
+            JSONArray steps = leg.getJSONArray("steps");
+            if (steps == null){
+                this.instructionsResult.add("Pas d'inintéraire");
             }
+
             if (modeMap){
                 /**
                  * On veut récupérer les coordonnées gps du chemin
-                 * On récupère juste les start location (sauf pour dérnière étape)
+                 * On récupère juste les start location (sauf pour dernière étape)
                  * car à chaque étape, le start location est
                  * égal au end_location de l'étape précédènte
                  */
@@ -80,11 +99,11 @@ public class GoogleApiResultManager {
                     this.instructionsResult.add(instruct);
                 }
             }
+
         } catch (JSONException jsonExcept){
             this.instructionsResult.add("Pas d'itinéraire possible");
-        } catch (NullPointerException nullPointer){
-            this.instructionsResult.add("Pas d'itinéraire possible");
         }
+
 
     }
 }
