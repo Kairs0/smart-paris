@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Arnaud on 08/12/2017.
@@ -14,6 +16,7 @@ public class GoogleApiThread implements Runnable {
     private String origin;
     private String destination;
     private String mode;
+    private List<String> waypoints;
 
 
     /**
@@ -24,10 +27,11 @@ public class GoogleApiThread implements Runnable {
         return result;
     }
 
-    GoogleApiThread(String origin, String destination, String mode) {
+    GoogleApiThread(String origin, String destination, String mode, List<String> waypoints) {
         this.origin = origin;
         this.destination = destination;
         this.mode = mode;
+        this.waypoints = waypoints;
     }
 
 
@@ -44,7 +48,20 @@ public class GoogleApiThread implements Runnable {
                 String baseUrl = "https://maps.googleapis.com/maps/api/directions/json?" +
                         "key=AIzaSyBM27gzMoQUs11F4Zqkc4xMaxhfZS8RS9M&" +
                         "language=fr";
-                String fullUrl = baseUrl + urlOrigin + urlDestination + urlMode;
+
+                String tmpWaypoints = "";
+                for (String wp : this.waypoints ) {
+                    String wpClean = wp.replaceAll("\\s+", "%20");
+                    tmpWaypoints = tmpWaypoints.concat(wpClean + "|");
+                }
+                if (tmpWaypoints.length() > 0) {
+                    tmpWaypoints = tmpWaypoints.substring(0, tmpWaypoints.length() -1 );
+                }
+
+                String urlWaypoints = this.waypoints.size() == 0 ? "" :
+                        "&waypoints=" + tmpWaypoints;
+
+                String fullUrl = baseUrl + urlOrigin + urlDestination + urlMode + urlWaypoints;
 
                 url = new URL(fullUrl);
                 urlConnection = (HttpURLConnection) url.openConnection();

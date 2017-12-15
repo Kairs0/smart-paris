@@ -50,7 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String pointA = intent.getStringExtra(MainActivity.EXTRA_POINTA);
         String pointB = intent.getStringExtra(MainActivity.EXTRA_POINTB);
 
-        GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking");
+        GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking", new ArrayList<String>());
         Thread callThread = new Thread(api);
         callThread.start();
         try {

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class DisplayPathAtoB extends AppCompatActivity {
 
     @Override
@@ -21,7 +23,7 @@ public class DisplayPathAtoB extends AppCompatActivity {
         String pointA = intent.getStringExtra(MainActivity.EXTRA_POINTA);
         String pointB = intent.getStringExtra(MainActivity.EXTRA_POINTB);
 
-        GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking");
+        GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking", new ArrayList<String>());
         Thread callThread = new Thread(api);
         callThread.start();
         try {
