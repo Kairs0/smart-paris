@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -19,16 +20,17 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_POINTB = "com.atelierdev.itineraire.monitineraireapp.pointB";
     public static final String EXTRA_POINTSUPP = "com.atelierdev.itineraire.monitineraireapp.pointInt";
     public static final String EXTRA_MONUMENT = "com.atelierdev.itineraire.monitineraireapp.monument";
+    public static final String EXTRA_USELOC = "com.atelierdev.itineraire.monitineraireapp.use_loc";
 
     //TODO Arnaud: pour utiliser la location
-    private FusedLocationProviderClient mFusedLocationClient;
+    // https://developer.android.com/training/location/retrieve-current.html
+
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -55,25 +57,6 @@ public class MainActivity extends AppCompatActivity {
         EditText editTextA = (EditText) findViewById(R.id.pointA);
         EditText editTextB = (EditText) findViewById(R.id.pointB);
 
-        //TODO arnaud:
-        // modèle pour récupérer position. A déplacer
-//        try {
-//            mFusedLocationClient.getLastLocation()
-//                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-//                        @Override
-//                        public void onSuccess(Location location) {
-//                            // Got last known location. In some rare situations this can be null.
-//                            if (location != null) {
-//                                // Logic to handle location object
-//                            }
-//                        }
-//                    });
-//        } catch (SecurityException e){
-//
-//        }
-        // end modèle
-
-
         String pointA = editTextA.getText().toString();
         String pointB = editTextB.getText().toString();
 
@@ -88,12 +71,17 @@ public class MainActivity extends AppCompatActivity {
         EditText editTextA = (EditText) findViewById(R.id.pointA);
         EditText editTextB = (EditText) findViewById(R.id.pointB);
         EditText editTextInt = (EditText) findViewById(R.id.pointInt);
+        CheckBox checkBoxUseLoc = (CheckBox) findViewById(R.id.use_loc);
+
         String pointA = editTextA.getText().toString();
         String pointB = editTextB.getText().toString();
         String pointInt = editTextInt.getText().toString();
+        String useLoc = String.valueOf(checkBoxUseLoc.isChecked());
+
         intent.putExtra(EXTRA_POINTA, pointA);
         intent.putExtra(EXTRA_POINTB, pointB);
         intent.putExtra(EXTRA_POINTSUPP, pointInt);
+        intent.putExtra(EXTRA_USELOC, useLoc);
 
         startActivity(intent);
     }
@@ -103,5 +91,25 @@ public class MainActivity extends AppCompatActivity {
         TextView textViewInt = (TextView) findViewById(R.id.pointIntTextView);
         editTextInt.setVisibility(View.VISIBLE);
         textViewInt.setVisibility(View.VISIBLE);
+    }
+
+    public void hidePointA(View view){
+
+        CheckBox checkBoxPos = (CheckBox) findViewById(R.id.use_loc);
+
+        EditText editTextA = (EditText) findViewById(R.id.pointA);
+        TextView textViewA = (TextView) findViewById(R.id.pointATextView);
+
+        if (checkBoxPos.isChecked()){
+            editTextA.setText("");
+            editTextA.setVisibility(View.GONE);
+            textViewA.setVisibility(View.GONE);
+        } else {
+            editTextA.setVisibility(View.VISIBLE);
+            textViewA.setVisibility(View.VISIBLE);
+        }
+
+
+
     }
 }

@@ -2,9 +2,12 @@ package com.atelierdev.itineraire.monitineraireapp;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -12,6 +15,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 
 import java.util.ArrayList;
@@ -21,9 +25,21 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private String locationUser;
+
+    public String getLocationUser() {
+        return locationUser;
+    }
+
+    public void setLocationUser(String locationUser) {
+        this.locationUser = locationUser;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -51,12 +67,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String pointB = intent.getStringExtra(MainActivity.EXTRA_POINTB);
 
         String pointInt = intent.getStringExtra(MainActivity.EXTRA_POINTSUPP);
+
+        boolean useLoc = Boolean.valueOf(intent.getStringExtra(MainActivity.EXTRA_USELOC));
+
         List<String> listPointsInt = new ArrayList<>();
         if (!pointInt.equals("")){
             listPointsInt.add(pointInt);
         }
 
-        GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking", listPointsInt);
+        String startPoint;
+
+        if(useLoc){
+            this.calculUserPosition();
+            startPoint = getLocationUser();
+        } else {
+            startPoint = pointA;
+        }
+
+
+        GoogleApiThread api = new GoogleApiThread(startPoint, pointB, "walking", listPointsInt);
         Thread callThread = new Thread(api);
         callThread.start();
         try {
@@ -104,6 +133,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //Dessiner le trajet entre tous les points de la liste
             mMap.addPolyline(new PolylineOptions().addAll(points).width(5).color(Color.RED));
 
+        }
+    }
+
+    private void calculUserPosition(){
+
+        try {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                                setLocationUser(location.toString());
+                            } else {
+                                setLocationUser("");
+                            }
+                        }
+                    });
+        } catch (SecurityException e){
+            setLocationUser("");
         }
     }
 }

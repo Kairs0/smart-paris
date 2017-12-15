@@ -21,6 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/pointATextView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -94,11 +95,13 @@
 
 
             <CheckBox
-                android:id="@+id/checkBox"
+                android:id="@+id/use_loc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:layout_weight="1"
+                android:checked="false"
+                android:onClick="hidePointA"
                 android:text="@string/use_position" />
 
 

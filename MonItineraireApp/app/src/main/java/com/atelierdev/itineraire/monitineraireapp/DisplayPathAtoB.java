@@ -15,7 +15,6 @@ public class DisplayPathAtoB extends AppCompatActivity {
         setContentView(R.layout.activity_display_path_a_to_b);
         TextView textView = findViewById(R.id.resultatChemin);
         updateTextView("Chargement ...");
-//        textView.setText();
 
 
         // Get the Intent that started this activity and extract the string
