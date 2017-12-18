@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">MonItineraireApp</string>
     <string name="action_settings">Settings</string>
-    <string name="point_a">Point A</string>
+    <string name="point_a">Départ</string>
     <string name="point_int">Point Intermédaire</string>
-    <string name="point_B">Point B</string>
+    <string name="point_B">Arrivée</string>
     <string name="monument">Monument</string>
-    <string name="point_a_hint">Point A</string>
-    <string name="point_b_hint">Point B</string>
-    <string name="point_int_hint">Point intermediaire</string>
+    <string name="point_a_hint">Départ</string>
+    <string name="point_b_hint">Arrivée</string>
+    <string name="point_int_hint">Point Intermédaire</string>
     <string name="calc_button">Calcul</string>
     <string name="monument_hint">Monument</string>
     <string name="calc_button_info">Infos</string>
