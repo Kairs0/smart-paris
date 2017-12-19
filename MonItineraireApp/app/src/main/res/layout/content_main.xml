@@ -101,7 +101,7 @@
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:layout_weight="1"
                 android:checked="false"
-                android:onClick="hidePointA"
+                android:onClick="useDeviceLocation"
                 android:text="@string/use_position" />
 
 
