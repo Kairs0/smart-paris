@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -17,10 +16,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -82,14 +77,13 @@ public class MainActivity extends AppCompatActivity {
         EditText editTextA = (EditText) findViewById(R.id.pointA);
         EditText editTextB = (EditText) findViewById(R.id.pointB);
         EditText editTextInt = (EditText) findViewById(R.id.pointInt);
-        CheckBox checkBoxUseLoc = (CheckBox) findViewById(R.id.use_loc);
 
         String pointA;
         String pointB = editTextB.getText().toString();
         String pointInt = editTextInt.getText().toString();
 
         if(this.useMyLocForMap){
-            pointA = String.valueOf(this.longitudeUser) + "," + String.valueOf(this.latitudeUser);
+            pointA = String.valueOf(this.latitudeUser) + "," + String.valueOf(this.longitudeUser);
         } else {
             pointA = editTextA.getText().toString();
         }
