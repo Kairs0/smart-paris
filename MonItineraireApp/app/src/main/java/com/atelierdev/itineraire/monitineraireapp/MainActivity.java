@@ -12,7 +12,6 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -34,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MONUMENT = "com.atelierdev.itineraire.monitineraireapp.monument";
 
     private boolean useMyLocForMap = false;
-    private boolean isSearchAllowed = true;
 
     //Location
     // https://stackoverflow.com/questions/42218419/how-do-i-implement-the-locationlistener
