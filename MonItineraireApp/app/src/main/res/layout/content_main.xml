@@ -58,13 +58,21 @@
             android:textColor="#000000"
             android:textStyle="bold" />
 
-        <EditText
+        <!--<EditText-->
+            <!--android:id="@+id/pointInt"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:visibility="gone"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:hint="@string/point_int_hint"-->
+            <!--android:inputType="textPostalAddress" />-->
+
+        <fragment
             android:id="@+id/pointInt"
             android:layout_width="fill_parent"
-            android:visibility="gone"
             android:layout_height="wrap_content"
-            android:hint="@string/point_int_hint"
-            android:inputType="textPostalAddress" />
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:hint="@string/point_a_hint"
+            />
 
         <TextView
             android:layout_width="fill_parent"

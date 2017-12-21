@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Location
     // https://stackoverflow.com/questions/42218419/how-do-i-implement-the-locationlistener
+    // https://developer.android.com/reference/android/location/LocationManager.html#getLastKnownLocation(java.lang.String)
     LocationManager locationManager;
     Context mContext;
 
@@ -44,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
     private Double latitudeUser;
 
     private LatLng startPoint;
+    private LatLng middlePoint;
     private LatLng endPoint;
+
+    private boolean useWayPoint = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-        // Location manager
+        // Create location manager
         mContext=this;
-        locationManager=(LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         try {
             locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER,
                     2000,
@@ -67,12 +71,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        // AUTO COMPLETE POINT A AND B
+        // Auto complétion pour chaque point
         PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.pointA);
 
         PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.pointB);
+
+        PlaceAutocompleteFragment autocompleteWayPathPoint = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointInt);
 
         /*
         * The following code example shows setting an AutocompleteFilter on a PlaceAutocompleteFragment to
@@ -84,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
         autocompleteStartPoint.setFilter(addressFilter);
         autocompleteEndPoint.setFilter(addressFilter);
+        autocompleteWayPathPoint.setFilter(addressFilter);
+        autocompleteWayPathPoint.getView().setVisibility(View.GONE);
 
         autocompleteStartPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -109,18 +118,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        autocompleteWayPathPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                setMiddlePoint(place.getLatLng());
+            }
+
+            @Override
+            public void onError(Status status) {
+
+            }
+        });
+
     }
 
     public void displayMap(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
 
         // TODO points intermediaires
-        EditText editTextInt = (EditText) findViewById(R.id.pointInt);
-        String pointInt = editTextInt.getText().toString();
+//        EditText editTextInt = (EditText) findViewById(R.id.pointInt);
+
 
         String pointA;
         String pointB = this.endPoint != null ?
                 String.valueOf(this.endPoint.latitude) + "," + String.valueOf(this.endPoint.longitude):
+                "";
+
+        String pointInt = this.middlePoint != null ?
+                String.valueOf(this.middlePoint.latitude) + "," + String.valueOf(this.middlePoint.longitude):
                 "";
 
         if(this.useMyLocForMap){
@@ -156,8 +181,13 @@ public class MainActivity extends AppCompatActivity {
             PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
                     getFragmentManager().findFragmentById(R.id.pointB);
 
+            PlaceAutocompleteFragment autocompleteWayPoint = (PlaceAutocompleteFragment)
+                    getFragmentManager().findFragmentById(R.id.pointInt);
+
             autocompleteStartPoint.setText("");
             autocompleteEndPoint.setText("");
+            autocompleteWayPoint.setText("");
+
 
             intent.putExtra(EXTRA_POINTA, pointA);
             intent.putExtra(EXTRA_POINTB, pointB);
@@ -167,11 +197,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showFieldWayPoint(View view){
-        // TODO: masquer lors du reclick, mettre autocomplte
-        EditText editTextInt = (EditText) findViewById(R.id.pointInt);
         TextView textViewInt = (TextView) findViewById(R.id.pointIntTextView);
-        editTextInt.setVisibility(View.VISIBLE);
-        textViewInt.setVisibility(View.VISIBLE);
+        PlaceAutocompleteFragment fr = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.pointInt);
+
+        if (!this.useWayPoint){
+            fr.getView().setVisibility(View.VISIBLE);
+            textViewInt.setVisibility(View.VISIBLE);
+            this.useWayPoint = true;
+        } else {
+            fr.getView().setVisibility(View.GONE);
+            textViewInt.setVisibility(View.GONE);
+            fr.setText("");
+            this.useWayPoint = false;
+        }
+
+
+
     }
 
     /**
@@ -283,6 +324,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void setEndPoint(LatLng endPoint) {
         this.endPoint = endPoint;
+    }
+
+    public void setMiddlePoint(LatLng middlePoint) {
+        this.middlePoint = middlePoint;
     }
 
     /**
