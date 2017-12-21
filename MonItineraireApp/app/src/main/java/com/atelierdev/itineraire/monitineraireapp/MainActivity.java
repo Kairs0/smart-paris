@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -148,6 +149,16 @@ public class MainActivity extends AppCompatActivity {
         } else {
             this.startPoint = null;
             this.endPoint = null;
+
+            PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
+                    getFragmentManager().findFragmentById(R.id.pointA);
+
+            PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
+                    getFragmentManager().findFragmentById(R.id.pointB);
+
+            autocompleteStartPoint.setText("");
+            autocompleteEndPoint.setText("");
+
             intent.putExtra(EXTRA_POINTA, pointA);
             intent.putExtra(EXTRA_POINTB, pointB);
             intent.putExtra(EXTRA_POINTSUPP, pointInt);
@@ -174,11 +185,17 @@ public class MainActivity extends AppCompatActivity {
 
         Fragment fr = getFragmentManager().findFragmentById(R.id.pointA);
 
+
+
+
         // TODO : utiliser strings litteral
         if (checkBoxPos.isChecked()){
             this.useMyLocForMap = true;
             fr.getView().setVisibility(View.GONE);
             altText.setVisibility(View.VISIBLE);
+
+            updateLoc();
+
             if (this.longitudeUser == null || this.latitudeUser == null){
                 altText.setText("Localisation impossible");
             } else {
@@ -194,6 +211,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void updateLoc() {
+        try {
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location != null){
+                setLatitudeUser(location.getLatitude());
+                setLongitudeUser(location.getLongitude());
+            }
+        } catch (SecurityException e) {}
+    }
 
     //LOCATION
     LocationListener locationListenerGPS = new LocationListener() {
