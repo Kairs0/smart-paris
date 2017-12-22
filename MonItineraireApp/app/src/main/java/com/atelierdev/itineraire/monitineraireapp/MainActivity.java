@@ -14,10 +14,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +30,9 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -51,12 +57,63 @@ public class MainActivity extends AppCompatActivity {
     private LatLng middlePoint;
     private LatLng endPoint;
 
+    Spinner spinnerhour;
+    Spinner spinnermin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //Récupération du Spinner déclaré dans le fichier main.xml de res/layout
+        spinnerhour = findViewById(R.id.dureehour);
+        spinnermin = findViewById(R.id.dureemin);
+        //Création d'une liste d'élément à mettre dans le Spinner
+        List hourList = new ArrayList();
+        hourList.add("0h");
+        hourList.add("1h");
+        hourList.add("2h");
+        hourList.add("3h");
+        hourList.add("4h");
+        hourList.add("5h");
+        hourList.add("6h");
+
+        List minList = new ArrayList();
+        minList.add("0 min");
+        minList.add("10 min");
+        minList.add("20 min");
+        minList.add("30 min");
+        minList.add("40 min");
+        minList.add("50 min");
+
+		/*Le Spinner a besoin d'un adapter pour sa presentation alors on lui passe le context(this) et
+                un fichier de presentation par défaut( android.R.layout.simple_spinner_item)
+		Avec la liste des elements */
+        ArrayAdapter adapterhour = new ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                hourList
+        );
+
+
+               /* On definit une présentation du spinner quand il est déroulé
+        adapterhour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
+        //Enfin on passe l'adapter au Spinner et c'est tout
+        spinnerhour.setAdapter(adapterhour);
+
+        ArrayAdapter adaptermin = new ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                minList
+        );
+
+
+               /* On definit une présentation du spinner quand il est déroulé
+        adaptermin.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); */
+        //Enfin on passe l'adapter au Spinner et c'est tout
+        spinnermin.setAdapter(adaptermin);
 
         // Create location manager
         mContext=this;
@@ -157,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
             // lors d'une seconde recherche incorrecte (ex l'utilisateur n'a pas respecifié de point)
             this.startPoint = null;
             this.endPoint = null;
+
 
             // On reset la valeur "utiliser point intermediaire"
             this.useWayPoint = false;
