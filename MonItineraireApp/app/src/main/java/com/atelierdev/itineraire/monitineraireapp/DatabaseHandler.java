@@ -19,10 +19,11 @@ public abstract class DatabaseHandler {
 
     public static boolean Initialize(Context context){
 
-        Monument.deleteAll(Monument.class);
-        AssetManager assetManager = context.getAssets();
+        Monument.deleteAll(Monument.class); //On supprime anciennes donnees
+        AssetManager assetManager = context.getAssets(); //Pour recuperer fichier dans dossiers "assets"
 
         try{
+            // On ouvre le fichier, qu'on lit ligne par ligne
             InputStream is= assetManager.open("Monuments.txt");
             BufferedReader bReader = new BufferedReader(new InputStreamReader(is));
             String line = "";
@@ -30,6 +31,7 @@ public abstract class DatabaseHandler {
                 try {
 
                     if (line != null) {
+                        // On recupere les differents champs
                         String[] properties = line.split(",+");
                         int Id = Integer.parseInt(properties[0]);
                         String Name = properties[1];
