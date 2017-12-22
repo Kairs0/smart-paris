@@ -14,8 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        ProgressBar p = (ProgressBar)findViewById(R.id.progressBar1);
+        p.setVisibility(View.GONE);
+
 
         // Create location manager
         mContext=this;
@@ -89,10 +94,12 @@ public class MainActivity extends AppCompatActivity {
                 .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
                 .build();
 
+        initViewsAll();
+
         autocompleteStartPoint.setFilter(addressFilter);
         autocompleteEndPoint.setFilter(addressFilter);
         autocompleteWayPathPoint.setFilter(addressFilter);
-        autocompleteWayPathPoint.getView().setVisibility(View.GONE);
+
 
         autocompleteStartPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -132,11 +139,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        ProgressBar p = (ProgressBar)findViewById(R.id.progressBar1);
+        p.setVisibility(View.GONE);
+        initViewsAll();
+
+    }
+
     public void displayMap(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
-
-        // TODO points intermediaires
-//        EditText editTextInt = (EditText) findViewById(R.id.pointInt);
 
 
         String pointA;
@@ -172,6 +186,14 @@ public class MainActivity extends AppCompatActivity {
             String msg="Impossible d'effectuer une recherche !";
             Toast.makeText(mContext,msg,Toast.LENGTH_LONG).show();
         } else {
+            changeVisibilityAll(View.GONE);
+            ProgressBar p = (ProgressBar)findViewById(R.id.progressBar1);
+            if(p.getVisibility() != View.VISIBLE){
+                p.setVisibility(View.VISIBLE);
+            }
+
+
+
             this.startPoint = null;
             this.endPoint = null;
 
@@ -200,14 +222,20 @@ public class MainActivity extends AppCompatActivity {
         TextView textViewInt = (TextView) findViewById(R.id.pointIntTextView);
         PlaceAutocompleteFragment fr = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.pointInt);
 
+        Button buttonPointInt = (Button) findViewById(R.id.alternative_path);
+
+
+
         if (!this.useWayPoint){
             fr.getView().setVisibility(View.VISIBLE);
             textViewInt.setVisibility(View.VISIBLE);
+            buttonPointInt.setText("- Point");
             this.useWayPoint = true;
         } else {
             fr.getView().setVisibility(View.GONE);
             textViewInt.setVisibility(View.GONE);
             fr.setText("");
+            buttonPointInt.setText("+ Point");
             this.useWayPoint = false;
         }
 
@@ -330,12 +358,72 @@ public class MainActivity extends AppCompatActivity {
         this.middlePoint = middlePoint;
     }
 
+    private void changeVisibilityAll(int value){
+        // FRAMGENTS
+        PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointA);
+
+        PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointB);
+
+        PlaceAutocompleteFragment autocompleteWayPathPoint = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointInt);
+
+        // TextsView
+        TextView pointA_alt = (TextView) findViewById(R.id.pointATextView);
+        TextView pointIntTxtView = (TextView) findViewById(R.id.pointIntTextView);
+        TextView pointBTxtView = (TextView) findViewById(R.id.pointBTextBox);
+        TextView txtViewMonument = (TextView) findViewById(R.id.textViewmonument);
+
+        //Buttons
+        Button buttonAltPath = (Button) findViewById(R.id.alternative_path);
+        Button displayPath = (Button) findViewById(R.id.displayMap);
+        Button infoMunum = (Button) findViewById(R.id.infoMonument);
+
+        // CheckBox
+        CheckBox checkBoxPos = (CheckBox) findViewById(R.id.use_loc);
+
+        //EditTexts
+        EditText txtMonument = (EditText) findViewById(R.id.monument);
+        EditText editPointAalt = (EditText) findViewById(R.id.pointA_alt);
+
+        autocompleteEndPoint.getView().setVisibility(value);
+        autocompleteStartPoint.getView().setVisibility(value);
+        autocompleteWayPathPoint.getView().setVisibility(value);
+        pointA_alt.setVisibility(value);
+        pointIntTxtView.setVisibility(value);
+        pointBTxtView.setVisibility(value);
+        txtViewMonument.setVisibility(value);
+        buttonAltPath.setVisibility(value);
+        displayPath.setVisibility(value);
+        infoMunum.setVisibility(value);
+        checkBoxPos.setVisibility(value);
+        txtMonument.setVisibility(value);
+        editPointAalt.setVisibility(value);
+    }
+
+    private void initViewsAll(){
+        changeVisibilityAll(View.VISIBLE);
+
+        EditText textAltPointA = (EditText) findViewById(R.id.pointA_alt);
+        textAltPointA.setVisibility(View.GONE);
+
+        TextView textViewInt = (TextView) findViewById(R.id.pointIntTextView);
+        textViewInt.setVisibility(View.GONE);
+
+        PlaceAutocompleteFragment autocompleteWayPathPoint = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointInt);
+        autocompleteWayPathPoint.getView().setVisibility(View.GONE);
+
+    }
+
     /**
      * Called when the user press info button
      */
     public void displayInfo(View view){
         Intent intent = new Intent(this, DisplayInfoMonument.class);
         EditText editMonument = (EditText) findViewById(R.id.monument);
+
 
         String monument = editMonument.getText().toString();
 
