@@ -20,9 +20,14 @@ public class GoogleApiResultManager {
     private List<String> instructionsResult = new ArrayList<>();
     private List<LatLng> coordsResult = new ArrayList<>();
     private List<LatLng> decodedPolylineResult = new ArrayList<>();
+    private int durationInSeconds = 0;
 
     public List<LatLng> getCoordsResult(){
         return coordsResult;
+    }
+
+    public int getDurationInSeconds() {
+        return durationInSeconds;
     }
 
     public List<String> getInstructionsResult() {
@@ -35,6 +40,40 @@ public class GoogleApiResultManager {
 
     public GoogleApiResultManager(String jsonString){
         this.jsonString = jsonString;
+    }
+
+    public void calculTime(){
+        int result = 0;
+        try{
+            JSONObject jsonObject = new JSONObject(this.jsonString);
+            JSONArray routes = jsonObject.getJSONArray("routes");
+            if (routes == null){
+                return;
+            }
+            JSONObject firstItinerary = routes.getJSONObject(0);
+            if (firstItinerary == null) {
+                return;
+            }
+            JSONArray legs = firstItinerary.getJSONArray("legs");
+            if (legs == null) {
+                return;
+            }
+            for (int i = 0 ; i < legs.length(); i++) {
+                JSONObject leg = legs.getJSONObject(i);
+                JSONObject duration = leg.getJSONObject("duration");
+                if (duration == null) {
+                    return;
+                } else {
+                    result += duration.getInt("value");
+                }
+            }
+
+        } catch (JSONException jsonExcept){
+            this.instructionsResult.add("Pas d'itinéraire possible");
+        } catch (NullPointerException nullPointer){
+            this.instructionsResult.add("Pas d'itinéraire possible");
+        }
+        this.durationInSeconds = result;
     }
 
     public void ManageJsonResult(Boolean modeMap){
