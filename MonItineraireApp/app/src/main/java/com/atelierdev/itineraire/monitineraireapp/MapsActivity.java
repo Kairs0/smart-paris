@@ -2,13 +2,9 @@ package com.atelierdev.itineraire.monitineraireapp;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
+import android.support.v4.app.FragmentActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -29,20 +25,10 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationClient;
-    private String locationUser;
-
-    public String getLocationUser() {
-        return locationUser;
-    }
-
-    public void setLocationUser(String locationUser) {
-        this.locationUser = locationUser;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+//        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -65,31 +51,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Get the Intent that started this activity and extract the string
+        // Récupère l'intent qui a lancé l'activité et extrait les données
         Intent intent = getIntent();
         String pointA = intent.getStringExtra(MainActivity.EXTRA_POINTA);
         String pointB = intent.getStringExtra(MainActivity.EXTRA_POINTB);
-
         String pointInt = intent.getStringExtra(MainActivity.EXTRA_POINTSUPP);
 
-        boolean useLoc = Boolean.valueOf(intent.getStringExtra(MainActivity.EXTRA_USELOC));
-
+        // Transforme le point int en une liste pour pouvoir le passer au thread api
         List<String> listPointsInt = new ArrayList<>();
         if (!pointInt.equals("")){
             listPointsInt.add(pointInt);
         }
 
-        String startPoint;
-
-        if(useLoc){
-            this.calculUserPosition();
-            startPoint = getLocationUser();
-        } else {
-            startPoint = pointA;
-        }
-
-
-        GoogleApiThread api = new GoogleApiThread(startPoint, pointB, "walking", listPointsInt);
+        // Apelle l'api. Voir documentation dans GoogleApiThread
+        GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking", listPointsInt);
         Thread callThread = new Thread(api);
         callThread.start();
         try {
@@ -98,14 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             GoogleApiResultManager manageJson = new GoogleApiResultManager(result);
 
             manageJson.ManageJsonResult(true);
-            List<List<Double>> list_pairs_coord = manageJson.getCoordsResult();
-
-            List<LatLng> pointsPath = new ArrayList<>();
-
-            for (List<Double> pair : list_pairs_coord){
-                LatLng point = new LatLng(pair.get(0), pair.get(1));
-                pointsPath.add(point);
-            }
+            List<LatLng> pointsPath = manageJson.getCoordsResult();
 
             // set camera on start point
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsPath.get(0), 18));
@@ -120,6 +88,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (Exception e) {
             e.printStackTrace();
             // Créer des objets LatLng au niveau de l'hotel de ville, d'une origine et d'une destination
+
+            // TODO: gérer d'une meilleure façon le cas où l'api ne retourne rien
             LatLng paris = new LatLng(48.8566, 2.35177);
             LatLng origine = new LatLng(48.86, 2.36);
             LatLng destination = new LatLng(48.857460, 2.351670);
@@ -162,27 +132,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Polygon polygon = mMap.addPolygon(rectOptions);
             Boolean boo = PolyUtil.containsLocation(gervais, poly, true);
             Log.d("myTag", "Le point est-il dans le polygone ?"+ boo);
-        }
-    }
-
-    private void calculUserPosition(){
-
-        try {
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                // Logic to handle location object
-                                setLocationUser(location.toString());
-                            } else {
-                                setLocationUser("");
-                            }
-                        }
-                    });
-        } catch (SecurityException e){
-            setLocationUser("");
         }
     }
 }

@@ -4,11 +4,38 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Arnaud on 08/12/2017.
+ * Classe utilisée pour l'appel à l'API direction.
+ * Utilisation :
+ * 1) Instanciation de la classe
+ * >> GoogleApiThread example = new GoogleApiThread(String pointA,
+ *                  String pointB, String mode, List(String> listPointsInt);
+ * Avec: pointA, pointB strings avec coordonnées GPS
+ * mode string ayant pour valeur "walking", "driving", ...
+ * listPointsInt liste de strings pour les points intermédiaires, ayant même format que point A et B
+ *
+ * 2) Appel asynchrone de la méthode run de la classe pour calculer le trajet
+ * >> Thread callThreadExample = new Thread(example);
+ * >> callThreadExample.start();
+ *
+ * 3) Récupération des résultats
+ * >> callThread.join(); // Attend la fin du thread
+ * >> String result = example.getResult(); stock les résultats dans un string
+ *
+ * 4) Traitement du résultat avec la classe GoogleApiResultManager
+ * >> GoogleApiResultManager manageJsonExample = new GoogleApiResultManager(result);
+ * >> manageJson.ManageJsonResult(boolean modeMap);
+ * avec modeMap un boolean ayant pour valeur true ou false.
+ * Si modeMap est à true, la class Manager va calculer une list de coordonnées, sinon la classe
+ * va calculer une liste d'instructions.
+ *
+ * 5) Appel des résultats avec la classe GoogleApiResultManager
+ * >> List<LatLng> points = manageJsonExample.getCoordsResult(); (calcul avec modeMap=true)
+ * OU
+ * >> List<String> instrucs = manageJsonExample.getInstructionsResult(); (calcul avec modeMap=false)
  */
 
 public class GoogleApiThread implements Runnable {
@@ -42,6 +69,7 @@ public class GoogleApiThread implements Runnable {
             HttpURLConnection urlConnection = null;
 
             try {
+                // Pour chaque donnée, on remplace les espaces pour qu'ils soient traités dans la requetes
                 String urlOrigin = "&origin=" + this.origin.replaceAll("\\s+", "%20");
                 String urlDestination = "&destination=" + this.destination.replaceAll("\\s+", "%20");
                 String urlMode = "&mode=" + this.mode;
@@ -49,6 +77,7 @@ public class GoogleApiThread implements Runnable {
                         "key=AIzaSyBM27gzMoQUs11F4Zqkc4xMaxhfZS8RS9M&" +
                         "language=fr";
 
+                // Traitement des points intérmediaires
                 String tmpWaypoints = "";
                 for (String wp : this.waypoints ) {
                     String wpClean = wp.replaceAll("\\s+", "%20");
