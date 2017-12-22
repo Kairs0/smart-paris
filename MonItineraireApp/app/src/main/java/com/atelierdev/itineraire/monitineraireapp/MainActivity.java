@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MONUMENT = "com.atelierdev.itineraire.monitineraireapp.monument";
 
     private boolean useMyLocForMap = false;
+    private boolean useWayPoint = false;
 
     //Location
     // https://stackoverflow.com/questions/42218419/how-do-i-implement-the-locationlistener
@@ -50,18 +51,12 @@ public class MainActivity extends AppCompatActivity {
     private LatLng middlePoint;
     private LatLng endPoint;
 
-    private boolean useWayPoint = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        ProgressBar p = (ProgressBar)findViewById(R.id.progressBar1);
-        p.setVisibility(View.GONE);
-
 
         // Create location manager
         mContext=this;
@@ -70,98 +65,58 @@ public class MainActivity extends AppCompatActivity {
             locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER,
                     2000,
                     10, locationListenerGPS);
-        } catch (SecurityException e){ /*TODO*/}
+        } catch (SecurityException e){ /*TODO Arnaud*/}
         finally {
             isLocationEnabled();
         }
 
+        // Initialise les inputs avec auto complétion
+        initAutoCompleteFragments();
 
-        // Auto complétion pour chaque point
-        PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.pointA);
-
-        PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.pointB);
-
-        PlaceAutocompleteFragment autocompleteWayPathPoint = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.pointInt);
-
-        /*
-        * The following code example shows setting an AutocompleteFilter on a PlaceAutocompleteFragment to
-        * set a filter returning only results with a precise address.
-        */
-        AutocompleteFilter addressFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
-                .build();
-
+        // Initialise l'ensemble de la page pour l'affichage standard
         initViewsAll();
-
-        autocompleteStartPoint.setFilter(addressFilter);
-        autocompleteEndPoint.setFilter(addressFilter);
-        autocompleteWayPathPoint.setFilter(addressFilter);
-
-
-        autocompleteStartPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                setStartPoint(place.getLatLng());
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-            }
-        });
-
-        autocompleteEndPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                setEndPoint(place.getLatLng());
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO
-            }
-        });
-
-        autocompleteWayPathPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                setMiddlePoint(place.getLatLng());
-            }
-
-            @Override
-            public void onError(Status status) {
-
-            }
-        });
-
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-
-        ProgressBar p = (ProgressBar)findViewById(R.id.progressBar1);
-        p.setVisibility(View.GONE);
         initViewsAll();
-
     }
 
+    /**
+     *
+     *
+     * INTENTS LAUNCH
+     *
+     * Méthode appelées qui mènent à l'execution d'un nouvelle activitée
+     *
+     *
+     */
+
+
+    /**
+     * Méthode appelée lors du click sur le bouton "Afficher mon trajet" (id displayMap)
+     * @param view
+     */
     public void displayMap(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
 
 
         String pointA;
+
+        // Initie point B. Si aucun point n'a été récupéré par l'autocomplétion, this.endPoint es null
+        // et on met pointB à ""
         String pointB = this.endPoint != null ?
                 String.valueOf(this.endPoint.latitude) + "," + String.valueOf(this.endPoint.longitude):
                 "";
 
+        // De même pour pointInt
         String pointInt = this.middlePoint != null ?
                 String.valueOf(this.middlePoint.latitude) + "," + String.valueOf(this.middlePoint.longitude):
                 "";
 
+        // Si l'utilisateur souhaite utiliser sa localisation, on set le pointA aux valeurs de
+        // ses coordonnées. Sinon, on effectue le même travail que pour le pointB.
         if(this.useMyLocForMap){
             pointA = String.valueOf(this.latitudeUser) + "," + String.valueOf(this.longitudeUser);
         } else {
@@ -172,45 +127,38 @@ public class MainActivity extends AppCompatActivity {
 
         boolean searchAllowed = true;
 
+        // Si l'un des deux points n'est pas spécifié, il est impossible de calculer le trajet.
         if(TextUtils.isEmpty(pointA) || TextUtils.isEmpty(pointB)){
             searchAllowed = false;
         }
 
         if (this.useMyLocForMap){
+            // Si l'utilisateur veut utiliser sa position mais qu'on ne la connait pas,
+            // il est impossible de calculer le trajet.
             if (this.latitudeUser == null || this.longitudeUser == null){
                 searchAllowed = false;
             }
         }
 
         if(!searchAllowed){
+            // Si la recherche n'est pas possible, on affiche un message Toast
             String msg="Impossible d'effectuer une recherche !";
-            Toast.makeText(mContext,msg,Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
         } else {
+            // on masque tout et on affiche la barre de chargement
             changeVisibilityAll(View.GONE);
             ProgressBar p = (ProgressBar)findViewById(R.id.progressBar1);
-            if(p.getVisibility() != View.VISIBLE){
-                p.setVisibility(View.VISIBLE);
-            }
+            p.setVisibility(View.VISIBLE);
 
-
-
+            // On vide le startPoint et endPoint pour que les valeurs ne restent pas associées
+            // lors d'une seconde recherche incorrecte (ex l'utilisateur n'a pas respecifié de point)
             this.startPoint = null;
             this.endPoint = null;
 
-            PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
-                    getFragmentManager().findFragmentById(R.id.pointA);
+            // On vide la valeur affichée des fragments d'autocomplétion
+            clearOutFragments();
 
-            PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
-                    getFragmentManager().findFragmentById(R.id.pointB);
-
-            PlaceAutocompleteFragment autocompleteWayPoint = (PlaceAutocompleteFragment)
-                    getFragmentManager().findFragmentById(R.id.pointInt);
-
-            autocompleteStartPoint.setText("");
-            autocompleteEndPoint.setText("");
-            autocompleteWayPoint.setText("");
-
-
+            // On démarre l'activité map.
             intent.putExtra(EXTRA_POINTA, pointA);
             intent.putExtra(EXTRA_POINTB, pointB);
             intent.putExtra(EXTRA_POINTSUPP, pointInt);
@@ -218,35 +166,59 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void showFieldWayPoint(View view){
-        TextView textViewInt = (TextView) findViewById(R.id.pointIntTextView);
-        PlaceAutocompleteFragment fr = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.pointInt);
-
-        Button buttonPointInt = (Button) findViewById(R.id.alternative_path);
-
-
-
-        if (!this.useWayPoint){
-            fr.getView().setVisibility(View.VISIBLE);
-            textViewInt.setVisibility(View.VISIBLE);
-            buttonPointInt.setText("- Point");
-            this.useWayPoint = true;
-        } else {
-            fr.getView().setVisibility(View.GONE);
-            textViewInt.setVisibility(View.GONE);
-            fr.setText("");
-            buttonPointInt.setText("+ Point");
-            this.useWayPoint = false;
-        }
+    /**
+     * Called when the user press info button
+     */
+    public void displayInfo(View view){
+        Intent intent = new Intent(this, DisplayInfoMonument.class);
+        EditText editMonument = (EditText) findViewById(R.id.monument);
 
 
+        String monument = editMonument.getText().toString();
 
+        intent.putExtra(EXTRA_MONUMENT, monument);
+        startActivity(intent);
     }
 
     /**
+     *
+     * BUTTONS AND CHECKBOX
+     * Méthodes "internes" à l'activité appelés lorsque l'utilisateur
+     * effectue une action sur une checkbox ou un bouton,
+     * ne menant pas à l'execution d'une activitées
+     *
+     *
+     */
+
+    /**
+     * Méthode appelée lorsque l'utilisateur presse le point bouton ajour point int
+     */
+    public void showFieldWayPoint(View view){
+        TextView textViewInterm = (TextView) findViewById(R.id.pointIntTextView);
+        PlaceAutocompleteFragment fragmentPointInterm = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointInt);
+
+        Button buttonPointInterm = (Button) findViewById(R.id.alternative_path);
+
+        if (!this.useWayPoint){
+            // TODO arnaud: use litterals and check exceptions
+            fragmentPointInterm.getView().setVisibility(View.VISIBLE);
+            textViewInterm.setVisibility(View.VISIBLE);
+            buttonPointInterm.setText("- Point");
+            this.useWayPoint = true;
+        } else {
+            fragmentPointInterm.getView().setVisibility(View.GONE);
+            textViewInterm.setVisibility(View.GONE);
+            fragmentPointInterm.setText("");
+            buttonPointInterm.setText("+ Point");
+            this.useWayPoint = false;
+        }
+    }
+
+    /**
+     * Méthode appelée lorsque l'utilisateur fait appel à la géolocalisation
      * Si la checkbox "Utiliser ma localisation" est cochée,
      * affiche la geolocalisation de l'utilisateur, sinon reaffiche l'input
-     * @param view
      */
     public void onUseDeviceLocationClick(View view){
         CheckBox checkBoxPos = (CheckBox) findViewById(R.id.use_loc);
@@ -254,17 +226,14 @@ public class MainActivity extends AppCompatActivity {
 
         Fragment fr = getFragmentManager().findFragmentById(R.id.pointA);
 
-
-
-
-        // TODO : utiliser strings litteral
+        // TODO arnaud: use litterals and check exceptions
         if (checkBoxPos.isChecked()){
             this.useMyLocForMap = true;
             fr.getView().setVisibility(View.GONE);
             altText.setVisibility(View.VISIBLE);
-
             updateLoc();
-
+            // Si la position n'a pas pu être récupérée, on informe l'utilisateur que
+            // sa loc est impossible
             if (this.longitudeUser == null || this.latitudeUser == null){
                 altText.setText("Localisation impossible");
             } else {
@@ -272,14 +241,25 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             altText.setText("");
-
             altText.setVisibility(View.GONE);
             fr.getView().setVisibility(View.VISIBLE);
-
             this.useMyLocForMap = false;
         }
     }
 
+
+    /**
+     *
+     * UTILS
+     * Méthodes privées utilisées dans les différentes fonctions ci dessous
+     *
+     */
+
+
+
+    /**
+     * Essaie de récuperer la dernière position connue
+      */
     private void updateLoc() {
         try {
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -287,10 +267,10 @@ public class MainActivity extends AppCompatActivity {
                 setLatitudeUser(location.getLatitude());
                 setLongitudeUser(location.getLongitude());
             }
-        } catch (SecurityException e) {}
+        } catch (SecurityException e) {/*TODO arnaud*/}
     }
 
-    //LOCATION
+    // Location: initialise le gps listener qui va être utilisé lors de l'initalisation dans onCreate
     LocationListener locationListenerGPS = new LocationListener() {
         @Override
         public void onLocationChanged(android.location.Location location) {
@@ -316,7 +296,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
+    // Check si la geoloc est active sur l'appareil de l'utilisateur
+    // Appelée uniquement sur onCreate
+    // TODO: voir si utile -> l'application peut elle être utilisée sans localisation?
     private void isLocationEnabled() {
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             AlertDialog.Builder alertDialog=new AlertDialog.Builder(mContext);
@@ -338,27 +320,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setLongitudeUser(Double longitudeUser) {
-        this.longitudeUser = longitudeUser;
-    }
 
-    public void setLatitudeUser(Double latitudeUser) {
-        this.latitudeUser = latitudeUser;
-    }
 
-    public void setStartPoint(LatLng startPoint) {
-        this.startPoint = startPoint;
-    }
-
-    public void setEndPoint(LatLng endPoint) {
-        this.endPoint = endPoint;
-    }
-
-    public void setMiddlePoint(LatLng middlePoint) {
-        this.middlePoint = middlePoint;
-    }
-
+    /**
+     * Methode utilisée pour changer la visibilté de tous les éléments de la main page,
+     * sauf la barre de chargement
+     */
     private void changeVisibilityAll(int value){
+        // TODO Arnaud: clean
+
         // FRAMGENTS
         PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.pointA);
@@ -402,6 +372,9 @@ public class MainActivity extends AppCompatActivity {
         editPointAalt.setVisibility(value);
     }
 
+    /**
+     * Méthode utilisée pour initialiser la page
+     */
     private void initViewsAll(){
         changeVisibilityAll(View.VISIBLE);
 
@@ -415,21 +388,117 @@ public class MainActivity extends AppCompatActivity {
                 getFragmentManager().findFragmentById(R.id.pointInt);
         autocompleteWayPathPoint.getView().setVisibility(View.GONE);
 
+        // Cache la barre de chargement
+        ProgressBar p = (ProgressBar)findViewById(R.id.progressBar1);
+        p.setVisibility(View.GONE);
     }
 
     /**
-     * Called when the user press info button
+     * Utilisé pour initialiser les differents inputs avec autocomplétion
      */
-    public void displayInfo(View view){
-        Intent intent = new Intent(this, DisplayInfoMonument.class);
-        EditText editMonument = (EditText) findViewById(R.id.monument);
+    private void initAutoCompleteFragments(){
+        // Auto complétion pour chaque point
+        PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointA);
 
+        PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointB);
 
-        String monument = editMonument.getText().toString();
+        PlaceAutocompleteFragment autocompleteWayPathPoint = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointInt);
 
-        intent.putExtra(EXTRA_MONUMENT, monument);
-        startActivity(intent);
+        /*
+        * Filter: allows returning only results with a precise address.
+        */
+        AutocompleteFilter addressFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
+                .build();
+
+        autocompleteStartPoint.setFilter(addressFilter);
+        autocompleteEndPoint.setFilter(addressFilter);
+        autocompleteWayPathPoint.setFilter(addressFilter);
+
+        // Listeners pour autocomplete point: permet de récupérer les valeurs selectionnées
+        autocompleteStartPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                setStartPoint(place.getLatLng());
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+            }
+        });
+
+        autocompleteEndPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                setEndPoint(place.getLatLng());
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO
+            }
+        });
+
+        autocompleteWayPathPoint.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                setMiddlePoint(place.getLatLng());
+            }
+
+            @Override
+            public void onError(Status status) {
+
+            }
+        });
     }
 
+    /**
+     * Méthode utilisée pour nettoyer les valeurs des fragments
+     */
+    private void clearOutFragments(){
+        PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointA);
 
+        PlaceAutocompleteFragment autocompleteEndPoint = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointB);
+
+        PlaceAutocompleteFragment autocompleteWayPoint = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.pointInt);
+
+        autocompleteStartPoint.setText("");
+        autocompleteEndPoint.setText("");
+        autocompleteWayPoint.setText("");
+    }
+
+    /**
+     *
+     *
+     * GETTERS AND SETTERS
+     *
+     *
+     */
+
+    public void setLongitudeUser(Double longitudeUser) {
+        this.longitudeUser = longitudeUser;
+    }
+
+    public void setLatitudeUser(Double latitudeUser) {
+        this.latitudeUser = latitudeUser;
+    }
+
+    public void setStartPoint(LatLng startPoint) {
+        this.startPoint = startPoint;
+    }
+
+    public void setEndPoint(LatLng endPoint) {
+        this.endPoint = endPoint;
+    }
+
+    public void setMiddlePoint(LatLng middlePoint) {
+        this.middlePoint = middlePoint;
+    }
 }
