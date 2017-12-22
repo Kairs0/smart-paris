@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MonItineraireApp</string>
+    <string name="app_name">Smart Paris</string>
     <string name="action_settings">Settings</string>
     <string name="point_a">Départ</string>
     <string name="point_int">Point Intermédaire</string>
@@ -16,5 +16,8 @@
     <string name="title_activity_maps">Maps</string>
     <string name="display_map">Afficher mon trajet</string>
     <string name="use_position">Utiliser ma localisation</string>
-    <string name="alternative_path">+ Point</string>
+    <string name="show_alternative_point">+ Point</string>
+    <string name="hide_atlernative_point">- Point</string>
+    <string name="localisation_impossible">Localisation Impossible</string>
+    <string name="display_value_location">%1$d, %2$d</string>
 </resources>

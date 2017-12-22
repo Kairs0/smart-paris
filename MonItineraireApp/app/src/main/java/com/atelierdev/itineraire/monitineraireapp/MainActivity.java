@@ -204,16 +204,16 @@ public class MainActivity extends AppCompatActivity {
         Button buttonPointInterm = (Button) findViewById(R.id.alternative_path);
 
         if (!this.useWayPoint){
-            // TODO arnaud: use litterals and check exceptions
+            // TODO arnaud: check exceptions
             fragmentPointInterm.getView().setVisibility(View.VISIBLE);
             textViewInterm.setVisibility(View.VISIBLE);
-            buttonPointInterm.setText("- Point");
+            buttonPointInterm.setText(R.string.hide_atlernative_point);
             this.useWayPoint = true;
         } else {
             fragmentPointInterm.getView().setVisibility(View.GONE);
             textViewInterm.setVisibility(View.GONE);
             fragmentPointInterm.setText("");
-            buttonPointInterm.setText("+ Point");
+            buttonPointInterm.setText(R.string.show_alternative_point);
             this.useWayPoint = false;
         }
     }
@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
         Fragment fr = getFragmentManager().findFragmentById(R.id.pointA);
 
-        // TODO arnaud: use litterals and check exceptions
+        // TODO arnaud: check exceptions
         if (checkBoxPos.isChecked()){
             this.useMyLocForMap = true;
             fr.getView().setVisibility(View.GONE);
@@ -238,9 +238,12 @@ public class MainActivity extends AppCompatActivity {
             // Si la position n'a pas pu être récupérée, on informe l'utilisateur que
             // sa loc est impossible
             if (this.longitudeUser == null || this.latitudeUser == null){
-                altText.setText("Localisation impossible");
+                altText.setText(R.string.localisation_impossible);
             } else {
+                // TODO Arnaud: call for litterals
                 altText.setText(this.latitudeUser + "," + this.longitudeUser);
+//                String text = getString(R.string.display_value_location, this.latitudeUser, this.longitudeUser);
+//                altText.setText(text);
             }
         } else {
             altText.setText("");
@@ -386,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         Button buttonPointInterm = (Button) findViewById(R.id.alternative_path);
-        buttonPointInterm.setText("+ Point");
+        buttonPointInterm.setText(R.string.show_alternative_point);
 
         if(!this.useWayPoint){
             PlaceAutocompleteFragment autocompleteWayPathPoint = (PlaceAutocompleteFragment)

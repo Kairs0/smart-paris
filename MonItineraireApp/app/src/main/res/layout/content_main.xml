@@ -129,7 +129,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:onClick="showFieldWayPoint"
-                android:text="@string/alternative_path" />
+                android:text="@string/show_alternative_point" />
 
 
             <CheckBox
