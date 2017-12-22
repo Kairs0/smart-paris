@@ -1,5 +1,7 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,9 +16,9 @@ import java.util.List;
 public class GoogleApiResultManager {
     private String jsonString;
     private List<String> instructionsResult = new ArrayList<>();
-    private List<List<Double>> coordsResult = new ArrayList<>();
+    private List<LatLng> coordsResult = new ArrayList<>(); //TEST
 
-    public List<List<Double>> getCoordsResult() {
+    public List<LatLng> getCoordsResult(){
         return coordsResult;
     }
 
@@ -48,13 +50,6 @@ public class GoogleApiResultManager {
                 visiteALeg(leg, modeMap);
             }
 
-//            JSONObject legOne = legs.getJSONObject(0);
-//            if (legOne== null) {
-//                this.instructionsResult.add("Pas d'itinéraire");
-//            }
-//            JSONArray steps = legOne.getJSONArray("steps");
-
-
         } catch (JSONException jsonExcept){
             this.instructionsResult.add("Pas d'itinéraire possible");
         } catch (NullPointerException nullPointer){
@@ -75,21 +70,17 @@ public class GoogleApiResultManager {
                  * On veut récupérer les coordonnées gps du chemin
                  * On récupère juste les start location (sauf pour dernière étape)
                  * car à chaque étape, le start location est
-                 * égal au end_location de l'étape précédènte
+                 * égale au end_location de l'étape précédènte
                  */
                 for (int i = 0 ; i < steps.length(); i++){
                     JSONObject startLoc = steps.getJSONObject(i).getJSONObject("start_location");
-                    List<Double> coordStep = new ArrayList<>();
-                    coordStep.add(startLoc.getDouble("lat"));
-                    coordStep.add(startLoc.getDouble("lng"));
+                    LatLng coordStep = new LatLng(startLoc.getDouble("lat"), startLoc.getDouble("lng"));
                     coordsResult.add(coordStep);
                 }
-//                 ajoute la dernière coordonnée
+                //ajoute la dernière coordonnée
                 int last_index = steps.length();
                 JSONObject endLoc = steps.getJSONObject(last_index).getJSONObject("end_location");
-                List<Double> coordStep = new ArrayList<>();
-                coordStep.add(endLoc.getDouble("lat"));
-                coordStep.add(endLoc.getDouble("lng"));
+                LatLng coordStep = new LatLng(endLoc.getDouble("lat"), endLoc.getDouble("lng"));
                 coordsResult.add(coordStep);
 
             } else{
@@ -99,11 +90,8 @@ public class GoogleApiResultManager {
                     this.instructionsResult.add(instruct);
                 }
             }
-
         } catch (JSONException jsonExcept){
             this.instructionsResult.add("Pas d'itinéraire possible");
         }
-
-
     }
 }

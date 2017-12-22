@@ -62,18 +62,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Get the Intent that started this activity and extract the string
+        // Récupère l'intent qui a lancé l'activité et extrait les données
         Intent intent = getIntent();
         String pointA = intent.getStringExtra(MainActivity.EXTRA_POINTA);
         String pointB = intent.getStringExtra(MainActivity.EXTRA_POINTB);
-
         String pointInt = intent.getStringExtra(MainActivity.EXTRA_POINTSUPP);
 
+        // Transforme le point int en une liste pour pouvoir le passer au thread api
         List<String> listPointsInt = new ArrayList<>();
         if (!pointInt.equals("")){
             listPointsInt.add(pointInt);
         }
 
+        // Apelle l'api. Voir documentation dans GoogleApiThread
         GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking", listPointsInt);
         Thread callThread = new Thread(api);
         callThread.start();
@@ -83,14 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             GoogleApiResultManager manageJson = new GoogleApiResultManager(result);
 
             manageJson.ManageJsonResult(true);
-            List<List<Double>> list_pairs_coord = manageJson.getCoordsResult();
-
-            List<LatLng> pointsPath = new ArrayList<>();
-
-            for (List<Double> pair : list_pairs_coord){
-                LatLng point = new LatLng(pair.get(0), pair.get(1));
-                pointsPath.add(point);
-            }
+            List<LatLng> pointsPath = manageJson.getCoordsResult();
 
             // set camera on start point
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsPath.get(0), 18));
@@ -105,6 +99,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (Exception e) {
             e.printStackTrace();
             // Créer des objets LatLng au niveau de l'hotel de ville, d'une origine et d'une destination
+
+            // TODO: gérer d'une meilleure façon le cas où l'api ne retourne rien
             LatLng paris = new LatLng(48.8566, 2.35177);
             LatLng origine = new LatLng(48.856062, 2.353267);
             LatLng destination = new LatLng(48.857460, 2.351670);
