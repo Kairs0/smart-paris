@@ -2,6 +2,7 @@ package com.atelierdev.itineraire.monitineraireapp;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.support.v4.app.FragmentActivity;
@@ -9,6 +10,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
@@ -20,6 +22,8 @@ import com.google.maps.android.PolyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.location.Location.distanceBetween;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -84,19 +88,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             mMap.addPolyline(new PolylineOptions().addAll(pointsPath).width(5).color(Color.RED));
 
+            //Affiche le rectangle de sélection des monuments (largeur arbitraire pour 1h de disponibilité à adapter)
             LatLng origine = pointsPath.get(0);
             LatLng destination = pointsPath.get(pointsPath.size()-1);
+            float[] distance_vol_oiseau_metres=new float[]{12};
+            distanceBetween(origine.latitude, origine.longitude, destination.latitude, destination.longitude, distance_vol_oiseau_metres);
+            double vitesse_eval = 1.4;
+            double temps_disponible=3600;
+            double duree_trajet=distance_vol_oiseau_metres[0]/vitesse_eval;
+            double temps_restant=temps_disponible-duree_trajet;
+            double distance_restante=temps_restant/vitesse_eval;
+            double facteur=0.005*distance_restante/10000;
+
             double ux=destination.latitude-origine.latitude;
             double uy=destination.longitude-origine.longitude;
             double ux_unitaire=ux/(Math.sqrt(Math.pow(ux,2)+Math.pow(uy,2)));
             double uy_unitaire=uy/(Math.sqrt(Math.pow(ux,2)+Math.pow(uy,2)));
             double ux_unitaire_normal=-uy_unitaire;
             double uy_unitaire_normal=ux_unitaire;
-            double f=0.001;
-            LatLng S1 = new LatLng(origine.latitude+f*ux_unitaire_normal, origine.longitude+f*uy_unitaire_normal);
-            LatLng S2 = new LatLng(origine.latitude-f*ux_unitaire_normal, origine.longitude-f*uy_unitaire_normal);
-            LatLng S3 = new LatLng(destination.latitude+f*ux_unitaire_normal, destination.longitude+f*uy_unitaire_normal);
-            LatLng S4 = new LatLng(destination.latitude-f*ux_unitaire_normal, destination.longitude-f*uy_unitaire_normal);
+            LatLng S1 = new LatLng(origine.latitude+facteur*ux_unitaire_normal, origine.longitude+facteur*uy_unitaire_normal);
+            LatLng S2 = new LatLng(origine.latitude-facteur*ux_unitaire_normal, origine.longitude-facteur*uy_unitaire_normal);
+            LatLng S3 = new LatLng(destination.latitude+facteur*ux_unitaire_normal, destination.longitude+facteur*uy_unitaire_normal);
+            LatLng S4 = new LatLng(destination.latitude-facteur*ux_unitaire_normal, destination.longitude-facteur*uy_unitaire_normal);
             List<LatLng> poly=new ArrayList<LatLng>();
             poly.add(S1);
             poly.add(S2);
@@ -104,62 +117,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             poly.add(S3);
             PolygonOptions rectOptions = new PolygonOptions().addAll(poly).strokeColor(Color.argb(0, 50, 0, 255)).fillColor(Color.argb(70, 50, 0, 255));
             Polygon polygon = mMap.addPolygon(rectOptions);
-            LatLng point_test = new LatLng(48.863777, 2.322694);
-            if (PolyUtil.containsLocation(point_test, poly, true)) {
-            mMap.addMarker(new MarkerOptions().position(point_test).title("Le point est dans la zone"));
-            }
-            else {
-            mMap.addMarker(new MarkerOptions().position(point_test).title("Le point n'est PAS dans la zone"));
-            }
 
+            //Liste de monuments fictifs à remplacer par la notre
+            List<LatLng> liste_monuments=new ArrayList<LatLng>();
+            LatLng m1 = new LatLng(48.8566, 2.35177);
+            LatLng m2 = new LatLng(48.86, 2.36);
+            LatLng m3 = new LatLng(48.857460, 2.351670);
+            LatLng m4 = new LatLng(48.875788, 2.308562);
+            LatLng m5 = new LatLng(48.857606, 2.300345);
+            LatLng m6 = new LatLng(48.845651, 2.309428);
+            LatLng m7 = new LatLng(48.836900, 2.351453);
+            LatLng m8 = new LatLng(48.883881, 2.349439);
+            LatLng m9 = new LatLng(48.866756, 2.365709);
+            LatLng m10 = new LatLng(48.855809, 2.334118);
+            LatLng m11 = new LatLng(48.861531, 2.333718);
+            LatLng m12 = new LatLng(48.854057, 2.347342);
+            liste_monuments.add(m1);
+            liste_monuments.add(m2);
+            liste_monuments.add(m3);
+            liste_monuments.add(m4);
+            liste_monuments.add(m5);
+            liste_monuments.add(m6);
+            liste_monuments.add(m7);
+            liste_monuments.add(m8);
+            liste_monuments.add(m9);
+            liste_monuments.add(m10);
+            liste_monuments.add(m11);
+            liste_monuments.add(m12);
+
+            // Si le monument est dans le rectangle son marqueur est vert sinon il est jaune
+            for(int i=0; i < liste_monuments.size() ;i++) {
+                if (PolyUtil.containsLocation(liste_monuments.get(i), poly, true)) {
+                    mMap.addMarker(new MarkerOptions().position(liste_monuments.get(i)).title("Le point est dans la zone").icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().position(liste_monuments.get(i)).title("Le point n'est PAS dans la zone").icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            // Créer des objets LatLng au niveau de l'hotel de ville, d'une origine et d'une destination
-
             // TODO: gérer d'une meilleure façon le cas où l'api ne retourne rien
-            LatLng paris = new LatLng(48.8566, 2.35177);
-            LatLng origine = new LatLng(48.86, 2.36);
-            LatLng destination = new LatLng(48.857460, 2.351670);
-            LatLng bhv = new LatLng(48.857734, 2.353692);
-            LatLng gervais = new LatLng(48.855731, 2.354099);
-            double ux=destination.latitude-origine.latitude;
-            double uy=destination.longitude-origine.longitude;
-            double ux_unitaire=ux/(Math.sqrt(Math.pow(ux,2)+Math.pow(uy,2)));
-            double uy_unitaire=uy/(Math.sqrt(Math.pow(ux,2)+Math.pow(uy,2)));
-            double ux_unitaire_normal=-uy_unitaire;
-            double uy_unitaire_normal=ux_unitaire;
-            double f=0.001;
-            LatLng S1 = new LatLng(origine.latitude+f*ux_unitaire_normal, origine.longitude+f*uy_unitaire_normal);
-            LatLng S2 = new LatLng(origine.latitude-f*ux_unitaire_normal, origine.longitude-f*uy_unitaire_normal);
-            LatLng S3 = new LatLng(destination.latitude+f*ux_unitaire_normal, destination.longitude+f*uy_unitaire_normal);
-            LatLng S4 = new LatLng(destination.latitude-f*ux_unitaire_normal, destination.longitude-f*uy_unitaire_normal);
-            // Les mettre dans une liste
-            List<LatLng> points=new ArrayList<LatLng>();
-            List<LatLng> poly=new ArrayList<LatLng>();
-            points.add(origine);
-            points.add(destination);
-            points.add(bhv);
-            points.add(gervais);
-            poly.add(S1);
-            poly.add(S2);
-            poly.add(S4);
-            poly.add(S3);
-            //points.add(paris);
-            // Placer la camera au niveau du LatLng paris
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(paris, 18));
-            //Ajouter les marqueurs de la liste
-            for(int i=0; i < points.size() ;i++) {
-                mMap.addMarker(new MarkerOptions().position(points.get(i)).title("Point"));
-            }
-            //Dessiner le trajet entre tous les points de la liste
-            mMap.addPolyline(new PolylineOptions().addAll(points).width(5).color(Color.RED));
-            PolygonOptions rectOptions = new PolygonOptions().addAll(poly).fillColor(Color.BLACK);
-
-            // Get back the mutable Polygon
-            Polygon polygon = mMap.addPolygon(rectOptions);
-            Boolean boo = PolyUtil.containsLocation(gervais, poly, true);
-            Log.d("myTag", "Le point est-il dans le polygone ?"+ boo);
         }
     }
 }
