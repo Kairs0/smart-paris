@@ -14,10 +14,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,13 +31,15 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_POINTA = "com.atelierdev.itineraire.monitineraireapp.pointA";
     public static final String EXTRA_POINTB = "com.atelierdev.itineraire.monitineraireapp.pointB";
     public static final String EXTRA_POINTSUPP = "com.atelierdev.itineraire.monitineraireapp.pointInt";
     public static final String EXTRA_MONUMENT = "com.atelierdev.itineraire.monitineraireapp.monument";
-    public static final String EXTRA_DUREE = "com.atelierdev.itineraire.monitineraireapp.duree";
 
     private boolean useMyLocForMap = false;
     private boolean useWayPoint = false;
@@ -52,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
     private LatLng middlePoint;
     private LatLng endPoint;
 
-    private String dureevisite;
+    Spinner spinnerhour;
+    Spinner spinnermin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,54 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //Récupération du Spinner déclaré dans le fichier main.xml de res/layout
+        spinnerhour = findViewById(R.id.dureehour);
+        spinnermin = findViewById(R.id.dureemin);
+        //Création d'une liste d'élément à mettre dans le Spinner
+        List hourList = new ArrayList();
+        hourList.add("0h");
+        hourList.add("1h");
+        hourList.add("2h");
+        hourList.add("3h");
+        hourList.add("4h");
+        hourList.add("5h");
+        hourList.add("6h");
+
+        List minList = new ArrayList();
+        minList.add("0 min");
+        minList.add("10 min");
+        minList.add("20 min");
+        minList.add("30 min");
+        minList.add("40 min");
+        minList.add("50 min");
+
+		/*Le Spinner a besoin d'un adapter pour sa presentation alors on lui passe le context(this) et
+                un fichier de presentation par défaut( android.R.layout.simple_spinner_item)
+		Avec la liste des elements */
+        ArrayAdapter adapterhour = new ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                hourList
+        );
+
+
+               /* On definit une présentation du spinner quand il est déroulé
+        adapterhour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
+        //Enfin on passe l'adapter au Spinner et c'est tout
+        spinnerhour.setAdapter(adapterhour);
+
+        ArrayAdapter adaptermin = new ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                minList
+        );
+
+
+               /* On definit une présentation du spinner quand il est déroulé
+        adaptermin.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); */
+        //Enfin on passe l'adapter au Spinner et c'est tout
+        spinnermin.setAdapter(adaptermin);
 
         // Create location manager
         mContext=this;
@@ -106,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         String pointA;
-        String duree = this.dureevisite;
 
         // Initie point B. Si aucun point n'a été récupéré par l'autocomplétion, this.endPoint es null
         // et on met pointB à ""
@@ -159,8 +212,6 @@ public class MainActivity extends AppCompatActivity {
             this.startPoint = null;
             this.endPoint = null;
 
-            //de même pour la durée de la visite de Paris
-            this.dureevisite = null;
 
             // On reset la valeur "utiliser point intermediaire"
             this.useWayPoint = false;
@@ -172,7 +223,6 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_POINTA, pointA);
             intent.putExtra(EXTRA_POINTB, pointB);
             intent.putExtra(EXTRA_POINTSUPP, pointInt);
-            intent.putExtra(EXTRA_DUREE, duree);
             startActivity(intent);
         }
     }
@@ -521,6 +571,4 @@ public class MainActivity extends AppCompatActivity {
     public void setMiddlePoint(LatLng middlePoint) {
         this.middlePoint = middlePoint;
     }
-
-    public void setDuree(String duree) {this.dureevisite = duree;}
 }

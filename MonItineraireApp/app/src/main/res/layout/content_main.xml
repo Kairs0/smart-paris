@@ -31,7 +31,7 @@
 
 
         <TextView
-            android:id="@+id/textDuree"
+            android:id="@+id/duree"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -39,11 +39,17 @@
             android:textColor="#000000"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/duree"
-            android:layout_width="fill_parent"
+        <Spinner
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/duree_hint"/>
+            android:id="@+id/dureehour"
+            />;
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dureemin"
+            />;
 
         <TextView
             android:id="@+id/pointATextView"
