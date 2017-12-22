@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * INTENTS LAUNCH
      *
-     * Méthode appelées qui mènent à l'execution d'un nouvelle activitée
+     * Méthodes appelées qui mènent à l'execution d'un nouvelle activitée
      *
      *
      */
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
         String pointA;
 
-        // Initie point B. Si aucun point n'a été récupéré par l'autocomplétion, this.endPoint es null
+        // Initie point B. Si aucun point n'a été récupéré par l'autocomplétion, this.endPoint est null
         // et on met pointB à ""
         String pointB = this.endPoint != null ?
                 String.valueOf(this.endPoint.latitude) + "," + String.valueOf(this.endPoint.longitude):
@@ -387,10 +387,11 @@ public class MainActivity extends AppCompatActivity {
         EditText textAltPointA = (EditText) findViewById(R.id.pointA_alt);
         textAltPointA.setVisibility(View.GONE);
 
-
         Button buttonPointInterm = (Button) findViewById(R.id.alternative_path);
-        buttonPointInterm.setText(R.string.show_alternative_point);
 
+        // Si on utilise un point intérmediaire, l'affichage du boutton doit être à "-Point"
+        buttonPointInterm.setText(R.string.hide_atlernative_point);
+        
         if(!this.useWayPoint){
             PlaceAutocompleteFragment autocompleteWayPathPoint = (PlaceAutocompleteFragment)
                     getFragmentManager().findFragmentById(R.id.pointInt);
@@ -398,7 +399,10 @@ public class MainActivity extends AppCompatActivity {
 
             TextView textViewInt = (TextView) findViewById(R.id.pointIntTextView);
             textViewInt.setVisibility(View.GONE);
+            buttonPointInterm.setText(R.string.show_alternative_point);
         }
+
+
 
         // Cache la barre de chargement
         ProgressBar p = (ProgressBar)findViewById(R.id.progressBar1);
