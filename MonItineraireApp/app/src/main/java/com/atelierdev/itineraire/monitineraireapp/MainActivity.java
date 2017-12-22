@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_POINTB = "com.atelierdev.itineraire.monitineraireapp.pointB";
     public static final String EXTRA_POINTSUPP = "com.atelierdev.itineraire.monitineraireapp.pointInt";
     public static final String EXTRA_MONUMENT = "com.atelierdev.itineraire.monitineraireapp.monument";
+    public static final String EXTRA_DUREE = "com.atelierdev.itineraire.monitineraireapp.duree";
 
     private boolean useMyLocForMap = false;
     private boolean useWayPoint = false;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private LatLng startPoint;
     private LatLng middlePoint;
     private LatLng endPoint;
+
+    private String dureevisite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         String pointA;
+        String duree = this.dureevisite;
 
         // Initie point B. Si aucun point n'a été récupéré par l'autocomplétion, this.endPoint es null
         // et on met pointB à ""
@@ -155,6 +159,9 @@ public class MainActivity extends AppCompatActivity {
             this.startPoint = null;
             this.endPoint = null;
 
+            //de même pour la durée de la visite de Paris
+            this.dureevisite = null;
+
             // On reset la valeur "utiliser point intermediaire"
             this.useWayPoint = false;
 
@@ -165,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_POINTA, pointA);
             intent.putExtra(EXTRA_POINTB, pointB);
             intent.putExtra(EXTRA_POINTSUPP, pointInt);
+            intent.putExtra(EXTRA_DUREE, duree);
             startActivity(intent);
         }
     }
@@ -513,4 +521,6 @@ public class MainActivity extends AppCompatActivity {
     public void setMiddlePoint(LatLng middlePoint) {
         this.middlePoint = middlePoint;
     }
+
+    public void setDuree(String duree) {this.dureevisite = duree;}
 }

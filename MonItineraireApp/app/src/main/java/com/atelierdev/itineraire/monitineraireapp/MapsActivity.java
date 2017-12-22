@@ -55,6 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Intent intent = getIntent();
         String pointA = intent.getStringExtra(MainActivity.EXTRA_POINTA);
         String pointB = intent.getStringExtra(MainActivity.EXTRA_POINTB);
+        String duree = intent.getStringExtra(MainActivity.EXTRA_DUREE);
         String pointInt = intent.getStringExtra(MainActivity.EXTRA_POINTSUPP);
 
         // Transforme le point int en une liste pour pouvoir le passer au thread api

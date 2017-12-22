@@ -5,11 +5,13 @@
     <string name="point_int">Point Intermédaire</string>
     <string name="point_B">Arrivée</string>
     <string name="monument">Monument</string>
+    <string name="duree">Duree</string>
     <string name="point_a_hint">Départ</string>
     <string name="point_b_hint">Arrivée</string>
     <string name="point_int_hint">Point Intermédaire</string>
     <string name="calc_button">Calcul</string>
     <string name="monument_hint">Monument</string>
+    <string name="duree_hint">Duree</string>
     <string name="calc_button_info">Infos</string>
     <string name="result_path">Resultat</string>
     <string name="result_path_2">Something</string>

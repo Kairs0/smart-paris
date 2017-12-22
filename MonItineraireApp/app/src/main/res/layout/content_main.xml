@@ -30,6 +30,20 @@
             android:layout_height="wrap_content" />
 
 
+        <TextView
+            android:id="@+id/textDuree"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/duree"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/duree"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/duree_hint"/>
 
         <TextView
             android:id="@+id/pointATextView"
