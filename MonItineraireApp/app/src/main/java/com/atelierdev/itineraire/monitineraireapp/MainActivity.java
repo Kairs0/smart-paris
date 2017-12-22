@@ -155,6 +155,9 @@ public class MainActivity extends AppCompatActivity {
             this.startPoint = null;
             this.endPoint = null;
 
+            // On reset la valeur "utiliser point intermediaire"
+            this.useWayPoint = false;
+
             // On vide la valeur affichée des fragments d'autocomplétion
             clearOutFragments();
 
@@ -251,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      *
      * UTILS
-     * Méthodes privées utilisées dans les différentes fonctions ci dessous
+     * Méthodes privées utilisées dans les différentes fonctions ci dessus
      *
      */
 
@@ -381,12 +384,18 @@ public class MainActivity extends AppCompatActivity {
         EditText textAltPointA = (EditText) findViewById(R.id.pointA_alt);
         textAltPointA.setVisibility(View.GONE);
 
-        TextView textViewInt = (TextView) findViewById(R.id.pointIntTextView);
-        textViewInt.setVisibility(View.GONE);
 
-        PlaceAutocompleteFragment autocompleteWayPathPoint = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.pointInt);
-        autocompleteWayPathPoint.getView().setVisibility(View.GONE);
+        Button buttonPointInterm = (Button) findViewById(R.id.alternative_path);
+        buttonPointInterm.setText("+ Point");
+
+        if(!this.useWayPoint){
+            PlaceAutocompleteFragment autocompleteWayPathPoint = (PlaceAutocompleteFragment)
+                    getFragmentManager().findFragmentById(R.id.pointInt);
+            autocompleteWayPathPoint.getView().setVisibility(View.GONE);
+
+            TextView textViewInt = (TextView) findViewById(R.id.pointIntTextView);
+            textViewInt.setVisibility(View.GONE);
+        }
 
         // Cache la barre de chargement
         ProgressBar p = (ProgressBar)findViewById(R.id.progressBar1);
