@@ -84,6 +84,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             mMap.addPolyline(new PolylineOptions().addAll(pointsPath).width(5).color(Color.RED));
 
+            LatLng origine = pointsPath.get(0);
+            LatLng destination = pointsPath.get(pointsPath.size()-1);
+            double ux=destination.latitude-origine.latitude;
+            double uy=destination.longitude-origine.longitude;
+            double ux_unitaire=ux/(Math.sqrt(Math.pow(ux,2)+Math.pow(uy,2)));
+            double uy_unitaire=uy/(Math.sqrt(Math.pow(ux,2)+Math.pow(uy,2)));
+            double ux_unitaire_normal=-uy_unitaire;
+            double uy_unitaire_normal=ux_unitaire;
+            double f=0.001;
+            LatLng S1 = new LatLng(origine.latitude+f*ux_unitaire_normal, origine.longitude+f*uy_unitaire_normal);
+            LatLng S2 = new LatLng(origine.latitude-f*ux_unitaire_normal, origine.longitude-f*uy_unitaire_normal);
+            LatLng S3 = new LatLng(destination.latitude+f*ux_unitaire_normal, destination.longitude+f*uy_unitaire_normal);
+            LatLng S4 = new LatLng(destination.latitude-f*ux_unitaire_normal, destination.longitude-f*uy_unitaire_normal);
+            List<LatLng> poly=new ArrayList<LatLng>();
+            poly.add(S1);
+            poly.add(S2);
+            poly.add(S4);
+            poly.add(S3);
+            PolygonOptions rectOptions = new PolygonOptions().addAll(poly).strokeColor(Color.argb(0, 50, 0, 255)).fillColor(Color.argb(70, 50, 0, 255));
+            Polygon polygon = mMap.addPolygon(rectOptions);
+            LatLng point_test = new LatLng(48.863777, 2.322694);
+            if (PolyUtil.containsLocation(point_test, poly, true)) {
+            mMap.addMarker(new MarkerOptions().position(point_test).title("Le point est dans la zone"));
+            }
+            else {
+            mMap.addMarker(new MarkerOptions().position(point_test).title("Le point n'est PAS dans la zone"));
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
