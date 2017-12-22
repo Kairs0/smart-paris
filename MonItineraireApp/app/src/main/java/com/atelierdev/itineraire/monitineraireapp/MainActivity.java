@@ -81,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         initViewsAll();
+        if (this.useMyLocForMap){
+            replacePointAfragmentByAlt();
+        }
     }
 
     /**
@@ -232,19 +235,8 @@ public class MainActivity extends AppCompatActivity {
         // TODO arnaud: check exceptions
         if (checkBoxPos.isChecked()){
             this.useMyLocForMap = true;
-            fr.getView().setVisibility(View.GONE);
-            altText.setVisibility(View.VISIBLE);
             updateLoc();
-            // Si la position n'a pas pu être récupérée, on informe l'utilisateur que
-            // sa loc est impossible
-            if (this.longitudeUser == null || this.latitudeUser == null){
-                altText.setText(R.string.localisation_impossible);
-            } else {
-                // TODO Arnaud: call for litterals
-                altText.setText(this.latitudeUser + "," + this.longitudeUser);
-//                String text = getString(R.string.display_value_location, this.latitudeUser, this.longitudeUser);
-//                altText.setText(text);
-            }
+            replacePointAfragmentByAlt();
         } else {
             altText.setText("");
             altText.setVisibility(View.GONE);
@@ -391,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Si on utilise un point intérmediaire, l'affichage du boutton doit être à "-Point"
         buttonPointInterm.setText(R.string.hide_atlernative_point);
-        
+
         if(!this.useWayPoint){
             PlaceAutocompleteFragment autocompleteWayPathPoint = (PlaceAutocompleteFragment)
                     getFragmentManager().findFragmentById(R.id.pointInt);
@@ -488,6 +480,25 @@ public class MainActivity extends AppCompatActivity {
         autocompleteStartPoint.setText("");
         autocompleteEndPoint.setText("");
         autocompleteWayPoint.setText("");
+    }
+
+    private void replacePointAfragmentByAlt(){
+        Fragment fr = getFragmentManager().findFragmentById(R.id.pointA);
+        EditText altText = findViewById(R.id.pointA_alt);
+
+        fr.getView().setVisibility(View.GONE);
+        altText.setVisibility(View.VISIBLE);
+//        updateLoc();
+        // Si la position n'a pas pu être récupérée, on informe l'utilisateur que
+        // sa loc est impossible
+        if (this.longitudeUser == null || this.latitudeUser == null){
+            altText.setText(R.string.localisation_impossible);
+        } else {
+            // TODO Arnaud: call for litterals
+            altText.setText(this.latitudeUser + "," + this.longitudeUser);
+//                String text = getString(R.string.display_value_location, this.latitudeUser, this.longitudeUser);
+//                altText.setText(text);
+        }
     }
 
     /**
