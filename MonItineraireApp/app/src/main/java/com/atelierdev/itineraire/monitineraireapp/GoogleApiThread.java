@@ -27,13 +27,17 @@ import java.util.List;
  *
  * 4) Traitement du résultat avec la classe GoogleApiResultManager
  * >> GoogleApiResultManager manageJsonExample = new GoogleApiResultManager(result);
- * >> manageJson.ManageJsonResult(boolean modeMap);
+ * >> manageJsonExample.ManageJsonResult(boolean modeMap);
  * avec modeMap un boolean ayant pour valeur true ou false.
  * Si modeMap est à true, la class Manager va calculer une list de coordonnées, sinon la classe
  * va calculer une liste d'instructions.
+ * OU
+ * >> manageJsonExample.ManagePolylineResult();
+ * Cette option récupère directement la polyline encryptée dans la réponse à la requête et la décrype afin
+ * d'avoir la bonne trajectoire de la ligne
  *
  * 5) Appel des résultats avec la classe GoogleApiResultManager
- * >> List<LatLng> points = manageJsonExample.getCoordsResult(); (calcul avec modeMap=true)
+ * >> List<LatLng> points = manageJsonExample.getCoordsResult(); (calcul avec modeMap=true OU ManagePolylineResult)
  * OU
  * >> List<String> instrucs = manageJsonExample.getInstructionsResult(); (calcul avec modeMap=false)
  */

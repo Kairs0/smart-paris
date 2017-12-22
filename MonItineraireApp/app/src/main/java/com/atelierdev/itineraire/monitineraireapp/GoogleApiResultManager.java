@@ -1,5 +1,7 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
+import android.graphics.Point;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -16,7 +18,8 @@ import java.util.List;
 public class GoogleApiResultManager {
     private String jsonString;
     private List<String> instructionsResult = new ArrayList<>();
-    private List<LatLng> coordsResult = new ArrayList<>(); //TEST
+    private List<LatLng> coordsResult = new ArrayList<>();
+    private List<LatLng> decodedPolylineResult = new ArrayList<>();
 
     public List<LatLng> getCoordsResult(){
         return coordsResult;
@@ -24,6 +27,10 @@ public class GoogleApiResultManager {
 
     public List<String> getInstructionsResult() {
         return instructionsResult;
+    }
+
+    public List<LatLng> getDecodedPolylineResult() {
+        return decodedPolylineResult;
     }
 
     public GoogleApiResultManager(String jsonString){
@@ -53,6 +60,29 @@ public class GoogleApiResultManager {
         } catch (JSONException jsonExcept){
             this.instructionsResult.add("Pas d'itinéraire possible");
         } catch (NullPointerException nullPointer){
+            this.instructionsResult.add("Pas d'itinéraire possible");
+        }
+    }
+
+    public void ManagePolylineResult(){
+        try {
+            JSONObject jsonObject = new JSONObject(this.jsonString);
+            JSONArray routes = jsonObject.getJSONArray("routes");
+            if (routes == null){
+                this.instructionsResult.add("Pas d'itinéraire");
+            }
+            JSONObject firstItinerary = routes.getJSONObject(0);
+            if (firstItinerary == null) {
+                this.instructionsResult.add("Pas d'itinéraire");
+            }
+            JSONObject containerPoly = firstItinerary.getJSONObject("overview_polyline");
+            if (containerPoly == null) {
+                this.instructionsResult.add("Pas d'itinéraire");
+            }
+            String encodedPoly = containerPoly.getString("points");
+            decodedPolylineResult = polylineDecoder(encodedPoly);
+
+        } catch (Exception e){
             this.instructionsResult.add("Pas d'itinéraire possible");
         }
 
@@ -93,5 +123,42 @@ public class GoogleApiResultManager {
         } catch (JSONException jsonExcept){
             this.instructionsResult.add("Pas d'itinéraire possible");
         }
+    }
+
+    /**
+     * Decode la polyline encodée dans le json de google
+     * /!\ CREDITS: https://github.com/scoutant/polyline-decoder
+     */
+    private List<LatLng> polylineDecoder(String encoded){
+        double precision = 1E5;
+        List<LatLng> track = new ArrayList<>();
+        int index = 0;
+        int lat = 0, lng = 0;
+
+        while (index < encoded.length()) {
+            int b, shift = 0, result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+
+            double latitude = (double) lat/precision;
+            double longitude = (double) lng/precision;
+            track.add(new LatLng(latitude, longitude));
+        }
+        return track;
     }
 }

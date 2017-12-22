@@ -16,6 +16,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.PolyUtil;
+//import google.maps.geometry.encoding;
 
 
 import java.util.ArrayList;
@@ -72,17 +73,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String result = api.getResult();
             GoogleApiResultManager manageJson = new GoogleApiResultManager(result);
 
-            manageJson.ManageJsonResult(true);
-            List<LatLng> pointsPath = manageJson.getCoordsResult();
+            manageJson.ManagePolylineResult();
+            List<LatLng> pointsPath = manageJson.getDecodedPolylineResult();
 
             // set camera on start point
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsPath.get(0), 18));
 
-            for(int i=0; i < pointsPath.size() ;i++) {
-                mMap.addMarker(new MarkerOptions().position(pointsPath.get(i)).title("Point"));
-            }
+            // Ajoute un marqueur pour le point de départ et d'arrivée
+            mMap.addMarker(new MarkerOptions().position(pointsPath.get(0)).title("Point"));
+            int indexLastPoint = pointsPath.size() - 1;
+            mMap.addMarker(new MarkerOptions().position(pointsPath.get(indexLastPoint)).title("Point"));
 
-            mMap.addPolyline(new PolylineOptions().addAll(pointsPath).width(5).color(Color.RED));
+            PolylineOptions optionsMap = new PolylineOptions();
+            optionsMap.geodesic(true);
+            optionsMap.addAll(pointsPath);
+            optionsMap.width(5);
+            optionsMap.color(Color.BLUE);
+
+            mMap.addPolyline(optionsMap);
 
             LatLng origine = pointsPath.get(0);
             LatLng destination = pointsPath.get(pointsPath.size()-1);
