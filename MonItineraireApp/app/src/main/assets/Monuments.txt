@@ -1,0 +1,28 @@
+﻿1202,Notre-Dame de Paris,253,Incontournable,6 Place du Parvis de Notre-Dame,75004,48.853874,2.348011,TRUE,30,5,5,5,5,5
+1526,Petit Palais - Musée des beaux-arts de la Ville de Paris,253,Musée,2 avenue Winston Churchill,75008,48.86589499999999,2.3138045000000598,TRUE,90,4,4,5,3,4
+1650,Arc de Triomphe,253,Incontournable,3 place Charles de Gaulle,75016,48.8743062,2.294766500000037,TRUE,60,5,5,5,5,5
+1653,Tour Eiffel,253,Incontournable,3 avenue Anatole France,75007,48.858841,2.294329,TRUE,90,5,5,5,5,5
+1660,Panthéon,253,Incontournable,25 place du Panthéon,75005,48.845871,2.344943,TRUE,40,5,5,5,5,5
+3420,Tour Montparnasse,253,??,33 avenue du Maine,75015,48.842398800000005,2.3217409000000093,TRUE,40,4,4,4,4,3
+3421,Sainte Chapelle,253,Culte,8 boulevard du Palais,75001,48.8550649,2.3453830999999354,TRUE,,4,4,4,3,4
+3425,Sacré-Coeur,253,Culte,Place du Parvis du Sacré-Coeur,75018,48.886192,2.3437,TRUE,30,5,5,5,5,5
+3427,Tour Jean sans Peur,253,Musée,20 rue Étienne Marcel,75002,48.864075,2.348127,TRUE,,2,3,2,2,2
+3429,Palais du Luxembourg,253,Politique,15 rue de Vaugirard,75006,48.849266,2.336632,FALSE,N/A,4,4,4,4,4
+3733,Grande Synagogue de la Victoire,253,Culte,44 rue de la Victoire,75009,48.875233,2.336178,TRUE,20,3,3,3,3,3
+3737,Notre-Dame-de-Lorette,253,Culte,18 bis rue de Chateaudun,75009,48.875954,2.339276,TRUE,20,3,3,3,3,2
+3738,Eglise Notre Dame de la Croix,253,Culte,3 place de Ménilmontant,75020,48.868408,2.388162,TRUE,20,3,3,2,4,2
+3739,Eglise Saint-Paul-Saint-Louis,253,Culte,99 rue Saint-Antoine,75004,48.855083,2.36157,TRUE,20,3,3,3,3,2
+3741,Saint-Jean-de-Montmartre,253,Culte,19 rue des Abbesses,75018,48.8845081,2.3380712000000585,TRUE,20,3,2,3,3,4
+3742,Saint-Christophe de Javel,253,Culte,4 rue Saint-Christophe,75015,48.844582,2.279694,TRUE,20,3,2,2,4,2
+3744,Sainte-Odile,253,Culte,2 avenue Stéphane-Mallarmé,75017,48.886944,2.293589,TRUE,20,3,2,2,4,2
+3745,Saint-Eustache,253,Culte,2 impasse Saint Eustache,75001,48.8635861,2.345200400000067,TRUE,20,3,3,3,4,2
+3747,Saint-Philippe-du-Roule,253,Culte,154 rue du Faubourg-Saint-Honoré,75008,48.868496,2.322792,TRUE,20,2,2,3,2,2
+3748,Eglise Saint-Roch,253,Culte,296 rue Saint Honoré,75001,48.864819,2.332126,TRUE,20,3,3,3,3,3
+3749,Eglise Saint-Sulpice,253,Culte,Place Saint-Sulpice,75006,48.851204,2.333686,TRUE,20,3,3,4,4,2
+3750,Saint-Germain-l'Auxerrois,253,Culte,2 place du Louvre,75001,48.859627,2.340729,TRUE,20,3,3,4,3,3
+4104,Hôtel des Invalides,253,Incontournable,129 rue de Grenelle,75007,48.858109,2.311785,TRUE,,5,5,5,5,5
+5045,Tour Saint Jacques,253,??,88 rue de Rivoli,75004,48.858219,2.349105,TRUE,,4,3,4,4,3
+16835,Château de Vincennes,253,??,Avenue de Paris,94300,48.8455457,2.428678399999967,TRUE,,4,4,3,4,4
+16837,Mobilier national - Manufacture des Gobelins,253,??,42 avenue des Gobelins,75013,48.8348903,2.3531695000000354,TRUE,,3,3,3,3,4
+16842,Palais de l'Elysée,253,Politique,55 Rue du Faubourg Saint-Honoré,75008,48.87078349999999,2.3168708000000606,FALSE,N/A,4,4,3,5,3
+16869,Eglise Saint Germain des Prés,253,Culte,3 Place Saint-Germain des Prés,75006,48.8539755,2.3342595999999958,TRUE,,3,2,4,3,2
