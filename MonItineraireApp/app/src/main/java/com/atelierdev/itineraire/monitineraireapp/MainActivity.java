@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //Récupération du Spinner déclaré dans le fichier main.xml de res/layout
@@ -400,6 +400,7 @@ public class MainActivity extends AppCompatActivity {
         TextView pointIntTxtView = (TextView) findViewById(R.id.pointIntTextView);
         TextView pointBTxtView = (TextView) findViewById(R.id.pointBTextBox);
         TextView txtViewMonument = (TextView) findViewById(R.id.textViewmonument);
+        TextView txtViewDuree = findViewById(R.id.duree);
 
         //Buttons
         Button buttonAltPath = (Button) findViewById(R.id.alternative_path);
@@ -412,6 +413,10 @@ public class MainActivity extends AppCompatActivity {
         //EditTexts
         EditText txtMonument = (EditText) findViewById(R.id.monument);
         EditText editPointAalt = (EditText) findViewById(R.id.pointA_alt);
+
+        spinnerhour.setVisibility(value);
+        spinnermin.setVisibility(value);
+        txtViewDuree.setVisibility(value);
 
         autocompleteEndPoint.getView().setVisibility(value);
         autocompleteStartPoint.getView().setVisibility(value);
