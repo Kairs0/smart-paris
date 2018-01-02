@@ -2,9 +2,7 @@ package com.atelierdev.itineraire.monitineraireapp;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.support.v4.app.FragmentActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,7 +14,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.PolyUtil;
 //import google.maps.geometry.encoding;
 
@@ -77,8 +74,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String result = api.getResult();
             GoogleApiResultManager manageJson = new GoogleApiResultManager(result);
 
-            manageJson.ManagePolylineResult();
-            List<LatLng> pointsPath = manageJson.getDecodedPolylineResult();
+            manageJson.ManageCoordinates();
+            List<LatLng> pointsPath = manageJson.getCoordinatesLatLng();
 
             // set camera on start point
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsPath.get(0), 18));

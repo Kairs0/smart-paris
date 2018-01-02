@@ -30,7 +30,7 @@ public class DisplayPathAtoB extends AppCompatActivity {
             String result = api.getResult();
             GoogleApiResultManager manageJson = new GoogleApiResultManager(result);
 
-            manageJson.ManageJsonResult(false);
+            manageJson.ManageTextInstructions();
 
             StringBuilder sb = new StringBuilder();
             for (String instruct : manageJson.getInstructionsResult()){

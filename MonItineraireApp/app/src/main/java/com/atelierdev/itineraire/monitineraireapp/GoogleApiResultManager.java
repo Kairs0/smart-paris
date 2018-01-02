@@ -1,7 +1,5 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
-import android.graphics.Point;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -18,25 +16,8 @@ import java.util.List;
 public class GoogleApiResultManager {
     private String jsonString;
     private List<String> instructionsResult = new ArrayList<>();
-    private List<LatLng> coordsResult = new ArrayList<>();
-    private List<LatLng> decodedPolylineResult = new ArrayList<>();
+    private List<LatLng> coordinatesLatLng = new ArrayList<>();
     private int durationInSeconds = 0;
-
-    public List<LatLng> getCoordsResult(){
-        return coordsResult;
-    }
-
-    public int getDurationInSeconds() {
-        return durationInSeconds;
-    }
-
-    public List<String> getInstructionsResult() {
-        return instructionsResult;
-    }
-
-    public List<LatLng> getDecodedPolylineResult() {
-        return decodedPolylineResult;
-    }
 
     public GoogleApiResultManager(String jsonString){
         this.jsonString = jsonString;
@@ -68,15 +49,13 @@ public class GoogleApiResultManager {
                 }
             }
 
-        } catch (JSONException jsonExcept){
-            this.instructionsResult.add("Pas d'itinéraire possible");
-        } catch (NullPointerException nullPointer){
-            this.instructionsResult.add("Pas d'itinéraire possible");
+        } catch (JSONException | NullPointerException exp){
+            return;
         }
         this.durationInSeconds = result;
     }
 
-    public void ManageJsonResult(Boolean modeMap){
+    public void ManageTextInstructions(){
         try{
             JSONObject jsonObject = new JSONObject(this.jsonString);
             JSONArray routes = jsonObject.getJSONArray("routes");
@@ -93,9 +72,8 @@ public class GoogleApiResultManager {
             }
             for (int i = 0 ; i < legs.length(); i++) {
                 JSONObject leg = legs.getJSONObject(i);
-                visiteALeg(leg, modeMap);
+                getTextInstructFromLeg(leg, false);
             }
-
         } catch (JSONException jsonExcept){
             this.instructionsResult.add("Pas d'itinéraire possible");
         } catch (NullPointerException nullPointer){
@@ -103,70 +81,38 @@ public class GoogleApiResultManager {
         }
     }
 
-    public void ManagePolylineResult(){
+    public void ManageCoordinates(){
         try {
             JSONObject jsonObject = new JSONObject(this.jsonString);
             JSONArray routes = jsonObject.getJSONArray("routes");
-            if (routes == null){
-                this.instructionsResult.add("Pas d'itinéraire");
-            }
             JSONObject firstItinerary = routes.getJSONObject(0);
-            if (firstItinerary == null) {
-                this.instructionsResult.add("Pas d'itinéraire");
-            }
             JSONObject containerPoly = firstItinerary.getJSONObject("overview_polyline");
-            if (containerPoly == null) {
-                this.instructionsResult.add("Pas d'itinéraire");
-            }
             String encodedPoly = containerPoly.getString("points");
-            decodedPolylineResult = polylineDecoder(encodedPoly);
-
-        } catch (Exception e){
-            this.instructionsResult.add("Pas d'itinéraire possible");
+            coordinatesLatLng = polylineDecoder(encodedPoly);
+        } catch (JSONException e){
+            e.printStackTrace();
         }
-
     }
 
-    private void visiteALeg(JSONObject leg, boolean modeMap){
+    private void getTextInstructFromLeg(JSONObject leg, boolean modeMap){
         try{
             JSONArray steps = leg.getJSONArray("steps");
             if (steps == null){
                 this.instructionsResult.add("Pas d'inintéraire");
             }
-
-            if (modeMap){
-                /**
-                 * On veut récupérer les coordonnées gps du chemin
-                 * On récupère juste les start location (sauf pour dernière étape)
-                 * car à chaque étape, le start location est
-                 * égale au end_location de l'étape précédènte
-                 */
-                for (int i = 0 ; i < steps.length(); i++){
-                    JSONObject startLoc = steps.getJSONObject(i).getJSONObject("start_location");
-                    LatLng coordStep = new LatLng(startLoc.getDouble("lat"), startLoc.getDouble("lng"));
-                    coordsResult.add(coordStep);
-                }
-                //ajoute la dernière coordonnée
-                int last_index = steps.length();
-                JSONObject endLoc = steps.getJSONObject(last_index).getJSONObject("end_location");
-                LatLng coordStep = new LatLng(endLoc.getDouble("lat"), endLoc.getDouble("lng"));
-                coordsResult.add(coordStep);
-
-            } else{
-                // On récupère les instructions
-                for (int i=0 ; i < steps.length();++i) {
-                    String instruct = steps.getJSONObject(i).getString("html_instructions");
-                    this.instructionsResult.add(instruct);
-                }
+            // On récupère les instructions
+            for (int i=0 ; i < steps.length();++i) {
+                String instruct = steps.getJSONObject(i).getString("html_instructions");
+                this.instructionsResult.add(instruct);
             }
-        } catch (JSONException jsonExcept){
+        } catch (JSONException|NullPointerException exp){
             this.instructionsResult.add("Pas d'itinéraire possible");
         }
     }
 
     /**
      * Decode la polyline encodée dans le json de google
-     * /!\ CREDITS: https://github.com/scoutant/polyline-decoder
+     * from https://github.com/scoutant/polyline-decoder
      */
     private List<LatLng> polylineDecoder(String encoded){
         double precision = 1E5;
@@ -199,5 +145,21 @@ public class GoogleApiResultManager {
             track.add(new LatLng(latitude, longitude));
         }
         return track;
+    }
+
+    /**
+     * GETTERS AND SETTERS
+     */
+
+    public int getDurationInSeconds() {
+        return durationInSeconds;
+    }
+
+    public List<String> getInstructionsResult() {
+        return instructionsResult;
+    }
+
+    public List<LatLng> getCoordinatesLatLng() {
+        return coordinatesLatLng;
     }
 }
