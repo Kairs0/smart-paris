@@ -163,16 +163,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             liste_monuments.add(m11);
             liste_monuments.add(m12);
 
-            // Si le monument est dans le rectangle son marqueur est vert sinon il est jaune
+            List<LatLng> selected_monuments=new ArrayList<LatLng>();
+
+
+            // Si le monument est dans le rectangle il est ajouté à la liste des monuments sélectionnés et son marqueur est vert (sinon il est jaune)
             for(int i=0; i < liste_monuments.size() ;i++) {
                 if (PolyUtil.containsLocation(liste_monuments.get(i), poly, true)) {
                     mMap.addMarker(new MarkerOptions().position(liste_monuments.get(i)).title("Le point est dans la zone").icon(BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    selected_monuments.add(liste_monuments.get(i));
                 }
                 else {
                     mMap.addMarker(new MarkerOptions().position(liste_monuments.get(i)).title("Le point n'est PAS dans la zone").icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));                }
+                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));  }
             }
+            Log.d("myTag2", "Monuments sélectionnés"+ selected_monuments);
 
         } catch (Exception e) {
             e.printStackTrace();
