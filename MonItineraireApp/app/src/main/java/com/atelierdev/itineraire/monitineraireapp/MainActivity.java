@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_POINTB = "com.atelierdev.itineraire.monitineraireapp.pointB";
     public static final String EXTRA_POINTSUPP = "com.atelierdev.itineraire.monitineraireapp.pointInt";
     public static final String EXTRA_MONUMENT = "com.atelierdev.itineraire.monitineraireapp.monument";
+    public static final String TEMPS_DISPONIBLE_H = "com.atelierdev.itineraire.monitineraireapp.temps_disponible_h";
+    public static final String TEMPS_DISPONIBLE_MIN = "com.atelierdev.itineraire.monitineraireapp.temps_disponible_min";
 
     private boolean useMyLocForMap = false;
     private boolean useWayPoint = false;
@@ -81,12 +83,12 @@ public class MainActivity extends AppCompatActivity {
         hourList.add("6h");
 
         List minList = new ArrayList();
-        minList.add("0 min");
-        minList.add("10 min");
-        minList.add("20 min");
-        minList.add("30 min");
-        minList.add("40 min");
-        minList.add("50 min");
+        minList.add("0min");
+        minList.add("10min");
+        minList.add("20min");
+        minList.add("30min");
+        minList.add("40min");
+        minList.add("50min");
 
 		/*Le Spinner a besoin d'un adapter pour sa presentation alors on lui passe le context(this) et
                 un fichier de presentation par défaut( android.R.layout.simple_spinner_item)
@@ -161,7 +163,8 @@ public class MainActivity extends AppCompatActivity {
     public void displayMap(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
 
-
+        String temps_disponible_h=spinnerhour.getSelectedItem().toString();
+        String temps_disponible_min=spinnermin.getSelectedItem().toString();
         String pointA;
 
         // Initie point B. Si aucun point n'a été récupéré par l'autocomplétion, this.endPoint est null
@@ -221,11 +224,12 @@ public class MainActivity extends AppCompatActivity {
 
             // On vide la valeur affichée des fragments d'autocomplétion
             clearOutFragments();
-
             // On démarre l'activité map.
             intent.putExtra(EXTRA_POINTA, pointA);
             intent.putExtra(EXTRA_POINTB, pointB);
             intent.putExtra(EXTRA_POINTSUPP, pointInt);
+            intent.putExtra(TEMPS_DISPONIBLE_H, temps_disponible_h);
+            intent.putExtra(TEMPS_DISPONIBLE_MIN, temps_disponible_min);
             startActivity(intent);
         }
     }
