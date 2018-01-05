@@ -20,7 +20,9 @@ import com.google.maps.android.PolyUtil;
 //import google.maps.geometry.encoding;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.location.Location.distanceBetween;
@@ -88,6 +90,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.addMarker(new MarkerOptions().position(pointsPath.get(0)).title("Point"));
             int indexLastPoint = pointsPath.size() - 1;
             mMap.addMarker(new MarkerOptions().position(pointsPath.get(indexLastPoint)).title("Point"));
+
+            //Ajoute un marqueur pour le point intérmédiaire
+            if (!pointInt.equals("")) {
+                String[] arrayPointInt = pointInt.split(",");
+                LatLng pointInter = new LatLng(Double.parseDouble(arrayPointInt[0]), Double.parseDouble(pointInt.split(",")[1]));
+                mMap.addMarker(new MarkerOptions().position(pointInter));
+            }
 
             PolylineOptions optionsMap = new PolylineOptions();
             optionsMap.geodesic(true);
