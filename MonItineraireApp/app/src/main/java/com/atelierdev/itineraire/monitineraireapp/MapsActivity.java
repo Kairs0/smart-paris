@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,6 +21,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 //import google.maps.geometry.encoding;
 
+
+import org.json.JSONException;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -79,8 +83,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             callThread.join();
             String result = api.getResult();
             GoogleApiResultManager manageJson = new GoogleApiResultManager(result);
+            if (!manageJson.isStatusOk()){
+                setErrorMessage(manageJson.getErrorMessage());
+                return;
+            }
 
-            manageJson.ManageCoordinates();
+            try {
+                manageJson.ManageCoordinates();
+            } catch (JSONException e){
+                setErrorMessage("ERREUR JSON");
+                return;
+            }
+
             List<LatLng> pointsPath = manageJson.getCoordinatesLatLng();
 
             // set camera on start point
@@ -192,5 +206,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             e.printStackTrace();
             // TODO: gérer d'une meilleure façon le cas où l'api ne retourne rien
         }
+    }
+
+    private void setErrorMessage(String message){
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getView().setVisibility(View.GONE);
+        TextView error = findViewById(R.id.map_error_message);
+        error.setText(message);
+        error.setVisibility(View.VISIBLE);
     }
 }

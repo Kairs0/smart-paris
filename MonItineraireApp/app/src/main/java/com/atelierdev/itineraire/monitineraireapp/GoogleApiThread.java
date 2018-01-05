@@ -105,6 +105,7 @@ public class GoogleApiThread implements Runnable {
                 }
                 this.result = sb.toString();
             } catch (Exception e){
+                //TODO
                 e.printStackTrace();
                 this.result = "Nous n'avons pas pu vous connecter";
             } finally {
