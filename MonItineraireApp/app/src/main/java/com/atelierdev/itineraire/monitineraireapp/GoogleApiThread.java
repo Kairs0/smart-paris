@@ -1,10 +1,13 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Created by Arnaud on 08/12/2017.
@@ -50,6 +53,7 @@ public class GoogleApiThread implements Runnable {
 
     /**
      * getter for result
+     *
      * @return result
      */
     public synchronized String getResult() {
@@ -63,58 +67,51 @@ public class GoogleApiThread implements Runnable {
         this.waypoints = waypoints;
     }
 
-
     @Override
-    public void run(){
+    public void run() {
+        URL url;
+        HttpURLConnection urlConnection = null;
+
         try {
-            URL url;
-            HttpURLConnection urlConnection = null;
+            // Pour chaque donnée, on remplace les espaces pour qu'ils soient traités dans la requetes
+            String urlOrigin = "&origin=" + this.origin.replaceAll("\\s+", "%20");
+            String urlDestination = "&destination=" + this.destination.replaceAll("\\s+", "%20");
+            String urlMode = "&mode=" + this.mode;
+            String baseUrl = "https://maps.googleapis.com/maps/api/directions/json?" +
+                    "key=AIzaSyBM27gzMoQUs11F4Zqkc4xMaxhfZS8RS9M&" +
+                    "language=fr";
 
-            try {
-                // Pour chaque donnée, on remplace les espaces pour qu'ils soient traités dans la requetes
-                String urlOrigin = "&origin=" + this.origin.replaceAll("\\s+", "%20");
-                String urlDestination = "&destination=" + this.destination.replaceAll("\\s+", "%20");
-                String urlMode = "&mode=" + this.mode;
-                String baseUrl = "https://maps.googleapis.com/maps/api/directions/json?" +
-                        "key=AIzaSyBM27gzMoQUs11F4Zqkc4xMaxhfZS8RS9M&" +
-                        "language=fr";
-
-                // Traitement des points intérmediaires
-                String tmpWaypoints = "";
-                for (String wp : this.waypoints ) {
-                    String wpClean = wp.replaceAll("\\s+", "%20");
-                    tmpWaypoints = tmpWaypoints.concat(wpClean + "|");
-                }
-                if (tmpWaypoints.length() > 0) {
-                    tmpWaypoints = tmpWaypoints.substring(0, tmpWaypoints.length() -1 );
-                }
-
-                String urlWaypoints = this.waypoints.size() == 0 ? "" :
-                        "&waypoints=" + tmpWaypoints;
-
-                String fullUrl = baseUrl + urlOrigin + urlDestination + urlMode + urlWaypoints;
-
-                url = new URL(fullUrl);
-                urlConnection = (HttpURLConnection) url.openConnection();
-
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String output;
-                while ((output = br.readLine()) != null){
-                    sb.append(output);
-                }
-                this.result = sb.toString();
-            } catch (Exception e){
-                e.printStackTrace();
-                this.result = "Nous n'avons pas pu vous connecter";
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
+            // Traitement des points intérmediaires
+            String tmpWaypoints = "";
+            for (String wp : this.waypoints) {
+                String wpClean = wp.replaceAll("\\s+", "%20");
+                tmpWaypoints = tmpWaypoints.concat(wpClean + "|");
             }
-        } catch (Exception e){
-            e.printStackTrace();
+            if (tmpWaypoints.length() > 0) {
+                tmpWaypoints = tmpWaypoints.substring(0, tmpWaypoints.length() - 1);
+            }
+
+            String urlWaypoints = this.waypoints.size() == 0 ? "" :
+                    "&waypoints=" + tmpWaypoints;
+
+            String fullUrl = baseUrl + urlOrigin + urlDestination + urlMode + urlWaypoints;
+
+            url = new URL(fullUrl);
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            this.result = sb.toString();
+        } catch (Exception e) {
+            this.result = "{\"status\": \"API_CONNECT_ERROR\"}";
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
     }
-
 }
