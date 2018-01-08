@@ -87,22 +87,15 @@ public class GoogleApiResultManager {
         JSONObject firstItinerary = routes.getJSONObject(0);
         JSONObject containerPoly = firstItinerary.getJSONObject("overview_polyline");
         String encodedPoly = containerPoly.getString("points");
-        coordinatesLatLng = polylineDecoder(encodedPoly);
+        coordinatesLatLng = decodePolyline(encodedPoly);
     }
 
-    private void getTextInstructFromLeg(JSONObject leg){
-        try{
-            JSONArray steps = leg.getJSONArray("steps");
-            if (steps == null){
-                this.instructionsResult.add("Pas d'itinéraire");
-            }
-            // On récupère les instructions
-            for (int i=0 ; i < steps.length();++i) {
-                String instruct = steps.getJSONObject(i).getString("html_instructions");
-                this.instructionsResult.add(instruct);
-            }
-        } catch (JSONException|NullPointerException exp){
-            this.instructionsResult.add("Pas d'itinéraire possible");
+    private void getTextInstructFromLeg(JSONObject leg) throws JSONException {
+        JSONArray steps = leg.getJSONArray("steps");
+        // On récupère les instructions
+        for (int i = 0 ; i < steps.length() ; i++){
+            String instruct = steps.getJSONObject(i).getString("html_instructions");
+            this.instructionsResult.add(instruct);
         }
     }
 
@@ -110,7 +103,7 @@ public class GoogleApiResultManager {
      * Decode la polyline encodée dans le json de google
      * from https://github.com/scoutant/polyline-decoder
      */
-    private List<LatLng> polylineDecoder(String encoded){
+    private List<LatLng> decodePolyline(String encoded){
         double precision = 1E5;
         List<LatLng> track = new ArrayList<>();
         int index = 0;
@@ -151,7 +144,7 @@ public class GoogleApiResultManager {
     public boolean isStatusOk() throws JSONException {
         JSONObject jsonObject = new JSONObject(this.jsonString);
         String status = jsonObject.getString("status");
-        if (status == "OK") {
+        if (status.equals("OK")) {
             return true;
         } else {
             return false;
@@ -160,6 +153,7 @@ public class GoogleApiResultManager {
 
     public String getErrorMessage() throws JSONException {
         String status = this.getStatus();
+        //TODO mettre message erreur en strings
         switch (status){
             case "NOT_FOUND":
                 return "L'un des points spécifié n'a pas pu être localisé";
@@ -170,13 +164,15 @@ public class GoogleApiResultManager {
             case "MAX_ROUTE_LENGTH_EXCEEDED":
                 return "Les deux points spécifiés sont trop éloignés";
             case "INVALID_REQUEST":
-                return "La route n'a pas étée trouvée suite à un problème interne à l'apllication";
+                return "La route n'a pas été trouvée suite à un problème interne à l'application";
             case "OVER_QUERY_LIMIT ":
                 return "Trop de requêtes. Contactez le developpeur de l'application.";
             case "REQUEST_DENIED":
                 return "Erreur inconnue provenant des services Google. Reessayez à nouveau";
             case "UNKNOWN_ERROR":
                 return "Erreur inconnue provenant des services Google. Reessayez à nouveau";
+            case "API_CONNECT_ERROR":
+                return "La route n'a pas étée trouvée suite à un problème interne à l'apllication";
             default:
                 return "";
         }
