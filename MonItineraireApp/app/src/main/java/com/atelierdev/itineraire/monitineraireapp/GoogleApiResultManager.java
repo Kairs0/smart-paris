@@ -55,6 +55,7 @@ public class GoogleApiResultManager {
     }
 
     public void ManageTextInstructions(){
+        //TODO STRING CONSTANTS
         try{
             JSONObject jsonObject = new JSONObject(this.jsonString);
             JSONArray routes = jsonObject.getJSONArray("routes");
@@ -73,10 +74,8 @@ public class GoogleApiResultManager {
                 JSONObject leg = legs.getJSONObject(i);
                 getTextInstructFromLeg(leg);
             }
-        } catch (JSONException jsonExcept){
-            this.instructionsResult.add("Pas d'itinéraire possible");
-        } catch (NullPointerException nullPointer){
-            this.instructionsResult.add("Pas d'itinéraire possible");
+        } catch (JSONException|NullPointerException e){
+            this.instructionsResult.add("Pas d'itinéraire");
         }
     }
 
