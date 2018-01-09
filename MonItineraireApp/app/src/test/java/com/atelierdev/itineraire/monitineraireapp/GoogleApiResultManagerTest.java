@@ -6,23 +6,19 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by Arnaud on 09/01/2018.
- */
-
 public class GoogleApiResultManagerTest {
 
-    public String TEST_JSON_VALID = "";
-    public String TEST_JSON_EMPTY = "";
-    public String TEST_JSON_PARTIAL = "";
-    public String TEST_JSON_INCORRECT = "";
-    public String TEST_JSON_PATH_NOT_FOUND = "";
+    private String TEST_JSON_VALID = "";
+    private String TEST_JSON_EMPTY = "";
+    private String TEST_JSON_PARTIAL = "";
+    private String TEST_JSON_INCORRECT = "";
+    private String TEST_JSON_PATH_NOT_FOUND = "";
 
-    public GoogleApiResultManager validJsonManager;
-    public GoogleApiResultManager emptyJsonManager;
-    public GoogleApiResultManager partialJsonManager;
-    public GoogleApiResultManager incorrectJsonManager;
-    public GoogleApiResultManager pathNotFoundJsonManager;
+    private GoogleApiResultManager validJsonManager;
+    private GoogleApiResultManager emptyJsonManager;
+    private GoogleApiResultManager partialJsonManager;
+    private GoogleApiResultManager incorrectJsonManager;
+    private GoogleApiResultManager pathNotFoundJsonManager;
 
 
     @Before
@@ -874,7 +870,7 @@ public class GoogleApiResultManagerTest {
     }
 
     @Test
-    public void testManageCoordonatesOnValidJson(){
+    public void testManageCoordinatesOnValidJson(){
         try{
             validJsonManager.ManageCoordinates();
             assertTrue(validJsonManager.getCoordinatesLatLng().size() > 0);
@@ -884,7 +880,7 @@ public class GoogleApiResultManagerTest {
     }
 
     @Test
-    public void testManageCoordonatesOnIncorrectJson(){
+    public void testManageCoordinatesOnIncorrectJson(){
         try{
             emptyJsonManager.ManageCoordinates();
         } catch (Exception e){
