@@ -90,7 +90,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             callThread.join();
         } catch (InterruptedException|ExecutionException e) {
-            //TODO mettre message erreur en strings
             setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
             return;
         } catch (TimeoutException t){
@@ -109,7 +108,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             manageJson.ManageCoordinates();
         } catch (JSONException e) {
-            //TODO mettre message erreur en strings
             setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
             return;
         }

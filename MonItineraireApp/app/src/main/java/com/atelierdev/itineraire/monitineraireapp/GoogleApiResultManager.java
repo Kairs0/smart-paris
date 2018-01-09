@@ -55,7 +55,6 @@ public class GoogleApiResultManager {
     }
 
     public void ManageTextInstructions(){
-        //TODO STRING CONSTANTS
         try{
             JSONObject jsonObject = new JSONObject(this.jsonString);
             JSONArray routes = jsonObject.getJSONArray("routes");
@@ -152,7 +151,6 @@ public class GoogleApiResultManager {
 
     public String getErrorMessage() throws JSONException {
         String status = this.getStatus();
-        //TODO mettre message erreur en strings
         switch (status){
             case "NOT_FOUND":
                 return "L'un des points spécifié n'a pas pu être localisé";
