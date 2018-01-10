@@ -2,18 +2,21 @@ package com.atelierdev.itineraire.monitineraireapp;
 
 import com.orm.SugarRecord;
 
+import java.util.List;
+
 /**
  * Created by Guillaume on 18/12/2017.
  */
 
+//sugar se charge de la création de la table
 public class Monument extends SugarRecord<Monument> {
 
     //Variables, constructor, getter, setter
 
-    public long id;
+    public int monument_id;
     public String name;
     public int category;
-    public String type;
+    public String types;
     public double lat;
     public double lon;
     public int rating;
@@ -23,12 +26,12 @@ public class Monument extends SugarRecord<Monument> {
 
     }
 
-    public Monument(long id, String name, int category, String type, double lat, double lon, int rating, int visitTime){
+    public Monument(int monument_id, String name, int category, String types, double lat, double lon, int rating, int visitTime){
         super();
-        this.id = id;
+        this.monument_id = monument_id;
         this.name = name;
         this.category = category;
-        this.type = type;
+        this.types = types;
         this.lat = lat;
         this.lon = lon;
         this.rating = rating;
@@ -36,12 +39,12 @@ public class Monument extends SugarRecord<Monument> {
     }
 
 
-    /*public long getId() {
-        return id;
-    }*/
+    public int getMonumentId() {
+        return monument_id;
+    }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setMonumentId(int monument_id) {
+        this.monument_id = monument_id;
     }
 
     public String getName() {
@@ -60,12 +63,12 @@ public class Monument extends SugarRecord<Monument> {
         this.category = category;
     }
 
-    public String getType() {
-        return type;
+    public String getTypes() {
+        return types;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTypes(String type) {
+        this.types = type;
     }
 
     public int getVisitTime() {

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
+import com.orm.query.Select;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -18,7 +20,6 @@ import java.util.List;
 public abstract class DatabaseHandler {
 
     public static boolean Initialize(Context context){
-
         Monument.deleteAll(Monument.class); //On supprime anciennes donnees
         AssetManager assetManager = context.getAssets(); //Pour recuperer fichier dans dossiers "assets"
 
@@ -29,20 +30,21 @@ public abstract class DatabaseHandler {
             String line = "";
             while ((line = bReader.readLine()) != null) {
                 try {
-
+                    Log.d("types", line);
                     if (line != null) {
                         // On recupere les differents champs
                         String[] properties = line.split(",+");
-                        int Id = Integer.parseInt(properties[0]);
+                        int monument_id = Integer.parseInt(properties[0]);
                         String Name = properties[1];
                         int Category = Integer.parseInt(properties[2]);
-                        String Type = properties[3];
+
+                        String Types = properties[3];
                         double Lat = Double.parseDouble(properties[6]);
                         double Long = Double.parseDouble(properties[7]);
                         int visitTime = Integer.parseInt(properties[9]);
                         int Rating = Integer.parseInt(properties[10]);
 
-                        Monument new_monument = new Monument(Id, Name, Category, Type, Lat, Long, Rating, visitTime);
+                        Monument new_monument = new Monument(monument_id, Name, Category, Types, Lat, Long, Rating, visitTime);
                         new_monument.save();
                     }
                 }catch(Exception e){
@@ -53,10 +55,15 @@ public abstract class DatabaseHandler {
             Log.d("Exception", e.getMessage());
         }
 
-        List<Monument> monuments = Monument.listAll((Monument.class));
+        /*List<Monument> monuments = Monument.listAll((Monument.class));
         for (Monument monument : monuments) {
+            Log.d("Monument ", monument.getMonumentId() + monument.getName() + monument.getTypes());
+        }*/
+
+       /*List<Monument> testM = Monument.find(Monument.class, "name LIKE ?", "Tour");
+        for (Monument monument : testM) {
             Log.d("Monument ", monument.getId() + monument.getName());
-        }
+        }*/
 
 
         return true;
