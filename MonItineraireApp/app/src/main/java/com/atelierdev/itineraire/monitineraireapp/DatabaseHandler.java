@@ -37,7 +37,6 @@ public abstract class DatabaseHandler {
                         int monument_id = Integer.parseInt(properties[0]);
                         String Name = properties[1];
                         int Category = Integer.parseInt(properties[2]);
-
                         String Types = properties[3];
                         double Lat = Double.parseDouble(properties[6]);
                         double Long = Double.parseDouble(properties[7]);

@@ -12,15 +12,15 @@ import java.util.List;
 public class Monument extends SugarRecord<Monument> {
 
     //Variables, constructor, getter, setter
-
-    public int monument_id;
+    public long id; //clé primaire générée par sugar orm de manière auto-incrémentée
+    public int monument_id; //correspondant à l'id dans api.paris
     public String name;
-    public int category;
-    public String types;
+    public int category; //catégorie dans api.paris
+    public String types; //un ou plusieurs types parmi les 6 qu'in a distingués
     public double lat;
     public double lon;
-    public int rating;
-    public int visitTime;
+    public int rating;  //note du monument selon notre classement
+    public int visitTime;   //si 0, monument non visitable
 
     public Monument(){
 
@@ -50,7 +50,6 @@ public class Monument extends SugarRecord<Monument> {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -58,7 +57,6 @@ public class Monument extends SugarRecord<Monument> {
     public int getCategory() {
         return category;
     }
-
     public void setCategory(int category) {
         this.category = category;
     }
@@ -66,7 +64,6 @@ public class Monument extends SugarRecord<Monument> {
     public String getTypes() {
         return types;
     }
-
     public void setTypes(String type) {
         this.types = type;
     }
@@ -74,7 +71,6 @@ public class Monument extends SugarRecord<Monument> {
     public int getVisitTime() {
         return visitTime;
     }
-
     public void setVisitTime(int visitTime) {
         this.visitTime = visitTime;
     }
@@ -82,7 +78,6 @@ public class Monument extends SugarRecord<Monument> {
     public double getLat() {
         return lat;
     }
-
     public void setLat(double lat) {
         this.lat = lat;
     }
@@ -90,7 +85,6 @@ public class Monument extends SugarRecord<Monument> {
     public double getLon() {
         return lon;
     }
-
     public void setLon(double lon) {
         this.lon = lon;
     }
@@ -98,7 +92,6 @@ public class Monument extends SugarRecord<Monument> {
     public int getRating() {
         return rating;
     }
-
     public void setRating(int rating) {
         this.rating = rating;
     }
