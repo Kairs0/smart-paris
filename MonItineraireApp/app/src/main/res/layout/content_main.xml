@@ -18,16 +18,18 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
         <ProgressBar
             android:id="@+id/progressBar1"
             style="?android:attr/progressBarStyleLarge"
-            android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
 
 
         <TextView
@@ -39,17 +41,24 @@
             android:textColor="#000000"
             android:textStyle="bold" />
 
-        <Spinner
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/dureehour"
-            />;
+            android:orientation = "horizontal">
 
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/dureemin"
-            />;
+            <Spinner
+                android:id="@+id/dureehour"
+                android:layout_width="191dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical|center_horizontal" />;
+
+            <Spinner
+                android:id="@+id/dureemin"
+                android:layout_width="191dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal" />;
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/pointATextView"
@@ -65,43 +74,41 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:visibility="gone"
             android:hint="@string/point_a_hint"
-            android:inputType="textPostalAddress" />
+            android:inputType="textPostalAddress"
+            android:visibility="gone" />
 
         <fragment
             android:id="@+id/pointA"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            android:hint="@string/point_a_hint"
-            />
+            android:hint="@string/point_a_hint" />
 
         <TextView
             android:id="@+id/pointIntTextView"
             android:layout_width="fill_parent"
-            android:visibility="gone"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/point_int"
             android:textColor="#000000"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <!--<EditText-->
-            <!--android:id="@+id/pointInt"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:visibility="gone"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:hint="@string/point_int_hint"-->
-            <!--android:inputType="textPostalAddress" />-->
+        <!--android:id="@+id/pointInt"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="@string/point_int_hint"-->
+        <!--android:inputType="textPostalAddress" />-->
 
         <fragment
             android:id="@+id/pointInt"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            android:hint="@string/point_a_hint"
-            />
+            android:hint="@string/point_a_hint" />
 
         <TextView
             android:id="@+id/pointBTextBox"
@@ -113,23 +120,22 @@
             android:textStyle="bold" />
 
         <!--<EditText-->
-            <!--android:id="@+id/pointB"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:hint="@string/point_b_hint"-->
-            <!--android:inputType="textPostalAddress" />-->
+        <!--android:id="@+id/pointB"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="@string/point_b_hint"-->
+        <!--android:inputType="textPostalAddress" />-->
 
         <fragment
             android:id="@+id/pointB"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            android:hint="@string/point_b_hint"
-            />
+            android:hint="@string/point_b_hint" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="@+id/monument"
             app:layout_constraintEnd_toEndOf="@+id/pointB"
@@ -137,12 +143,12 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <!--<Button-->
-                <!--android:id="@+id/calculItineraire"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center_vertical|center_horizontal"-->
-                <!--android:onClick="calculTrajet"-->
-                <!--android:text="@string/calc_button" />-->
+            <!--android:id="@+id/calculItineraire"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical|center_horizontal"-->
+            <!--android:onClick="calculTrajet"-->
+            <!--android:text="@string/calc_button" />-->
             <Button
                 android:id="@+id/alternative_path"
                 android:layout_width="wrap_content"
@@ -163,60 +169,145 @@
                 android:text="@string/use_position" />
 
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/monument"
+            app:layout_constraintEnd_toEndOf="@+id/pointB"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <Button
+                android:id="@+id/displayMap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_weight="1"
+                android:onClick="displayMap"
+                android:text="@string/display_map" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="37dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/monument"
+            app:layout_constraintEnd_toEndOf="@+id/displayMap"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textSelectTypes"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/types"
+                android:textColor="#000000"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/monument"
+            app:layout_constraintEnd_toEndOf="@+id/types"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <CheckBox
+                android:id="@+id/type1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:checked="true"
+                android:onClick="chooseType1Click"
+                android:text="@string/type1" />
+
+            <CheckBox
+                android:id="@+id/type2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:checked="true"
+                android:onClick="chooseType2Click"
+                android:text="@string/type2" />
+
+            <CheckBox
+                android:id="@+id/type3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:checked="true"
+                android:onClick="chooseType3Click"
+                android:text="@string/type3" />
+
+            <CheckBox
+                android:id="@+id/type4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:checked="true"
+                android:onClick="chooseType4Click"
+                android:text="@string/type4" />
+
+            <CheckBox
+                android:id="@+id/type5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:checked="true"
+                android:onClick="chooseType5Click"
+                android:text="@string/type5" />
+
+            <CheckBox
+                android:id="@+id/type6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:checked="true"
+                android:onClick="chooseType6Click"
+                android:text="@string/type6" />
+
 
         </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/monument"
-        app:layout_constraintEnd_toEndOf="@+id/pointB"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        <!--<Button-->
+        <!--android:id="@+id/calculItineraire"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center_vertical|center_horizontal"-->
+        <!--android:onClick="calculTrajet"-->
+        <!--android:text="@string/calc_button" />-->
 
 
-        <Button
-            android:id="@+id/displayMap"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:layout_weight="1"
-            android:onClick="displayMap"
-            android:text="@string/display_map" />
-    </LinearLayout>
+        <!--<TextView-->
+            <!--android:id="@+id/textViewmonument"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="center"-->
+            <!--android:text="@string/monument"-->
+            <!--android:textColor="#000000"-->
+            <!--android:textStyle="bold" />-->
+
+        <!--<EditText-->
+            <!--android:id="@+id/monument"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:hint="@string/monument_hint"-->
+            <!--android:inputType="textPostalAddress" />-->
 
         <!--<Button-->
-            <!--android:id="@+id/calculItineraire"-->
+            <!--android:id="@+id/infoMonument"-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
             <!--android:layout_gravity="center_vertical|center_horizontal"-->
-            <!--android:onClick="calculTrajet"-->
-            <!--android:text="@string/calc_button" />-->
-
-        <TextView
-            android:id="@+id/textViewmonument"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/monument"
-            android:textColor="#000000"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/monument"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/monument_hint"
-            android:inputType="textPostalAddress" />
-
-        <Button
-            android:id="@+id/infoMonument"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:onClick="displayInfo"
-            android:text="@string/calc_button_info" />
+            <!--android:onClick="displayInfo"-->
+            <!--android:text="@string/calc_button_info" />-->
 
 
         <RelativeLayout
