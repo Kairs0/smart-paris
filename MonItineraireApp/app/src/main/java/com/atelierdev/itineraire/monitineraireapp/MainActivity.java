@@ -150,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
 
         DatabaseHandler.Initialize();
 
+
+        DatabaseHandler.Initialize(getBaseContext());
     }
 
     /**
