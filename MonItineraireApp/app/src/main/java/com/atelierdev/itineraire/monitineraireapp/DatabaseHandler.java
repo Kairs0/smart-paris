@@ -55,15 +55,11 @@ public abstract class DatabaseHandler {
             Log.d("Exception", e.getMessage());
         }
 
-        /*List<Monument> monuments = Monument.listAll((Monument.class));
-        for (Monument monument : monuments) {
-            Log.d("Monument ", monument.getMonumentId() + monument.getName() + monument.getTypes());
-        }*/
-
-       /*List<Monument> testM = Monument.find(Monument.class, "name LIKE ?", "Tour");
+        //Exemple de requête : sélectionner tous les monuments dont le nom commence par T
+        List<Monument> testM = Monument.findWithQuery(Monument.class, "Select * from Monument where name LIKE ?", "T%");
         for (Monument monument : testM) {
             Log.d("Monument ", monument.getId() + monument.getName());
-        }*/
+        }
 
 
         return true;
