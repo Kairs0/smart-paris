@@ -33,4 +33,5 @@ dependencies {
     compile 'com.google.maps.android:android-maps-utils:0.5'
     implementation 'com.google.android.gms:play-services-location:11.6.2'
     implementation 'com.google.android.gms:play-services-places:11.6.2'
+    compile 'com.github.satyan:sugar:1.3'
 }

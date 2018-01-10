@@ -1,37 +1,44 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
+import com.orm.SugarRecord;
+
 /**
  * Created by Guillaume on 18/12/2017.
  */
 
-public class Monument {
+public class Monument extends SugarRecord<Monument> {
 
     //Variables, constructor, getter, setter
-    public int id;
+
+    public long id;
     public String name;
     public int category;
     public String type;
-    public String address;
     public double lat;
     public double lon;
     public int rating;
+    public int visitTime;
 
-    public Monument(int id, String name, int category, String type, String address, int zipCode, double lat, double lon, int rating){
+    public Monument(){
+
+    }
+
+    public Monument(long id, String name, int category, String type, double lat, double lon, int rating, int visitTime){
         super();
         this.id = id;
         this.name = name;
         this.category = category;
         this.type = type;
-        this.address = address;
         this.lat = lat;
         this.lon = lon;
         this.rating = rating;
+        this.visitTime = visitTime;
     }
 
 
-    public int getId() {
+    /*public long getId() {
         return id;
-    }
+    }*/
 
     public void setId(int id) {
         this.id = id;
@@ -61,12 +68,12 @@ public class Monument {
         this.type = type;
     }
 
-    public String getAddress() {
-        return address;
+    public int getVisitTime() {
+        return visitTime;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setVisitTime(int visitTime) {
+        this.visitTime = visitTime;
     }
 
     public double getLat() {

@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_POINTA = "com.atelierdev.itineraire.monitineraireapp.pointA";
     public static final String EXTRA_POINTB = "com.atelierdev.itineraire.monitineraireapp.pointB";
@@ -146,6 +147,9 @@ public class MainActivity extends AppCompatActivity {
         if (this.useMyLocForMap){
             replacePointAfragmentByAlt();
         }
+
+        DatabaseHandler.Initialize();
+
     }
 
     /**
