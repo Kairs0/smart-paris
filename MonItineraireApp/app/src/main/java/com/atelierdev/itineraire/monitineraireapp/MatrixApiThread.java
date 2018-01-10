@@ -83,10 +83,6 @@ public class MatrixApiThread implements Runnable {
         for (String word : list){
             result = result.concat(word).concat(delim);
         }
-
         return result.substring(0, result.length() -1);
     }
-
-
-
 }
