@@ -94,7 +94,8 @@ public class DisplayInfoMonument extends AppCompatActivity {
                 URL url;
                 HttpURLConnection urlConnection = null;
                 try {
-                    url = new URL("https://api.paris.fr/api/data/1.0/Equipements/get_equipement/?token=f6e85890f660abe2fd846df117a3cb215fc7d5bb80969d17026f3820a23728f2&id=" + _monument);
+                    int monument_id = Monument.findWithQuery(Monument.class, "Select * from Monument where name = ?", _monument).get(0).getMonumentId();
+                    url = new URL("https://api.paris.fr/api/data/1.0/Equipements/get_equipement/?token=f6e85890f660abe2fd846df117a3cb215fc7d5bb80969d17026f3820a23728f2&id=" + monument_id);
 
                     urlConnection = (HttpURLConnection) url
                             .openConnection();
