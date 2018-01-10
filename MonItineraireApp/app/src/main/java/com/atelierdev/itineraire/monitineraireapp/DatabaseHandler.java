@@ -56,10 +56,10 @@ public abstract class DatabaseHandler {
         }
 
         //Exemple de requête : sélectionner tous les monuments dont le nom commence par T
-        List<Monument> testM = Monument.findWithQuery(Monument.class, "Select * from Monument where name LIKE ?", "T%");
+        /*List<Monument> testM = Monument.findWithQuery(Monument.class, "Select * from Monument where name LIKE ?", "T%");
         for (Monument monument : testM) {
             Log.d("Monument ", monument.getId() + monument.getName());
-        }
+        }*/
 
 
         return true;

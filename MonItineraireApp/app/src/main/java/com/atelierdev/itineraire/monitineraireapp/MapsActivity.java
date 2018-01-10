@@ -165,32 +165,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         PolygonOptions rectOptions = new PolygonOptions().addAll(poly).strokeColor(Color.argb(0, 50, 0, 255)).fillColor(Color.argb(70, 50, 0, 255));
         Polygon polygon = mMap.addPolygon(rectOptions);
 
-        //Liste de monuments fictifs à remplacer par la notre
+        //Liste de monuments
         List<LatLng> liste_monuments = new ArrayList<LatLng>();
-        LatLng m1 = new LatLng(48.8566, 2.35177);
-        LatLng m2 = new LatLng(48.86, 2.36);
-        LatLng m3 = new LatLng(48.857460, 2.351670);
-        LatLng m4 = new LatLng(48.875788, 2.308562);
-        LatLng m5 = new LatLng(48.857606, 2.300345);
-        LatLng m6 = new LatLng(48.845651, 2.309428);
-        LatLng m7 = new LatLng(48.836900, 2.351453);
-        LatLng m8 = new LatLng(48.883881, 2.349439);
-        LatLng m9 = new LatLng(48.866756, 2.365709);
-        LatLng m10 = new LatLng(48.855809, 2.334118);
-        LatLng m11 = new LatLng(48.861531, 2.333718);
-        LatLng m12 = new LatLng(48.854057, 2.347342);
-        liste_monuments.add(m1);
-        liste_monuments.add(m2);
-        liste_monuments.add(m3);
-        liste_monuments.add(m4);
-        liste_monuments.add(m5);
-        liste_monuments.add(m6);
-        liste_monuments.add(m7);
-        liste_monuments.add(m8);
-        liste_monuments.add(m9);
-        liste_monuments.add(m10);
-        liste_monuments.add(m11);
-        liste_monuments.add(m12);
+        List<Monument> allMonuments = Monument.listAll(Monument.class);
+        for (Monument monument : allMonuments) {
+            LatLng m = new LatLng(monument.getLat(), monument.getLon());
+            liste_monuments.add(m);
+        }
 
         List<LatLng> selected_monuments = new ArrayList<LatLng>();
 
