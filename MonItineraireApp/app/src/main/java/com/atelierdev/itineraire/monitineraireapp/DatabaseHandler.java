@@ -20,7 +20,7 @@ import java.util.List;
 public abstract class DatabaseHandler {
 
     public static boolean Initialize(Context context){
-        Monument.deleteAll(Monument.class); //On supprime anciennes donnees
+       // Monument.deleteAll(Monument.class); //On supprime anciennes donnees
         AssetManager assetManager = context.getAssets(); //Pour recuperer fichier dans dossiers "assets"
 
         try{

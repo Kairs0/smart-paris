@@ -1,3 +1,4 @@
+/*
 package com.atelierdev.itineraire.monitineraireapp;
 
 import android.content.Intent;
@@ -15,9 +16,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+*/
 /**
  * Created by Elodie on 04/12/2017.
- */
+ *//*
+
 
 public class DisplayInfoMonument extends AppCompatActivity {
     @Override
@@ -33,11 +36,13 @@ public class DisplayInfoMonument extends AppCompatActivity {
 
         Thread t1 = new TestThread("A", monument);
         t1.start();
-        /*try {
+        */
+/*try {
             t1.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }*/
+        }*//*
+
     }
 
     public void UpdateTextView(String result) {
@@ -127,3 +132,4 @@ public class DisplayInfoMonument extends AppCompatActivity {
         }
     }
 }
+*/

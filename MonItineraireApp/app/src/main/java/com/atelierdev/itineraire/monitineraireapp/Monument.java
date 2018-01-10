@@ -9,7 +9,7 @@ import java.util.List;
  */
 
 //sugar se charge de la création de la table
-public class Monument extends SugarRecord<Monument> {
+public class Monument extends SugarRecord<Monument>{
 
     //Variables, constructor, getter, setter
     public long id; //clé primaire générée par sugar orm de manière auto-incrémentée

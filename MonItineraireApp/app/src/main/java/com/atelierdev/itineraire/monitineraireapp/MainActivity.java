@@ -42,12 +42,19 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_POINTA = "com.atelierdev.itineraire.monitineraireapp.pointA";
     public static final String EXTRA_POINTB = "com.atelierdev.itineraire.monitineraireapp.pointB";
     public static final String EXTRA_POINTSUPP = "com.atelierdev.itineraire.monitineraireapp.pointInt";
-    public static final String EXTRA_MONUMENT = "com.atelierdev.itineraire.monitineraireapp.monument";
+//    public static final String EXTRA_MONUMENT = "com.atelierdev.itineraire.monitineraireapp.monument";
     public static final String TEMPS_DISPONIBLE_H = "com.atelierdev.itineraire.monitineraireapp.temps_disponible_h";
     public static final String TEMPS_DISPONIBLE_MIN = "com.atelierdev.itineraire.monitineraireapp.temps_disponible_min";
 
     private boolean useMyLocForMap = false;
     private boolean useWayPoint = false;
+
+    private boolean type1 = true;
+    private boolean type2 = true;
+    private boolean type3 = true;
+    private boolean type4 = true;
+    private boolean type5 = true;
+    private boolean type6 = true;
 
     //Location
     // https://stackoverflow.com/questions/42218419/how-do-i-implement-the-locationlistener
@@ -71,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //On initialise la base de données (pour l'instant systématique mais voir à quelle frquence on le fait)
+        DatabaseHandler.Initialize(getBaseContext());
         
         //Récupération du Spinner déclaré dans le fichier main.xml de res/layout
         spinnerhour = findViewById(R.id.dureehour);
@@ -148,9 +158,6 @@ public class MainActivity extends AppCompatActivity {
         if (this.useMyLocForMap){
             replacePointAfragmentByAlt();
         }
-
-        //On initialise la base de données (pour l'instant systématique mais voir à quelle frquence on le fait)
-        DatabaseHandler.Initialize(getBaseContext());
     }
 
     /**
@@ -245,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Called when the user press info button
      */
-    public void displayInfo(View view){
+ /*   public void displayInfo(View view){
         Intent intent = new Intent(this, DisplayInfoMonument.class);
         EditText editMonument = (EditText) findViewById(R.id.monument);
 
@@ -254,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
 
         intent.putExtra(EXTRA_MONUMENT, monument);
         startActivity(intent);
-    }
+    }*/
 
     /**
      *
@@ -320,6 +327,75 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (NullPointerException e){
             Log.d("onUseDeviceLocation_err", e.getMessage());
+        }
+    }
+
+    /**
+     * Méthodes appelée lorsque l'utilisateur choisit quels types de monuments visiter
+     */
+    public void chooseType1Click(View view){
+        CheckBox checkBoxType1 = (CheckBox) findViewById(R.id.type1);
+
+        // TODO arnaud: check exceptions
+        if (checkBoxType1.isChecked()){
+            this.type1 = true;
+        } else {
+            this.type1 = false;
+        }
+    }
+
+    public void chooseType2Click(View view){
+        CheckBox checkBoxType2 = (CheckBox) findViewById(R.id.type2);
+
+        // TODO arnaud: check exceptions
+        if (checkBoxType2.isChecked()){
+            this.type2 = true;
+        } else {
+            this.type2 = false;
+        }
+    }
+
+    public void chooseType3Click(View view){
+        CheckBox checkBoxType3 = (CheckBox) findViewById(R.id.type3);
+
+        // TODO arnaud: check exceptions
+        if (checkBoxType3.isChecked()){
+            this.type3 = true;
+        } else {
+            this.type3 = false;
+        }
+    }
+
+    public void chooseType4Click(View view){
+        CheckBox checkBoxType4 = (CheckBox) findViewById(R.id.type4);
+
+        // TODO arnaud: check exceptions
+        if (checkBoxType4.isChecked()){
+            this.type4 = true;
+        } else {
+            this.type4 = false;
+        }
+    }
+
+    public void chooseType5Click(View view){
+        CheckBox checkBoxType5 = (CheckBox) findViewById(R.id.type5);
+
+        // TODO arnaud: check exceptions
+        if (checkBoxType5.isChecked()){
+            this.type5 = true;
+        } else {
+            this.type5 = false;
+        }
+    }
+
+    public void chooseType6Click(View view){
+        CheckBox checkBoxType6 = (CheckBox) findViewById(R.id.type6);
+
+        // TODO arnaud: check exceptions
+        if (checkBoxType6.isChecked()){
+            this.type6 = true;
+        } else {
+            this.type6 = false;
         }
     }
 
@@ -421,19 +497,27 @@ public class MainActivity extends AppCompatActivity {
         TextView pointA_alt = findViewById(R.id.pointATextView);
         TextView pointIntTxtView = findViewById(R.id.pointIntTextView);
         TextView pointBTxtView = findViewById(R.id.pointBTextBox);
-        TextView txtViewMonument = findViewById(R.id.textViewmonument);
+//        TextView txtViewMonument = findViewById(R.id.textViewmonument);
         TextView txtViewDuree = findViewById(R.id.duree);
+        TextView textSelectTypes = (TextView) findViewById(R.id.textSelectTypes);
+
 
         //Buttons
         Button buttonAltPath = findViewById(R.id.alternative_path);
         Button displayPath = findViewById(R.id.displayMap);
-        Button infoMunum = findViewById(R.id.infoMonument);
+//        Button infoMunum = findViewById(R.id.infoMonument);
 
         // CheckBox
         CheckBox checkBoxPos = findViewById(R.id.use_loc);
+        CheckBox checkBoxType1 = (CheckBox) findViewById(R.id.type1);
+        CheckBox checkBoxType2 = (CheckBox) findViewById(R.id.type2);
+        CheckBox checkBoxType3 = (CheckBox) findViewById(R.id.type3);
+        CheckBox checkBoxType4 = (CheckBox) findViewById(R.id.type4);
+        CheckBox checkBoxType5 = (CheckBox) findViewById(R.id.type5);
+        CheckBox checkBoxType6 = (CheckBox) findViewById(R.id.type6);
 
         //EditTexts
-        EditText txtMonument = findViewById(R.id.monument);
+//        EditText txtMonument = findViewById(R.id.monument);
         EditText editPointAalt = findViewById(R.id.pointA_alt);
 
         spinnerhour.setVisibility(value);
@@ -446,12 +530,19 @@ public class MainActivity extends AppCompatActivity {
         pointA_alt.setVisibility(value);
         pointIntTxtView.setVisibility(value);
         pointBTxtView.setVisibility(value);
-        txtViewMonument.setVisibility(value);
+//        txtViewMonument.setVisibility(value);
         buttonAltPath.setVisibility(value);
         displayPath.setVisibility(value);
-        infoMunum.setVisibility(value);
+//        infoMunum.setVisibility(value);
         checkBoxPos.setVisibility(value);
-        txtMonument.setVisibility(value);
+        textSelectTypes.setVisibility(value);
+        checkBoxType1.setVisibility(value);
+        checkBoxType2.setVisibility(value);
+        checkBoxType3.setVisibility(value);
+        checkBoxType4.setVisibility(value);
+        checkBoxType5.setVisibility(value);
+        checkBoxType6.setVisibility(value);
+//        txtMonument.setVisibility(value);
         editPointAalt.setVisibility(value);
     }
 
