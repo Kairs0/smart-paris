@@ -28,4 +28,5 @@
     <string name="type5">Lieux politiques</string>
     <string name="type6">Autres</string>
     <string name="types">Types de monuments</string>
+    <string name="title_activity_error">ErrorActivity</string>
 </resources>

@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -33,6 +34,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        
         //Récupération du Spinner déclaré dans le fichier main.xml de res/layout
         spinnerhour = findViewById(R.id.dureehour);
         spinnermin = findViewById(R.id.dureemin);
@@ -131,7 +134,9 @@ public class MainActivity extends AppCompatActivity {
             locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER,
                     2000,
                     10, locationListenerGPS);
-        } catch (SecurityException e){ /*TODO Arnaud*/}
+        } catch (SecurityException e){
+            Log.d("mainOnCreate_err", e.getMessage());
+        }
         finally {
             isLocationEnabled();
         }
@@ -150,6 +155,9 @@ public class MainActivity extends AppCompatActivity {
         if (this.useMyLocForMap){
             replacePointAfragmentByAlt();
         }
+
+        //On initialise la base de données (pour l'instant systématique mais voir à quelle frquence on le fait)
+        DatabaseHandler.Initialize(getBaseContext());
     }
 
     /**
@@ -269,25 +277,30 @@ public class MainActivity extends AppCompatActivity {
      * Méthode appelée lorsque l'utilisateur presse le point bouton ajour point int
      */
     public void showFieldWayPoint(View view){
-        TextView textViewInterm = (TextView) findViewById(R.id.pointIntTextView);
+        TextView textViewInterm = findViewById(R.id.pointIntTextView);
         PlaceAutocompleteFragment fragmentPointInterm = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.pointInt);
 
-        Button buttonPointInterm = (Button) findViewById(R.id.alternative_path);
+        Button buttonPointInterm = findViewById(R.id.alternative_path);
 
-        if (!this.useWayPoint){
-            // TODO arnaud: check exceptions
-            fragmentPointInterm.getView().setVisibility(View.VISIBLE);
-            textViewInterm.setVisibility(View.VISIBLE);
-            buttonPointInterm.setText(R.string.hide_atlernative_point);
-            this.useWayPoint = true;
-        } else {
-            fragmentPointInterm.getView().setVisibility(View.GONE);
-            textViewInterm.setVisibility(View.GONE);
-            fragmentPointInterm.setText("");
-            buttonPointInterm.setText(R.string.show_alternative_point);
-            this.useWayPoint = false;
+        try{
+            if (!this.useWayPoint){
+                fragmentPointInterm.getView().setVisibility(View.VISIBLE);
+                textViewInterm.setVisibility(View.VISIBLE);
+                buttonPointInterm.setText(R.string.hide_atlernative_point);
+                this.useWayPoint = true;
+            } else {
+                fragmentPointInterm.getView().setVisibility(View.GONE);
+                textViewInterm.setVisibility(View.GONE);
+                fragmentPointInterm.setText("");
+                buttonPointInterm.setText(R.string.show_alternative_point);
+                this.useWayPoint = false;
+            }
+        } catch (NullPointerException e){
+            e.getMessage();
+            Log.d("showFieldWayPoint_err", e.getMessage());
         }
+
     }
 
     /**
@@ -301,16 +314,19 @@ public class MainActivity extends AppCompatActivity {
 
         Fragment fr = getFragmentManager().findFragmentById(R.id.pointA);
 
-        // TODO arnaud: check exceptions
-        if (checkBoxPos.isChecked()){
-            this.useMyLocForMap = true;
-            updateLoc();
-            replacePointAfragmentByAlt();
-        } else {
-            altText.setText("");
-            altText.setVisibility(View.GONE);
-            fr.getView().setVisibility(View.VISIBLE);
-            this.useMyLocForMap = false;
+        try {
+            if (checkBoxPos.isChecked()){
+                this.useMyLocForMap = true;
+                updateLoc();
+                replacePointAfragmentByAlt();
+            } else {
+                altText.setText("");
+                altText.setVisibility(View.GONE);
+                fr.getView().setVisibility(View.VISIBLE);
+                this.useMyLocForMap = false;
+            }
+        } catch (NullPointerException e){
+            Log.d("onUseDeviceLocation_err", e.getMessage());
         }
     }
 
@@ -403,7 +419,10 @@ public class MainActivity extends AppCompatActivity {
                 setLatitudeUser(location.getLatitude());
                 setLongitudeUser(location.getLongitude());
             }
-        } catch (SecurityException e) {/*TODO arnaud*/}
+        } catch (SecurityException e) {
+            Log.d("updateLoc_err", e.getMessage());
+
+        }
     }
 
     // Location: initialise le gps listener qui va être utilisé lors de l'initalisation dans onCreate
@@ -463,7 +482,6 @@ public class MainActivity extends AppCompatActivity {
      * sauf la barre de chargement
      */
     private void changeVisibilityAll(int value){
-        // TODO Arnaud: clean
 
         // FRAMGENTS
         PlaceAutocompleteFragment autocompleteStartPoint = (PlaceAutocompleteFragment)
@@ -476,20 +494,21 @@ public class MainActivity extends AppCompatActivity {
                 getFragmentManager().findFragmentById(R.id.pointInt);
 
         // TextsView
-        TextView pointA_alt = (TextView) findViewById(R.id.pointATextView);
-        TextView pointIntTxtView = (TextView) findViewById(R.id.pointIntTextView);
-        TextView pointBTxtView = (TextView) findViewById(R.id.pointBTextBox);
-        TextView textSelectTypes = (TextView) findViewById(R.id.textSelectTypes);
-//        TextView txtViewMonument = (TextView) findViewById(R.id.textViewmonument);
+        TextView pointA_alt = findViewById(R.id.pointATextView);
+        TextView pointIntTxtView = findViewById(R.id.pointIntTextView);
+        TextView pointBTxtView = findViewById(R.id.pointBTextBox);
+//        TextView txtViewMonument = findViewById(R.id.textViewmonument);
         TextView txtViewDuree = findViewById(R.id.duree);
+        TextView textSelectTypes = (TextView) findViewById(R.id.textSelectTypes);
+
 
         //Buttons
-        Button buttonAltPath = (Button) findViewById(R.id.alternative_path);
-        Button displayPath = (Button) findViewById(R.id.displayMap);
-//        Button infoMunum = (Button) findViewById(R.id.infoMonument);
+        Button buttonAltPath = findViewById(R.id.alternative_path);
+        Button displayPath = findViewById(R.id.displayMap);
+//        Button infoMunum = findViewById(R.id.infoMonument);
 
         // CheckBox
-        CheckBox checkBoxPos = (CheckBox) findViewById(R.id.use_loc);
+        CheckBox checkBoxPos = findViewById(R.id.use_loc);
         CheckBox checkBoxType1 = (CheckBox) findViewById(R.id.type1);
         CheckBox checkBoxType2 = (CheckBox) findViewById(R.id.type2);
         CheckBox checkBoxType3 = (CheckBox) findViewById(R.id.type3);
@@ -498,8 +517,8 @@ public class MainActivity extends AppCompatActivity {
         CheckBox checkBoxType6 = (CheckBox) findViewById(R.id.type6);
 
         //EditTexts
-//        EditText txtMonument = (EditText) findViewById(R.id.monument);
-        EditText editPointAalt = (EditText) findViewById(R.id.pointA_alt);
+//        EditText txtMonument = findViewById(R.id.monument);
+        EditText editPointAalt = findViewById(R.id.pointA_alt);
 
         spinnerhour.setVisibility(value);
         spinnermin.setVisibility(value);
@@ -533,10 +552,10 @@ public class MainActivity extends AppCompatActivity {
     private void initViewsAll(){
         changeVisibilityAll(View.VISIBLE);
 
-        EditText textAltPointA = (EditText) findViewById(R.id.pointA_alt);
+        EditText textAltPointA = findViewById(R.id.pointA_alt);
         textAltPointA.setVisibility(View.GONE);
 
-        Button buttonPointInterm = (Button) findViewById(R.id.alternative_path);
+        Button buttonPointInterm = findViewById(R.id.alternative_path);
 
         // Si on utilise un point intérmediaire, l'affichage du boutton doit être à "-Point"
         buttonPointInterm.setText(R.string.hide_atlernative_point);
@@ -546,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
                     getFragmentManager().findFragmentById(R.id.pointInt);
             autocompleteWayPathPoint.getView().setVisibility(View.GONE);
 
-            TextView textViewInt = (TextView) findViewById(R.id.pointIntTextView);
+            TextView textViewInt = findViewById(R.id.pointIntTextView);
             textViewInt.setVisibility(View.GONE);
             buttonPointInterm.setText(R.string.show_alternative_point);
         }
@@ -554,7 +573,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Cache la barre de chargement
-        ProgressBar p = (ProgressBar)findViewById(R.id.progressBar1);
+        ProgressBar p = findViewById(R.id.progressBar1);
         p.setVisibility(View.GONE);
     }
 
