@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //On initialise la base de données (pour l'instant systématique mais voir à quelle frquence on le fait)
         DatabaseHandler.Initialize(getBaseContext());
     }
 
