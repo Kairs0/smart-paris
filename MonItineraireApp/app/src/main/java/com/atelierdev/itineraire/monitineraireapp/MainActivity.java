@@ -78,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //On initialise la base de données (pour l'instant systématique mais voir à quelle frquence on le fait)
+        DatabaseHandler.Initialize(getBaseContext());
         
         //Récupération du Spinner déclaré dans le fichier main.xml de res/layout
         spinnerhour = findViewById(R.id.dureehour);
@@ -155,9 +158,6 @@ public class MainActivity extends AppCompatActivity {
         if (this.useMyLocForMap){
             replacePointAfragmentByAlt();
         }
-
-        //On initialise la base de données (pour l'instant systématique mais voir à quelle frquence on le fait)
-        DatabaseHandler.Initialize(getBaseContext());
     }
 
     /**
