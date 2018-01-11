@@ -614,15 +614,6 @@ public class MainActivity extends AppCompatActivity {
         autocompleteEndPoint.setBoundsBias(rectangleIleDeFrance);
         autocompleteWayPathPoint.setBoundsBias(rectangleIleDeFrance);
 
-
-
-
-        //tOdo todel
-//        autocompleteFragment.setBoundsBias(new LatLngBounds(
-//                new LatLng(-33.880490, 151.184363),
-//                new LatLng(-33.858754, 151.229596)));
-
-
         autocompleteStartPoint.setFilter(addressFilter);
         autocompleteEndPoint.setFilter(addressFilter);
         autocompleteWayPathPoint.setFilter(addressFilter);
