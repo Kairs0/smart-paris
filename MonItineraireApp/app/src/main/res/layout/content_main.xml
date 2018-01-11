@@ -42,9 +42,11 @@
             android:textStyle="bold" />
 
         <LinearLayout
+            android:baselineAligned="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:minHeight="40dp"
             >
 
             <LinearLayout
@@ -67,8 +69,7 @@
                 <Spinner
                     android:id="@+id/dureemin"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-/>
+                    android:layout_height="match_parent" />
             </LinearLayout>
 
         </LinearLayout>
