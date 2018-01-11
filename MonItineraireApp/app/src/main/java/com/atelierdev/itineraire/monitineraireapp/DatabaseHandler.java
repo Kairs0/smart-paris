@@ -30,7 +30,6 @@ public abstract class DatabaseHandler {
             String line = "";
             while ((line = bReader.readLine()) != null) {
                 try {
-                    Log.d("types", line);
                     if (line != null) {
                         // On recupere les differents champs
                         String[] properties = line.split(",+");

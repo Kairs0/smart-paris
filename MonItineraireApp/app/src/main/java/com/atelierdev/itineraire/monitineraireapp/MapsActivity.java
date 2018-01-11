@@ -184,20 +184,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Polygon polygon = mMap.addPolygon(rectOptions);
 
         //Liste de monuments obtenu via appel à la base de données
-        List<LatLng> liste_monuments = new ArrayList<LatLng>();
+        List<Monument> liste_monuments = new ArrayList<Monument>();
         for(int i = 0; i < types.size(); i++){
             List<Monument> allMonumentsOfType = Monument.findWithQuery(Monument.class, "Select * from Monument where types LIKE ?", "%"+types.get(i)+"%");
-            for (Monument monument : allMonumentsOfType) {
-                LatLng m = new LatLng(monument.getLat(), monument.getLon());
-                liste_monuments.add(m);
-            }
+            liste_monuments.addAll(allMonumentsOfType);
         }
 
         List<LatLng> selected_monuments = new ArrayList<LatLng>();
 
+        //On parcourt la liste de monuments et on retire ceux qui ne sont pas dans la zone
+        for (int i = 0; i < liste_monuments.size(); i++) {
+            Monument monument = liste_monuments.get(i);
+            LatLng latlng = new LatLng(monument.getLat(), monument.getLon());
+            if (PolyUtil.containsLocation(latlng, poly, true)) {
+                mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            } else {
+                mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                liste_monuments.remove(monument);
+            }
+        }
 
         // Si le monument est dans le rectangle il est ajouté à la liste des monuments sélectionnés et son marqueur est vert (sinon il est jaune)
-        for (int i = 0; i < liste_monuments.size(); i++) {
+        /*for (int i = 0; i < liste_monuments.size(); i++) {
             if (PolyUtil.containsLocation(liste_monuments.get(i), poly, true)) {
                 mMap.addMarker(new MarkerOptions().position(liste_monuments.get(i)).title("Le point est dans la zone").icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
@@ -206,7 +216,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addMarker(new MarkerOptions().position(liste_monuments.get(i)).title("Le point n'est PAS dans la zone").icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
             }
-        }
+        }*/
         Log.d("myTag2", "Monuments sélectionnés" + selected_monuments);
 
     }
@@ -222,9 +232,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void putMarkerOnImportantPoints(List<LatLng> pointsPath, String wayPoint){
         // Ajoute un marqueur pour point de départ, arrivée et intermédiaire
-        mMap.addMarker(new MarkerOptions().position(pointsPath.get(0)).title("Point"));
+        mMap.addMarker(new MarkerOptions().position(pointsPath.get(0)).title("Départ"));
         int indexLastPoint = pointsPath.size() - 1;
-        mMap.addMarker(new MarkerOptions().position(pointsPath.get(indexLastPoint)).title("Point"));
+        mMap.addMarker(new MarkerOptions().position(pointsPath.get(indexLastPoint)).title("Arrivée"));
         //Ajoute un marqueur pour le point intérmédiaire
         if (!wayPoint.equals("")) {
             String[] arrayPointInt = wayPoint.split(",");
