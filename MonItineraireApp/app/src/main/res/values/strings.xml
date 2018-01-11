@@ -5,7 +5,7 @@
     <string name="point_int">Point Intermédaire</string>
     <string name="point_B">Arrivée</string>
     <string name="monument">Monument</string>
-    <string name="duree">Durée souhaitée</string>
+    <string name="duree">Temps disponible</string>
     <string name="point_a_hint">Départ</string>
     <string name="point_b_hint">Arrivée</string>
     <string name="point_int_hint">Point Intermédaire</string>

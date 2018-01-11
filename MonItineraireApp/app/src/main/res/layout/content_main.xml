@@ -42,21 +42,34 @@
             android:textStyle="bold" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation = "horizontal">
+            android:orientation="horizontal"
+            >
 
-            <Spinner
-                android:id="@+id/dureehour"
-                android:layout_width="191dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical|center_horizontal" />;
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:layout_width="0dp"
+                android:gravity="center_horizontal">
 
-            <Spinner
-                android:id="@+id/dureemin"
-                android:layout_width="191dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal" />;
+                <Spinner
+                    android:id="@+id/dureehour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:layout_width="0dp"
+                android:gravity="center_horizontal">
+                <Spinner
+                    android:id="@+id/dureemin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+/>
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -286,28 +299,28 @@
 
 
         <!--<TextView-->
-            <!--android:id="@+id/textViewmonument"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:gravity="center"-->
-            <!--android:text="@string/monument"-->
-            <!--android:textColor="#000000"-->
-            <!--android:textStyle="bold" />-->
+        <!--android:id="@+id/textViewmonument"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center"-->
+        <!--android:text="@string/monument"-->
+        <!--android:textColor="#000000"-->
+        <!--android:textStyle="bold" />-->
 
         <!--<EditText-->
-            <!--android:id="@+id/monument"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:hint="@string/monument_hint"-->
-            <!--android:inputType="textPostalAddress" />-->
+        <!--android:id="@+id/monument"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="@string/monument_hint"-->
+        <!--android:inputType="textPostalAddress" />-->
 
         <!--<Button-->
-            <!--android:id="@+id/infoMonument"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_vertical|center_horizontal"-->
-            <!--android:onClick="displayInfo"-->
-            <!--android:text="@string/calc_button_info" />-->
+        <!--android:id="@+id/infoMonument"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center_vertical|center_horizontal"-->
+        <!--android:onClick="displayInfo"-->
+        <!--android:text="@string/calc_button_info" />-->
 
 
         <RelativeLayout
