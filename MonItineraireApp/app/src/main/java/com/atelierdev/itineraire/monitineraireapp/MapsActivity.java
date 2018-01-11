@@ -72,17 +72,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Récupère la liste des types qui ont été sélectionné
         List<String> types = new ArrayList<>();
         if(MainActivity.type1)
-            types.add("1");
+            types.add("%1%");
         if(MainActivity.type2)
-            types.add("2");
+            types.add("%2%");
         if(MainActivity.type3)
-            types.add("3");
+            types.add("%3%");
         if(MainActivity.type4)
-            types.add("4");
+            types.add("%4%");
         if(MainActivity.type5)
-            types.add("5");
+            types.add("%5%");
         if(MainActivity.type6)
-            types.add("6");
+            types.add("%6%");
 
         // Transforme le point int en une liste pour pouvoir le passer au thread api
         List<String> listPointsInt = new ArrayList<>();
@@ -180,12 +180,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         PolygonOptions rectOptions = new PolygonOptions().addAll(poly).strokeColor(Color.argb(0, 50, 0, 255)).fillColor(Color.argb(70, 50, 0, 255));
         Polygon polygon = mMap.addPolygon(rectOptions);
 
+
         //Liste de monuments obtenu via appel à la base de données
         List<Monument> allMonuments = new ArrayList<Monument>();
-        for(int i = 0; i < types.size(); i++){
-            List<Monument> allMonumentsOfType = Monument.findWithQuery(Monument.class, "Select * from Monument where types LIKE ?", "%"+types.get(i)+"%");
-            allMonuments.addAll(allMonumentsOfType);
+        String[] types_arg = types.toArray(new String[0]);
+        String query = "SELECT * FROM Monument WHERE types LIKE ?"; //On écrit la requête à envoyer à la base de données
+        for(int i=1;i<types_arg.length;i++){
+            query += " OR types LIKE ?";
         }
+        query += " ORDER BY rating";
+        List<Monument> allMonumentsOfType = Monument.findWithQuery(Monument.class, query, types_arg);
+        Log.d("Monuments", String.valueOf(allMonumentsOfType.size()));
+        allMonuments.addAll(allMonumentsOfType);
 
         List<Monument> selected_monuments = new ArrayList<Monument>();
 
