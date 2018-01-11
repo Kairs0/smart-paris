@@ -76,17 +76,17 @@ public class MatrixApiThread implements Runnable {
             // we replace each space by +
             List<String> replaceOrigins = new ArrayList<>();
             for (String origin : this.origins){
-                replaceOrigins.add(origin.replaceAll("\\s+", "+"));
+                replaceOrigins.add(origin.replaceAll("\\s+", "%20"));
             }
             this.origins = replaceOrigins;
             List<String> replaceDestinations = new ArrayList<>();
             for (String destination : this.destinations){
-                replaceDestinations.add(destination.replaceAll("\\s+", "+"));
+                replaceDestinations.add(destination.replaceAll("\\s+", "%20"));
             }
             this.destinations = replaceDestinations;
-            String urlOrigins = "&origins=" + myJoinFunction(this.origins, "|");
-            String urlDestinations = "&destinations=" + myJoinFunction(this.destinations, "|");
-            String urlMode = "mode=" + this.mode;
+            String urlOrigins = "&origins=" + myJoinFunction(this.origins, "%7C");
+            String urlDestinations = "&destinations=" + myJoinFunction(this.destinations, "%7C");
+            String urlMode = "&mode=" + this.mode;
             String keyUrl = "&key=AIzaSyC6kv8mZQhM8p8AlDdUz41s_ae8H9hGHlU";
             String baseUrl = "https://maps.googleapis.com/maps/api/distancematrix/json?" +
                     urlMode + keyUrl;
