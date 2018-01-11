@@ -69,6 +69,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String temps_disponible_h = intent.getStringExtra(MainActivity.TEMPS_DISPONIBLE_H);
         String temps_disponible_min = intent.getStringExtra(MainActivity.TEMPS_DISPONIBLE_MIN);
 
+
+        List<String> types = new ArrayList<String>();
+        if(MainActivity.type1)
+            types.add("1");
+        if(MainActivity.type2)
+            types.add("2");
+        if(MainActivity.type3)
+            types.add("3");
+        if(MainActivity.type4)
+            types.add("4");
+        if(MainActivity.type5)
+            types.add("5");
+        if(MainActivity.type6)
+            types.add("6");
+        for(String type : types)
+            Log.d("types", type);
+
+
         // Transforme le point int en une liste pour pouvoir le passer au thread api
         List<String> listPointsInt = new ArrayList<>();
         if (!pointInt.equals("")) {
@@ -165,12 +183,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         PolygonOptions rectOptions = new PolygonOptions().addAll(poly).strokeColor(Color.argb(0, 50, 0, 255)).fillColor(Color.argb(70, 50, 0, 255));
         Polygon polygon = mMap.addPolygon(rectOptions);
 
-        //Liste de monuments
+        //Liste de monuments obtenu via appel à la base de données
         List<LatLng> liste_monuments = new ArrayList<LatLng>();
-        List<Monument> allMonuments = Monument.listAll(Monument.class);
-        for (Monument monument : allMonuments) {
-            LatLng m = new LatLng(monument.getLat(), monument.getLon());
-            liste_monuments.add(m);
+        for(int i = 0; i < types.size(); i++){
+            List<Monument> allMonumentsOfType = Monument.findWithQuery(Monument.class, "Select * from Monument where types LIKE ?", "%"+types.get(i)+"%");
+            for (Monument monument : allMonumentsOfType) {
+                LatLng m = new LatLng(monument.getLat(), monument.getLon());
+                liste_monuments.add(m);
+            }
         }
 
         List<LatLng> selected_monuments = new ArrayList<LatLng>();
