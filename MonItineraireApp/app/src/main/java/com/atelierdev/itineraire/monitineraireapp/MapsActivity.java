@@ -69,8 +69,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String temps_disponible_h = intent.getStringExtra(MainActivity.TEMPS_DISPONIBLE_H);
         String temps_disponible_min = intent.getStringExtra(MainActivity.TEMPS_DISPONIBLE_MIN);
 
-
-        List<String> types = new ArrayList<String>();
+        // Récupère la liste des types qui ont été sélectionné
+        List<String> types = new ArrayList<>();
         if(MainActivity.type1)
             types.add("1");
         if(MainActivity.type2)
@@ -83,9 +83,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             types.add("5");
         if(MainActivity.type6)
             types.add("6");
-        for(String type : types)
-            Log.d("types", type);
-
 
         // Transforme le point int en une liste pour pouvoir le passer au thread api
         List<String> listPointsInt = new ArrayList<>();
@@ -184,41 +181,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Polygon polygon = mMap.addPolygon(rectOptions);
 
         //Liste de monuments obtenu via appel à la base de données
-        List<Monument> liste_monuments = new ArrayList<Monument>();
+        List<Monument> allMonuments = new ArrayList<Monument>();
         for(int i = 0; i < types.size(); i++){
             List<Monument> allMonumentsOfType = Monument.findWithQuery(Monument.class, "Select * from Monument where types LIKE ?", "%"+types.get(i)+"%");
-            liste_monuments.addAll(allMonumentsOfType);
+            allMonuments.addAll(allMonumentsOfType);
         }
 
-        List<LatLng> selected_monuments = new ArrayList<LatLng>();
+        List<Monument> selected_monuments = new ArrayList<Monument>();
 
-        //On parcourt la liste de monuments et on retire ceux qui ne sont pas dans la zone
-        for (int i = 0; i < liste_monuments.size(); i++) {
-            Monument monument = liste_monuments.get(i);
+        //Ajoute un marqueur vert aux monuments qui sont dans la zone et un marqueur jaune sinon
+        for (int i = 0; i < allMonuments.size(); i++) {
+            Monument monument = allMonuments.get(i);
             LatLng latlng = new LatLng(monument.getLat(), monument.getLon());
             if (PolyUtil.containsLocation(latlng, poly, true)) {
                 mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                selected_monuments.add(monument);
             } else {
                 mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                liste_monuments.remove(monument);
             }
         }
-
-        // Si le monument est dans le rectangle il est ajouté à la liste des monuments sélectionnés et son marqueur est vert (sinon il est jaune)
-        /*for (int i = 0; i < liste_monuments.size(); i++) {
-            if (PolyUtil.containsLocation(liste_monuments.get(i), poly, true)) {
-                mMap.addMarker(new MarkerOptions().position(liste_monuments.get(i)).title("Le point est dans la zone").icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                selected_monuments.add(liste_monuments.get(i));
-            } else {
-                mMap.addMarker(new MarkerOptions().position(liste_monuments.get(i)).title("Le point n'est PAS dans la zone").icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-            }
-        }*/
-        Log.d("myTag2", "Monuments sélectionnés" + selected_monuments);
-
     }
 
     private void setErrorMessage(String message) {
