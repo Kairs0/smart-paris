@@ -50,12 +50,12 @@ public class MainActivity extends AppCompatActivity {
     private boolean useMyLocForMap = false;
     private boolean useWayPoint = false;
 
-    private boolean type1 = true;
-    private boolean type2 = true;
-    private boolean type3 = true;
-    private boolean type4 = true;
-    private boolean type5 = true;
-    private boolean type6 = true;
+    public static boolean type1 = true;
+    public static boolean type2 = true;
+    public static boolean type3 = true;
+    public static boolean type4 = true;
+    public static boolean type5 = true;
+    public static boolean type6 = true;
 
     //Location
     // https://stackoverflow.com/questions/42218419/how-do-i-implement-the-locationlistener
