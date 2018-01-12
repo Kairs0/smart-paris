@@ -14,6 +14,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -21,6 +23,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 import org.json.JSONException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -30,6 +33,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static android.location.Location.distanceBetween;
+import static com.atelierdev.itineraire.monitineraireapp.MainActivity.EXTRA_MONUMENT_ID;
+
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -129,8 +134,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         List<LatLng> pointsPath = manageJson.getCoordinatesLatLng();
 
-        // set camera on start point
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsPath.get(0), 18));
+        //Regler la camera pour afficher tout le trajet
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(pointsPath.get(0));
+        builder.include(pointsPath.get(pointsPath.size()-1));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 20));
 
         putMarkerOnImportantPoints(pointsPath, pointInt);
 
@@ -195,19 +203,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         List<Monument> selected_monuments = new ArrayList<Monument>();
 
+        //Dictionnaire pour associer les ids (valeur) des monuments à leur titre (clé) et les récupérer lors d'un clic sur l'étiquette
+        final HashMap<String, String> markerIds = new HashMap<>();
+
         //Ajoute un marqueur vert aux monuments qui sont dans la zone et un marqueur jaune sinon
         for (int i = 0; i < allMonuments.size(); i++) {
             Monument monument = allMonuments.get(i);
             LatLng latlng = new LatLng(monument.getLat(), monument.getLon());
+            String monument_id_str = Integer.toString(monument.getMonumentId());
             if (PolyUtil.containsLocation(latlng, poly, true)) {
                 mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(latlng)
+                        .title(monument.getName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                markerIds.put(marker.getTitle(), monument_id_str);
                 selected_monuments.add(monument);
+                Log.d("myTag4", "Monument id : " + markerIds.get(marker.getTitle()));
             } else {
-                mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
+                Marker marker = mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                markerIds.put(marker.getTitle(), monument_id_str);
             }
         }
+
+        googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Intent intent = new Intent(getBaseContext(), DisplayInfoMonument.class);
+                intent.putExtra(EXTRA_MONUMENT_ID, markerIds.get(marker.getTitle()));
+                // Starting the  Activity
+                startActivity(intent);
+            }
+        });
     }
 
     private void setErrorMessage(String message) {

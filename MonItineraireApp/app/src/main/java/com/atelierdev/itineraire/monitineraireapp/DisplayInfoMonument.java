@@ -1,4 +1,3 @@
-/*
 package com.atelierdev.itineraire.monitineraireapp;
 
 import android.content.Intent;
@@ -16,10 +15,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-*/
-/**
- * Created by Elodie on 04/12/2017.
- *//*
 
 
 public class DisplayInfoMonument extends AppCompatActivity {
@@ -32,16 +27,15 @@ public class DisplayInfoMonument extends AppCompatActivity {
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        String monument = intent.getStringExtra(MainActivity.EXTRA_MONUMENT);
+        String monument = intent.getStringExtra(MainActivity.EXTRA_MONUMENT_ID);
 
         Thread t1 = new TestThread("A", monument);
         t1.start();
-        */
-/*try {
+        /*try {
             t1.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }*//*
+        } */
 
     }
 
@@ -99,8 +93,9 @@ public class DisplayInfoMonument extends AppCompatActivity {
                 URL url;
                 HttpURLConnection urlConnection = null;
                 try {
-                    int monument_id = Monument.findWithQuery(Monument.class, "Select * from Monument where name = ?", _monument).get(0).getMonumentId();
-                    url = new URL("https://api.paris.fr/api/data/1.0/Equipements/get_equipement/?token=f6e85890f660abe2fd846df117a3cb215fc7d5bb80969d17026f3820a23728f2&id=" + monument_id);
+                    //int monument_id = Monument.findWithQuery(Monument.class, "Select * from Monument where name = ?", _monument).get(0).getMonumentId();
+                    //url = new URL("https://api.paris.fr/api/data/1.0/Equipements/get_equipement/?token=f6e85890f660abe2fd846df117a3cb215fc7d5bb80969d17026f3820a23728f2&id=" + monument_id);
+                    url = new URL("https://api.paris.fr/api/data/1.0/Equipements/get_equipement/?token=f6e85890f660abe2fd846df117a3cb215fc7d5bb80969d17026f3820a23728f2&id=" + _monument);
 
                     urlConnection = (HttpURLConnection) url
                             .openConnection();
@@ -132,4 +127,3 @@ public class DisplayInfoMonument extends AppCompatActivity {
         }
     }
 }
-*/

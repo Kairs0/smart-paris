@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_POINTA = "com.atelierdev.itineraire.monitineraireapp.pointA";
     public static final String EXTRA_POINTB = "com.atelierdev.itineraire.monitineraireapp.pointB";
     public static final String EXTRA_POINTSUPP = "com.atelierdev.itineraire.monitineraireapp.pointInt";
-//    public static final String EXTRA_MONUMENT = "com.atelierdev.itineraire.monitineraireapp.monument";
+    public static final String EXTRA_MONUMENT_ID = "com.atelierdev.itineraire.monitineraireapp.monument_id";
     public static final String TEMPS_DISPONIBLE_H = "com.atelierdev.itineraire.monitineraireapp.temps_disponible_h";
     public static final String TEMPS_DISPONIBLE_MIN = "com.atelierdev.itineraire.monitineraireapp.temps_disponible_min";
 
