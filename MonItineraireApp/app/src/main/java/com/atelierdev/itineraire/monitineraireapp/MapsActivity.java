@@ -39,6 +39,8 @@ import static com.atelierdev.itineraire.monitineraireapp.MainActivity.EXTRA_MONU
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    public static final String EXTRA_TRAJET = "com.atelierdev.itineraire.monitineraireapp.trajet";
+    public String trajet = "Voici les étapes de votre trajet";
     private GoogleMap mMap;
 
     @Override
@@ -238,6 +240,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
+    }
+
+    public void displaySteps(View view){
+        Intent intent = new Intent(getBaseContext(), DisplayStepsActivity.class);
+        intent.putExtra(EXTRA_TRAJET, trajet);
+        // Starting the  Activity
+        startActivity(intent);
     }
 
     private void setErrorMessage(String message) {

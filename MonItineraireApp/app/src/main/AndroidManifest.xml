@@ -37,10 +37,13 @@
                 android:value=".MainActivity" />
         </activity>
 
+        <activity android:name=".DisplayStepsActivity" android:parentActivityName=".MapsActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MapsActivity" />
+        </activity>
 
-
-
-       <activity android:name=".DisplayInfoMonument" android:parentActivityName=".MainActivity">
+       <activity android:name=".DisplayInfoMonument" android:parentActivityName=".MainActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
