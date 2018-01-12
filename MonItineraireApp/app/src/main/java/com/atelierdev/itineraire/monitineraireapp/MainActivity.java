@@ -1,15 +1,10 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -19,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,6 +24,7 @@ import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -57,9 +52,6 @@ public class MainActivity extends AppCompatActivity {
     public static boolean type5 = true;
     public static boolean type6 = true;
 
-    //Location
-    // https://stackoverflow.com/questions/42218419/how-do-i-implement-the-locationlistener
-    // https://developer.android.com/reference/android/location/LocationManager.html#getLastKnownLocation(java.lang.String)
     LocationManager locationManager;
     Context mContext;
 
@@ -80,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //On initialise la base de données (pour l'instant systématique mais voir à quelle frquence on le fait)
+        // Initialise la base de données (pour l'instant systématique mais voir à quelle frquence on le fait)
         DatabaseHandler.Initialize(getBaseContext());
         
         initSpinners();
@@ -88,7 +80,10 @@ public class MainActivity extends AppCompatActivity {
         // Create location manager
         mContext=this;
         locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        try {
+
+        if(!LocalizationHandler.isGrantedPermission(this))
+            LocalizationHandler.requestPermissionIfNotGranted(this);
+        /*try {
             locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER,
                     2000,
                     10, locationListenerGPS);
@@ -97,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }
         finally {
             isLocationEnabled();
-        }
+        }*/
 
         // Initialise les inputs avec auto complétion
         initAutoCompleteFragments();
@@ -205,20 +200,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Called when the user press info button
-     */
- /*   public void displayInfo(View view){
-        Intent intent = new Intent(this, DisplayInfoMonument.class);
-        EditText editMonument = (EditText) findViewById(R.id.monument);
-
-
-        String monument = editMonument.getText().toString();
-
-        intent.putExtra(EXTRA_MONUMENT, monument);
-        startActivity(intent);
-    }*/
-
-    /**
      *
      * BUTTONS AND CHECKBOXS
      * Méthodes "internes" à l'activité main appelés lorsque l'utilisateur
@@ -272,7 +253,9 @@ public class MainActivity extends AppCompatActivity {
         try {
             if (checkBoxPos.isChecked()){
                 this.useMyLocForMap = true;
-                updateLoc();
+                double[] latlng = LocalizationHandler.getLatLng(this, locationManager);
+                setLatitudeUser(latlng[0]);
+                setLongitudeUser(latlng[0]);
                 replacePointAfragmentByAlt();
             } else {
                 altText.setText("");
@@ -362,54 +345,10 @@ public class MainActivity extends AppCompatActivity {
      *
      */
 
-
-
-    /**
-     * Essaie de récuperer la dernière position connue
-      */
-    private void updateLoc() {
-        try {
-            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (location != null){
-                setLatitudeUser(location.getLatitude());
-                setLongitudeUser(location.getLongitude());
-            }
-        } catch (SecurityException e) {
-            Log.d("updateLoc_err", e.getMessage());
-
-        }
-    }
-
-    // Location: initialise le gps listener qui va être utilisé lors de l'initalisation dans onCreate
-    LocationListener locationListenerGPS = new LocationListener() {
-        @Override
-        public void onLocationChanged(android.location.Location location) {
-            double latitude=location.getLatitude();
-            setLatitudeUser(latitude);
-            double longitude=location.getLongitude();
-            setLongitudeUser(longitude);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    };
-
     // Check si la geoloc est active sur l'appareil de l'utilisateur
     // Appelée uniquement sur onCreate
     // TODO: voir si utile -> l'application peut elle être utilisée sans localisation?
-    private void isLocationEnabled() {
+    /*private void isLocationEnabled() {
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             AlertDialog.Builder alertDialog=new AlertDialog.Builder(mContext);
             alertDialog.setTitle("Activer la localisation");
@@ -428,9 +367,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert=alertDialog.create();
             alert.show();
         }
-    }
-
-
+    }*/
 
     /**
      * Methode utilisée pour changer la visibilté de tous les éléments de la main page,
