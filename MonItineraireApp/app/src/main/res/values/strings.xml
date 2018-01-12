@@ -30,4 +30,5 @@
     <string name="types">Types de monuments</string>
     <string name="title_activity_error">ErrorActivity</string>
     <string name="show_details">Etapes du trajet</string>
+    <string name="speech">Lancer la lecture</string>
 </resources>

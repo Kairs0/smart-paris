@@ -222,7 +222,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 markerIds.put(marker.getTitle(), monument_id_str);
                 selected_monuments.add(monument);
-                Log.d("myTag4", "Monument id : " + markerIds.get(marker.getTitle()));
             } else {
                 Marker marker = mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));

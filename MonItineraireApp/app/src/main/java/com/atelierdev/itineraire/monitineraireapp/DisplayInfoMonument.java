@@ -1,10 +1,14 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,10 +18,15 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Locale;
 
 
+public class DisplayInfoMonument extends AppCompatActivity implements TextToSpeech.OnInitListener{
 
-public class DisplayInfoMonument extends AppCompatActivity {
+    private TextToSpeech engine;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +40,7 @@ public class DisplayInfoMonument extends AppCompatActivity {
 
         Thread t1 = new TestThread("A", monument);
         t1.start();
+        engine = new TextToSpeech(this, this);
         /*try {
             t1.join();
         } catch (InterruptedException e) {
@@ -126,4 +136,24 @@ public class DisplayInfoMonument extends AppCompatActivity {
             }
         }
     }
+
+    public void playText(View v) {
+        TextView textView = findViewById(R.id.resultatInformation);
+        String toSpeak=textView.getText().toString();
+        engine.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
+
+    }
+
+    @Override
+    public void onInit(int i) {
+
+
+        if (i == TextToSpeech.SUCCESS) {
+            //Setting speech Language
+            engine.setLanguage(Locale.FRENCH);
+            engine.setPitch(1);
+        }
+    }
+
+
 }
