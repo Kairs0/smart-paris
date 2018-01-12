@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
                 this.useMyLocForMap = true;
                 double[] latlng = LocalizationHandler.getLatLng(this, locationManager);
                 setLatitudeUser(latlng[0]);
-                setLongitudeUser(latlng[0]);
+                setLongitudeUser(latlng[1]);
                 replacePointAfragmentByAlt();
             } else {
                 altText.setText("");
