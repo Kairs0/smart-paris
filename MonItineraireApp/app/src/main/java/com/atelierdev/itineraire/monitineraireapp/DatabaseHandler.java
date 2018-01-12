@@ -37,10 +37,10 @@ public abstract class DatabaseHandler {
                         String Name = properties[1];
                         int Category = Integer.parseInt(properties[2]);
                         String Types = properties[3];
-                        double Lat = Double.parseDouble(properties[6]);
-                        double Long = Double.parseDouble(properties[7]);
-                        int visitTime = Integer.parseInt(properties[9]);
-                        int Rating = Integer.parseInt(properties[10]);
+                        double Lat = Double.parseDouble(properties[4]);
+                        double Long = Double.parseDouble(properties[5]);
+                        int visitTime = Integer.parseInt(properties[6]);
+                        int Rating = Integer.parseInt(properties[7]);
 
                         Monument new_monument = new Monument(monument_id, Name, Category, Types, Lat, Long, Rating, visitTime);
                         new_monument.save();
