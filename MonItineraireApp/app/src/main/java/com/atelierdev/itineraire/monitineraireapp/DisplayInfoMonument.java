@@ -155,5 +155,11 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        engine.shutdown();
+    }
+
 
 }
