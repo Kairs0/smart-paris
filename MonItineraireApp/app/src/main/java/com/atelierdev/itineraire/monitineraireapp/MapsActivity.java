@@ -1,5 +1,6 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -64,6 +65,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -90,6 +92,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             types.add("%5%");
         if(MainActivity.type6)
             types.add("%6%");
+
+        if(LocalizationHandler.isGrantedPermission(this))
+        {
+            mMap.setMyLocationEnabled(true);
+        }
+
 
         // Transforme le point int en une liste pour pouvoir le passer au thread api
         List<String> listPointsInt = new ArrayList<>();

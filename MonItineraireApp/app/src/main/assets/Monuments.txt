@@ -1,29 +1,94 @@
-﻿Id,Name,Category,Type,Address,Zipcode,Lat,Long,Visite,Temps de visite (min),Moyenne,Rating G.,Rating Emmanuel,Rating Elodie,Rating A.
-1202,Notre-Dame de Paris,253,1;3,6 Place du Parvis de Notre-Dame,75004,48.853874,2.348011,TRUE,30,5,5,5,5,5
-1526,Petit Palais - Musée des beaux-arts de la Ville de Paris,253,2;4,2 avenue Winston Churchill,75008,48.86589499999999,2.3138045000000598,TRUE,90,4,4,5,3,4
-1650,Arc de Triomphe,253,1;4,3 place Charles de Gaulle,75016,48.8743062,2.294766500000037,TRUE,60,5,5,5,5,5
-1653,Tour Eiffel,253,1;4,3 avenue Anatole France,75007,48.858841,2.294329,TRUE,90,5,5,5,5,5
-1660,Panthéon,253,1;4,25 place du Panthéon,75005,48.845871,2.344943,TRUE,40,5,5,5,5,5
-3420,Tour Montparnasse,253,6,33 avenue du Maine,75015,48.842398800000005,2.3217409000000093,TRUE,40,4,4,4,4,3
-3421,Sainte Chapelle,253,3,8 boulevard du Palais,75001,48.8550649,2.3453830999999354,TRUE,30,4,4,4,3,4
-3425,Sacré-Coeur,253,1;3,Place du Parvis du Sacré-Coeur,75018,48.886192,2.3437,TRUE,30,5,5,5,5,5
-3427,Tour Jean sans Peur,253,3,20 rue Étienne Marcel,75002,48.864075,2.348127,TRUE,20,2,3,2,2,2
-3429,Palais du Luxembourg,253,4;5,15 rue de Vaugirard,75006,48.849266,2.336632,FALSE,0,4,4,4,4,4
-3733,Grande Synagogue de la Victoire,253,3,44 rue de la Victoire,75009,48.875233,2.336178,TRUE,20,3,3,3,3,3
-3737,Notre-Dame-de-Lorette,253,3,18 bis rue de Chateaudun,75009,48.875954,2.339276,TRUE,20,3,3,3,3,2
-3738,Eglise Notre Dame de la Croix,253,3,3 place de Ménilmontant,75020,48.868408,2.388162,TRUE,20,3,3,2,4,2
-3739,Eglise Saint-Paul-Saint-Louis,253,3,99 rue Saint-Antoine,75004,48.855083,2.36157,TRUE,20,3,3,3,3,2
-3741,Saint-Jean-de-Montmartre,253,3,19 rue des Abbesses,75018,48.8845081,2.3380712000000585,TRUE,20,3,2,3,3,4
-3742,Saint-Christophe de Javel,253,3,4 rue Saint-Christophe,75015,48.844582,2.279694,TRUE,20,3,2,2,4,2
-3744,Sainte-Odile,253,3,2 avenue Stéphane-Mallarmé,75017,48.886944,2.293589,TRUE,20,3,2,2,4,2
-3745,Saint-Eustache,253,3,2 impasse Saint Eustache,75001,48.8635861,2.345200400000067,TRUE,20,3,3,3,4,2
-3747,Saint-Philippe-du-Roule,253,3,154 rue du Faubourg-Saint-Honoré,75008,48.868496,2.322792,TRUE,20,2,2,3,2,2
-3748,Eglise Saint-Roch,253,3,296 rue Saint Honoré,75001,48.864819,2.332126,TRUE,20,3,3,3,3,3
-3749,Eglise Saint-Sulpice,253,3,Place Saint-Sulpice,75006,48.851204,2.333686,TRUE,20,3,3,4,4,2
-3750,Saint-Germain-l'Auxerrois,253,3,2 place du Louvre,75001,48.859627,2.340729,TRUE,20,3,3,4,3,3
-4104,Hôtel des Invalides,253,1;4,129 rue de Grenelle,75007,48.858109,2.311785,TRUE,30,5,5,5,5,5
-5045,Tour Saint Jacques,253,4,88 rue de Rivoli,75004,48.858219,2.349105,TRUE,15,4,3,4,4,3
-16835,Château de Vincennes,253,4,Avenue de Paris,94300,48.8455457,2.428678399999967,TRUE,45,4,4,3,4,4
-16837,Mobilier national - Manufacture des Gobelins,253,4,42 avenue des Gobelins,75013,48.8348903,2.3531695000000354,TRUE,20,3,3,3,3,4
-16842,Palais de l'Elysée,253,5,55 Rue du Faubourg Saint-Honoré,75008,48.87078349999999,2.3168708000000606,FALSE,0,4,4,3,5,3
-16869,Eglise Saint Germain des Prés,253,3,3 Place Saint-Germain des Prés,75006,48.8539755,2.3342595999999958,TRUE,20,3,2,4,3,2
+﻿Id,Name,Category,Type,Lat,Long,Temps de visite (sec),Moyenne,Rating G.,Rating Emmanuel,Rating Elodie,Rating A.,Temps de visite (min),Commentaire
+1202,Notre-Dame de Paris,253,1;3,48.853874,2.348011,1800,5,5,5,5,5,30,
+1526,Petit Palais - Musée des beaux-arts de la Ville de Paris,253,2,48.86589499999999,2.3138045000000598,5400,4,4,5,3,4,90,
+1650,Arc de Triomphe,253,1,48.8743062,2.294766500000037,3600,5,5,5,5,5,60,
+1653,Tour Eiffel,253,1,48.858841,2.294329,5400,5,5,5,5,5,90,
+1660,Panthéon,253,1,48.845871,2.344943,2400,5,5,5,5,5,40,
+3420,Tour Montparnasse,253,6,48.842398800000005,2.3217409000000093,2400,4,4,4,4,3,40,
+3421,Sainte Chapelle,253,3,48.8550649,2.3453830999999354,1800,4,4,4,3,4,30,
+3425,Sacré-Coeur,253,1;3,48.886192,2.3437,1800,5,5,5,5,5,30,
+3427,Tour Jean sans Peur,253,3,48.864075,2.348127,1200,2,3,2,2,2,20,
+3429,Palais du Luxembourg,253,5,48.849266,2.336632,0,4,4,4,4,4,0,
+3733,Grande Synagogue de la Victoire,253,3,48.875233,2.336178,1200,3,3,3,3,3,20,
+3737,Notre-Dame-de-Lorette,253,3,48.875954,2.339276,1200,3,3,3,3,2,20,
+3738,Eglise Notre Dame de la Croix,253,3,48.868408,2.388162,1200,3,3,2,4,2,20,
+3739,Eglise Saint-Paul-Saint-Louis,253,3,48.855083,2.36157,1200,3,3,3,3,2,20,
+3741,Saint-Jean-de-Montmartre,253,3,48.8845081,2.3380712000000585,1200,3,2,3,3,4,20,
+3742,Saint-Christophe de Javel,253,3,48.844582,2.279694,1200,3,2,2,4,2,20,
+3744,Sainte-Odile,253,3,48.886944,2.293589,1200,3,2,2,4,2,20,
+3745,Saint-Eustache,253,3,48.8635861,2.345200400000067,1200,3,3,3,4,2,20,
+3747,Saint-Philippe-du-Roule,253,3,48.868496,2.322792,1200,2,2,3,2,2,20,
+3748,Eglise Saint-Roch,253,3,48.864819,2.332126,1200,3,3,3,3,3,20,
+3749,Eglise Saint-Sulpice,253,3,48.851204,2.333686,1200,3,3,4,4,2,20,
+3750,Saint-Germain-l'Auxerrois,253,3,48.859627,2.340729,1200,3,3,4,3,3,20,
+4104,Hôtel des Invalides,253,1,48.858109,2.311785,1800,5,5,5,5,5,30,
+5045,Tour Saint Jacques,253,6,48.858219,2.349105,900,4,3,4,4,3,15,
+16835,Château de Vincennes,253,6,48.8455457,2.428678399999967,2700,4,4,3,4,4,45,
+16837,Mobilier national - Manufacture des Gobelins,253,6,48.8348903,2.3531695000000354,1200,3,3,3,3,4,20,
+16842,Palais de l'Elysée,253,5,48.87078349999999,2.3168708000000606,0,4,4,3,5,3,0,
+16869,Eglise Saint Germain des Prés,253,3,48.8539755,2.3342595999999958,1200,3,2,4,3,2,20,
+1,Parc Floral de Paris,0,4,48.83065970681655,2.4497583079345304,3600,4,4,,,,60,
+5,Parc de Bercy,0,4,48.8321987,2.3844616999999744,1800,3,3,,,,30,
+7,Musée d'Art moderne de la Ville de Paris,0,2,48.8646541,2.297714000000042,5400,3,3,,,,90,
+13,Musée Antoine Bourdelle,0,2,48.842964,2.317775,5400,3,3,,,,90,
+33,Square de la Tour Saint-Jacques,0,4,48.857986,2.349811,900,2,2,,,,15,
+35,Square Jean XXIII,0,4,48.85238510000001,2.350909799999954,600,3,3,,,,10,Square juste à côté de Notre-Dame
+36,Square Louis-XIII,0,4,48.855038,2.365614,900,2,2,,,,15,
+62,Maison de Victor Hugo,0,3;6,48.856194,2.3657,3600,3,3,,,,60,
+1516,Maison de Balzac,0,3;6,48.8554,2.280709,3600,3,3,,,,60,
+1518,Musée Carnavalet - Histoire de Paris,0,2,48.8571611,2.3621481999999787,5400,4,4,,,,90,
+1519,Musée Cognacq-Jay,0,2,48.86348,2.359114,5400,3,3,,,,90,
+1520,Les Catacombes de Paris,0,6,48.833942,2.332225,5400,5,5,,,,90,
+1521,Musée Cernuschi - musée des arts de l'Asie de la Ville de Paris,0,2,48.879772,2.312335,5400,3,3,,,,90,
+1522,Palais Galliera - musée de la Mode de la Ville de Paris,0,2,48.8659488,2.2966089999999895,5400,4,4,,,,90,
+1524,Musée de la Vie romantique,0,2,48.8810988,2.333447699999965,5400,3,3,,,,90,
+1525,Musée du général Leclerc de Hauteclocque et de la Libération de Paris - Musée Jean Moulin,0,2,48.839547,2.31852000000003,5400,3,3,,,,90,
+1757,Parc des Buttes-Chaumont,0,4,48.8769129,2.381104599999958,1800,3,3,,,,30,
+1762,Square Louise Michel,0,4,48.88437,2.3437000000000103,900,3,3,,,,15,
+1765,Jardin Nelson-Mandela (ex-des Halles),0,4,48.861595,2.345312,3600,3,3,,,,60,
+1772,Coulée verte René-Dumont (ex-Promenade Plantée),0,4,48.853082,2.369002000000023,3600,3,3,,,,60,
+1775,Jardin Atlantique,0,4,48.839695,2.318952,1800,4,4,,,,30,
+1777,Parc de Belleville,0,4,48.870243,2.384909,1800,3,3,,,,30,
+1780,Jardin des Serres d'Auteuil,0,4,48.8479406,2.254687399999966,1800,3,3,,,,30,
+1781,Jardin d'acclimatation,0,4,48.8760934,2.2630511,1800,4,4,,,,30,
+1784,Jardin sauvage Saint Vincent,0,4,48.8883326,2.3418963000000304,1800,3,3,,,,30,
+1787,Esplanade des Invalides,0,4,48.86130945459035,2.3132834254089403,3600,3,3,,,,60,
+1788,Maison du Jardinage - Pôle ressource Jardinage Urbain,0,4,48.83559951677988,2.3822550308273094,3600,3,3,,,,60,
+1791,Parc André-Citroën,0,4,48.8433953,2.274885499999982,1800,3,3,,,,30,
+1792,Le Jardin des Papillons,0,4,48.8402804,2.43991589999996,900,3,3,,,,15,
+1793,Jardin du Luxembourg,0,4,48.8441127,2.3382951999999477,2400,5,5,,,,40,
+1794,Parc Kellermann,0,4,48.8202332,2.352914800000008,1800,3,3,,,,30,
+1795,Jardin des Tuileries,0,4,48.863022,2.328243,2700,5,5,,,,45,
+1797,Jardin du Palais Royal,0,4,48.864716,2.337728,1500,4,4,,,,25,
+1798,Jardin Villemin,0,4,48.874512,2.361447,1200,3,3,,,,20,
+1799,Jardin des Plantes,0,4,48.8433178,2.3639600999999857,1200,3,3,,,,20,
+1803,Parc de Choisy,0,4,48.8272517,2.3591022000000503,1800,3,3,,,,30,
+1804,Parc Monceau,0,4,48.879364,2.30906,1800,3,3,,,,30,
+1805,Parc Georges-Brassens,0,4,48.83279720852804,2.300806684130862,1800,3,3,,,,30,
+1806,Parc Sainte-Périne,0,4,48.84586669999999,2.269376999999963,1800,3,3,,,,30,
+1807,Parc du Champ-de-Mars,0,4,48.8547334674117,2.30001315183722,1800,4,4,,,,30,
+1808,Parc de Bagatelle,0,4,48.87068476484075,2.2442077032104635,1800,3,3,,,,30,
+1809,Parc de la Villette,0,4,48.893166,2.390299,1800,3,3,,,,30,
+1810,Parc Montsouris,0,4,48.8242155,2.3399515999999494,1800,3,3,,,,30,
+1811,Parc de la Butte-du-Chapeau-Rouge,0,4,48.8815596,2.397180100000014,1800,3,3,,,,30,
+1813,Jardin d'Agronomie Tropicale,0,4,48.8326204,2.466434100000015,1200,3,3,,,,20,
+2406,Square de la place Dauphine,0,4,48.85650283936609,2.3427272925903253,900,3,3,,,,15,
+2425,Square du Temple - Elie-Wiesel,0,4,48.8640047,2.360864900000024,900,3,3,,,,15,
+2441,Square René-Viviani,0,4,48.8516817,2.347668800000065,900,3,3,,,,15,
+2471,Jardins des Champs-Elysées,0,4,48.8679419,2.3153001000000586,1200,3,3,,,,20,
+2544,Parc Omnisport Suzanne-Lenglen,0,4,48.83100634301432,2.2716931973144483,1800,3,3,,,,30,
+2703,Jardin naturel - Pierre-Emmanuel,0,4,48.8585705,2.3990238999999747,1200,3,3,,,,20,
+2761,Jardins d'Éole,0,4,48.8873463,2.367083600000001,1200,3,3,,,,20,
+2779,Bois de Boulogne,0,4,48.86244019999999,2.249172700000031,5400,4,4,,,,90,
+2780,Pré-Catelan et jardin Shakespeare,0,4,48.866304,2.25483399999996,3600,3,3,,,,60,
+2817,Parc Clichy-Batignolles - Martin-Luther-King,0,4,48.8890095,2.315883500000041,1800,3,3,,,,30,
+2825,Square du Vert-Galant,0,4,48.85704,2.341348,900,3,3,,,,15,
+2892,Musée Zadkine,0,2,48.84288,2.3338,5400,3,3,,,,90,
+2894,Crypte archéologique de l'île de la Cité,0,3;6,48.853588,2.348905,3600,4,4,,,,60,
+5044,Jardins Abbé-Pierre - Grands-Moulins,0,4,48.8301077,2.38052219999997,3600,3,3,,,,60,
+5059,Musée des égouts,0,2,48.86263872607444,2.302555611183948,5400,2,2,,,,90,
+6337,Jardin Serge Gainsbourg,0,4,48.8777899,2.4082014000000527,3600,3,3,,,,60,
+6597,Ferme de Paris,0,6,48.8223502,2.444718200000011,2700,3,3,,,,45,
+6598,Bois de Vincennes,0,4,48.8303772,2.45001579999996,3600,4,4,,,,60,
+16592,Pelouses de l'hippodrome d'Auteuil,0,4,48.8521299,2.2541267999999945,1800,3,3,,,,30,
+17513,Parc zoologique de Paris,0,4,48.8322495,2.4156282999999803,1800,3,3,,,,30,
