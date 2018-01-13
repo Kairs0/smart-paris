@@ -31,4 +31,5 @@
     <string name="title_activity_error">ErrorActivity</string>
     <string name="show_details">Etapes du trajet</string>
     <string name="speech">Lancer la lecture</string>
+    <string name="stop_speech">Arrêter la lecture</string>
 </resources>

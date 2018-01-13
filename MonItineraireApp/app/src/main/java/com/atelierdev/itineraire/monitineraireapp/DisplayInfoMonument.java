@@ -140,6 +140,9 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
     public void playText(View v) {
         TextView textView = findViewById(R.id.resultatInformation);
         String toSpeak=textView.getText().toString();
+        if (toSpeak.length()>4000) {
+            toSpeak=toSpeak.substring(0,3999);
+        }
         engine.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
 
     }
@@ -153,11 +156,20 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
             engine.setLanguage(Locale.FRENCH);
             engine.setPitch(1);
         }
+
+        else {
+            Toast.makeText(getApplicationContext(), "Impossible de lire le texte", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void stopPlaying(View view) {
+        engine.stop();
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
+        engine.stop();
         engine.shutdown();
     }
 
