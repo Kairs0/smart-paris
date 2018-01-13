@@ -1,14 +1,12 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,8 +16,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 
 public class DisplayInfoMonument extends AppCompatActivity implements TextToSpeech.OnInitListener{
@@ -38,15 +41,26 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
         Intent intent = getIntent();
         String monument = intent.getStringExtra(MainActivity.EXTRA_MONUMENT_ID);
 
-        Thread t1 = new TestThread("A", monument);
-        t1.start();
-        engine = new TextToSpeech(this, this);
-        /*try {
-            t1.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } */
+        Thread getInfoMonumentThread = new ApiParisThread("ThreadInfoMonument", monument);
 
+        engine = new TextToSpeech(this, this);
+
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        try{
+            getInfoMonumentThread.start();
+
+            // On règle ici le tps max d'attente avant d'afficher l'erreur connection perdue
+            Future<?> f = service.submit(getInfoMonumentThread);
+            // 5 secondes ici
+            f.get(5, TimeUnit.SECONDS);
+
+            getInfoMonumentThread.join();
+
+        } catch (InterruptedException|ExecutionException e){
+            UpdateTextView("Les informations n'ont pas été trouvées suite à un problème interne à l'application");
+        } catch (TimeoutException e){
+            UpdateTextView("La connection internet a été perdue durant la récupération des informations.");
+        }
     }
 
     public void UpdateTextView(String result) {
@@ -84,7 +98,7 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
     }
 
 
-    public class TestThread extends Thread {
+    public class ApiParisThread extends Thread {
         private String _monument;
         public String result = "";
 
@@ -92,7 +106,7 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
             return result;
         }
 
-        public TestThread(String name, String monument) {
+        public ApiParisThread(String name, String monument) {
             super(name);
             _monument = monument;
         }
@@ -127,8 +141,8 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
 
                         Log.d("Resultat", result);
 
-                        String test = GetStringFromGetEquipmentRequest(result);
-                        UpdateTextView(test);
+                        String cleanResult = GetStringFromGetEquipmentRequest(result);
+                        UpdateTextView(cleanResult);
                     }
                 }
             } catch (Exception e) {

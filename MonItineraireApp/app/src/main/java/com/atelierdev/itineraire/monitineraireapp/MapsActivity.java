@@ -105,7 +105,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             listPointsInt.add(pointInt);
         }
 
-        // Apelle l'api. Voir documentation dans GoogleApiThread
+        // Apelle l'api direction. Voir documentation dans GoogleApiThread
         GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking", listPointsInt);
         Thread callThread = new Thread(api);
 
