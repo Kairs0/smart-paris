@@ -20,7 +20,7 @@ import java.util.List;
 public abstract class DatabaseHandler {
 
     public static boolean Initialize(Context context){
-       // Monument.deleteAll(Monument.class); //On supprime anciennes donnees
+        Monument.deleteAll(Monument.class); //On supprime anciennes donnees
         AssetManager assetManager = context.getAssets(); //Pour recuperer fichier dans dossiers "assets"
 
         try{
@@ -30,7 +30,6 @@ public abstract class DatabaseHandler {
             String line = "";
             while ((line = bReader.readLine()) != null) {
                 try {
-                    Log.d("types", line);
                     if (line != null) {
                         // On recupere les differents champs
                         String[] properties = line.split(",+");
@@ -38,10 +37,10 @@ public abstract class DatabaseHandler {
                         String Name = properties[1];
                         int Category = Integer.parseInt(properties[2]);
                         String Types = properties[3];
-                        double Lat = Double.parseDouble(properties[6]);
-                        double Long = Double.parseDouble(properties[7]);
-                        int visitTime = Integer.parseInt(properties[9]);
-                        int Rating = Integer.parseInt(properties[10]);
+                        double Lat = Double.parseDouble(properties[4]);
+                        double Long = Double.parseDouble(properties[5]);
+                        int visitTime = Integer.parseInt(properties[6]);
+                        int Rating = Integer.parseInt(properties[7]);
 
                         Monument new_monument = new Monument(monument_id, Name, Category, Types, Lat, Long, Rating, visitTime);
                         new_monument.save();

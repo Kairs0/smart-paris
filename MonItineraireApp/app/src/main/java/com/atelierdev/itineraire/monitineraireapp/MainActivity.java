@@ -1,15 +1,10 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -19,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,7 +24,9 @@ import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,23 +38,20 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_POINTA = "com.atelierdev.itineraire.monitineraireapp.pointA";
     public static final String EXTRA_POINTB = "com.atelierdev.itineraire.monitineraireapp.pointB";
     public static final String EXTRA_POINTSUPP = "com.atelierdev.itineraire.monitineraireapp.pointInt";
-//    public static final String EXTRA_MONUMENT = "com.atelierdev.itineraire.monitineraireapp.monument";
+    public static final String EXTRA_MONUMENT_ID = "com.atelierdev.itineraire.monitineraireapp.monument_id";
     public static final String TEMPS_DISPONIBLE_H = "com.atelierdev.itineraire.monitineraireapp.temps_disponible_h";
     public static final String TEMPS_DISPONIBLE_MIN = "com.atelierdev.itineraire.monitineraireapp.temps_disponible_min";
 
     private boolean useMyLocForMap = false;
     private boolean useWayPoint = false;
 
-    private boolean type1 = true;
-    private boolean type2 = true;
-    private boolean type3 = true;
-    private boolean type4 = true;
-    private boolean type5 = true;
-    private boolean type6 = true;
+    public static boolean type1 = true;
+    public static boolean type2 = true;
+    public static boolean type3 = true;
+    public static boolean type4 = true;
+    public static boolean type5 = true;
+    public static boolean type6 = true;
 
-    //Location
-    // https://stackoverflow.com/questions/42218419/how-do-i-implement-the-locationlistener
-    // https://developer.android.com/reference/android/location/LocationManager.html#getLastKnownLocation(java.lang.String)
     LocationManager locationManager;
     Context mContext;
 
@@ -79,61 +72,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //On initialise la base de données (pour l'instant systématique mais voir à quelle frquence on le fait)
+        // Initialise la base de données (pour l'instant systématique mais voir à quelle frquence on le fait)
         DatabaseHandler.Initialize(getBaseContext());
         
-        //Récupération du Spinner déclaré dans le fichier main.xml de res/layout
-        spinnerhour = findViewById(R.id.dureehour);
-        spinnermin = findViewById(R.id.dureemin);
-        //Création d'une liste d'élément à mettre dans le Spinner
-        List hourList = new ArrayList();
-        hourList.add("0h");
-        hourList.add("1h");
-        hourList.add("2h");
-        hourList.add("3h");
-        hourList.add("4h");
-        hourList.add("5h");
-        hourList.add("6h");
-
-        List minList = new ArrayList();
-        minList.add("0min");
-        minList.add("10min");
-        minList.add("20min");
-        minList.add("30min");
-        minList.add("40min");
-        minList.add("50min");
-
-		/*Le Spinner a besoin d'un adapter pour sa presentation alors on lui passe le context(this) et
-                un fichier de presentation par défaut( android.R.layout.simple_spinner_item)
-		Avec la liste des elements */
-        ArrayAdapter adapterhour = new ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                hourList
-        );
-
-
-               /* On definit une présentation du spinner quand il est déroulé
-        adapterhour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
-        //Enfin on passe l'adapter au Spinner et c'est tout
-        spinnerhour.setAdapter(adapterhour);
-
-        ArrayAdapter adaptermin = new ArrayAdapter(
-                this,
-                android.R.layout.simple_spinner_item,
-                minList
-        );
-
-
-               /* On definit une présentation du spinner quand il est déroulé
-        adaptermin.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); */
-        //Enfin on passe l'adapter au Spinner et c'est tout
-        spinnermin.setAdapter(adaptermin);
+        initSpinners();
 
         // Create location manager
         mContext=this;
         locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-        try {
+
+        if(!LocalizationHandler.isGrantedPermission(this))
+            LocalizationHandler.requestPermissionIfNotGranted(this);
+        /*try {
             locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER,
                     2000,
                     10, locationListenerGPS);
@@ -142,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }
         finally {
             isLocationEnabled();
-        }
+        }*/
 
         // Initialise les inputs avec auto complétion
         initAutoCompleteFragments();
@@ -178,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
     public void displayMap(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
 
-        String temps_disponible_h=spinnerhour.getSelectedItem().toString();
-        String temps_disponible_min=spinnermin.getSelectedItem().toString();
+        String temps_disponible_h = spinnerhour.getSelectedItem().toString();
+        String temps_disponible_min = spinnermin.getSelectedItem().toString();
         String pointA;
 
         // Initie point B. Si aucun point n'a été récupéré par l'autocomplétion, this.endPoint est null
@@ -210,71 +160,57 @@ public class MainActivity extends AppCompatActivity {
             searchAllowed = false;
         }
 
+        // Si l'utilisateur veut utiliser sa position mais qu'on ne la connait pas,
+        // il est impossible de calculer le trajet.
         if (this.useMyLocForMap){
-            // Si l'utilisateur veut utiliser sa position mais qu'on ne la connait pas,
-            // il est impossible de calculer le trajet.
             if (this.latitudeUser == null || this.longitudeUser == null){
                 searchAllowed = false;
             }
         }
 
         if(!searchAllowed){
-            // Si la recherche n'est pas possible, on affiche un message Toast
+            // Si la recherche n'est pas possible, on affiche un message Toast et on arrête l'opération
             String msg="Impossible d'effectuer une recherche !";
             Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
-        } else {
-            // on masque tout et on affiche la barre de chargement
-            changeVisibilityAll(View.GONE);
-            ProgressBar p = (ProgressBar)findViewById(R.id.progressBar1);
-            p.setVisibility(View.VISIBLE);
-
-            // On vide le startPoint et endPoint pour que les valeurs ne restent pas associées
-            // lors d'une seconde recherche incorrecte (ex l'utilisateur n'a pas respecifié de point)
-            this.startPoint = null;
-            this.endPoint = null;
-
-
-            // On reset la valeur "utiliser point intermediaire"
-            this.useWayPoint = false;
-
-            // On vide la valeur affichée des fragments d'autocomplétion
-            clearOutFragments();
-            // On démarre l'activité map.
-            intent.putExtra(EXTRA_POINTA, pointA);
-            intent.putExtra(EXTRA_POINTB, pointB);
-            intent.putExtra(EXTRA_POINTSUPP, pointInt);
-            intent.putExtra(TEMPS_DISPONIBLE_H, temps_disponible_h);
-            intent.putExtra(TEMPS_DISPONIBLE_MIN, temps_disponible_min);
-            startActivity(intent);
+            return;
         }
+
+        // on masque tout et on affiche la barre de chargement
+        changeVisibilityAll(View.GONE);
+        ProgressBar p = findViewById(R.id.progressBar1);
+        p.setVisibility(View.VISIBLE);
+
+        // On vide le startPoint et endPoint pour que les valeurs ne restent pas associées
+        // lors d'une seconde recherche incorrecte (ex l'utilisateur n'a pas respecifié de point)
+        this.startPoint = null;
+        this.endPoint = null;
+
+        // On reset la valeur "utiliser point intermediaire"
+        this.useWayPoint = false;
+
+        // On vide la valeur affichée des fragments d'autocomplétion
+        clearOutFragments();
+        // On démarre l'activité map.
+        intent.putExtra(EXTRA_POINTA, pointA);
+        intent.putExtra(EXTRA_POINTB, pointB);
+        intent.putExtra(EXTRA_POINTSUPP, pointInt);
+        intent.putExtra(TEMPS_DISPONIBLE_H, temps_disponible_h);
+        intent.putExtra(TEMPS_DISPONIBLE_MIN, temps_disponible_min);
+        startActivity(intent);
     }
 
     /**
-     * Called when the user press info button
-     */
- /*   public void displayInfo(View view){
-        Intent intent = new Intent(this, DisplayInfoMonument.class);
-        EditText editMonument = (EditText) findViewById(R.id.monument);
-
-
-        String monument = editMonument.getText().toString();
-
-        intent.putExtra(EXTRA_MONUMENT, monument);
-        startActivity(intent);
-    }*/
-
-    /**
      *
-     * BUTTONS AND CHECKBOX
-     * Méthodes "internes" à l'activité appelés lorsque l'utilisateur
+     * BUTTONS AND CHECKBOXS
+     * Méthodes "internes" à l'activité main appelés lorsque l'utilisateur
      * effectue une action sur une checkbox ou un bouton,
-     * ne menant pas à l'execution d'une activitées
+     * ne menant pas à l'execution d'une autre activitée
      *
      *
      */
 
     /**
-     * Méthode appelée lorsque l'utilisateur presse le point bouton ajour point int
+     * Méthode appelée lorsque l'utilisateur presse le point bouton ajouter point int
      */
     public void showFieldWayPoint(View view){
         TextView textViewInterm = findViewById(R.id.pointIntTextView);
@@ -309,15 +245,17 @@ public class MainActivity extends AppCompatActivity {
      * affiche la geolocalisation de l'utilisateur, sinon reaffiche l'input
      */
     public void onUseDeviceLocationClick(View view){
-        CheckBox checkBoxPos = (CheckBox) findViewById(R.id.use_loc);
-        EditText altText = (EditText) findViewById(R.id.pointA_alt);
+        CheckBox checkBoxPos = findViewById(R.id.use_loc);
+        EditText altText = findViewById(R.id.pointA_alt);
 
         Fragment fr = getFragmentManager().findFragmentById(R.id.pointA);
 
         try {
             if (checkBoxPos.isChecked()){
                 this.useMyLocForMap = true;
-                updateLoc();
+                double[] latlng = LocalizationHandler.getLatLng(this, locationManager);
+                setLatitudeUser(latlng[0]);
+                setLongitudeUser(latlng[1]);
                 replacePointAfragmentByAlt();
             } else {
                 altText.setText("");
@@ -407,54 +345,10 @@ public class MainActivity extends AppCompatActivity {
      *
      */
 
-
-
-    /**
-     * Essaie de récuperer la dernière position connue
-      */
-    private void updateLoc() {
-        try {
-            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (location != null){
-                setLatitudeUser(location.getLatitude());
-                setLongitudeUser(location.getLongitude());
-            }
-        } catch (SecurityException e) {
-            Log.d("updateLoc_err", e.getMessage());
-
-        }
-    }
-
-    // Location: initialise le gps listener qui va être utilisé lors de l'initalisation dans onCreate
-    LocationListener locationListenerGPS = new LocationListener() {
-        @Override
-        public void onLocationChanged(android.location.Location location) {
-            double latitude=location.getLatitude();
-            setLatitudeUser(latitude);
-            double longitude=location.getLongitude();
-            setLongitudeUser(longitude);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    };
-
     // Check si la geoloc est active sur l'appareil de l'utilisateur
     // Appelée uniquement sur onCreate
     // TODO: voir si utile -> l'application peut elle être utilisée sans localisation?
-    private void isLocationEnabled() {
+    /*private void isLocationEnabled() {
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             AlertDialog.Builder alertDialog=new AlertDialog.Builder(mContext);
             alertDialog.setTitle("Activer la localisation");
@@ -473,9 +367,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alert=alertDialog.create();
             alert.show();
         }
-    }
-
-
+    }*/
 
     /**
      * Methode utilisée pour changer la visibilté de tous les éléments de la main page,
@@ -546,6 +438,56 @@ public class MainActivity extends AppCompatActivity {
         editPointAalt.setVisibility(value);
     }
 
+    private void initSpinners(){
+        //Récupération du Spinner déclaré dans le fichier main.xml de res/layout
+        spinnerhour = findViewById(R.id.dureehour);
+        spinnermin = findViewById(R.id.dureemin);
+        //Création d'une liste d'élément à mettre dans le Spinner
+        List hourList = new ArrayList();
+        hourList.add("0h");
+        hourList.add("1h");
+        hourList.add("2h");
+        hourList.add("3h");
+        hourList.add("4h");
+        hourList.add("5h");
+        hourList.add("6h");
+
+        List minList = new ArrayList();
+        minList.add("0min");
+        minList.add("10min");
+        minList.add("20min");
+        minList.add("30min");
+        minList.add("40min");
+        minList.add("50min");
+
+		/*Le Spinner a besoin d'un adapter pour sa presentation alors on lui passe le context(this) et
+                un fichier de presentation par défaut( android.R.layout.simple_spinner_item)
+		Avec la liste des elements */
+        ArrayAdapter adapterhour = new ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                hourList
+        );
+
+
+               /* On definit une présentation du spinner quand il est déroulé
+        adapterhour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);*/
+        //Enfin on passe l'adapter au Spinner et c'est tout
+        spinnerhour.setAdapter(adapterhour);
+
+        ArrayAdapter adaptermin = new ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                minList
+        );
+
+
+               /* On definit une présentation du spinner quand il est déroulé
+        adaptermin.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); */
+        //Enfin on passe l'adapter au Spinner et c'est tout
+        spinnermin.setAdapter(adaptermin);
+    }
+
     /**
      * Méthode utilisée pour initialiser la page
      */
@@ -595,8 +537,19 @@ public class MainActivity extends AppCompatActivity {
         * Filter: allows returning only results with a precise address.
         */
         AutocompleteFilter addressFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
+//                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
                 .build();
+
+        // contrainte sur ile de france (rectangle approx)
+        // sud ouest : 48°13'38.0"N 1°25'51.1"E
+        // nord est : 49°09'45.6"N 3°17'54.7"E
+        LatLngBounds rectangleIleDeFrance = new LatLngBounds(
+                new LatLng(48.13380, 1.25511), new LatLng(49.09456, 3.17547)
+        );
+        autocompleteStartPoint.setBoundsBias(rectangleIleDeFrance);
+        autocompleteEndPoint.setBoundsBias(rectangleIleDeFrance);
+        autocompleteWayPathPoint.setBoundsBias(rectangleIleDeFrance);
 
         autocompleteStartPoint.setFilter(addressFilter);
         autocompleteEndPoint.setFilter(addressFilter);

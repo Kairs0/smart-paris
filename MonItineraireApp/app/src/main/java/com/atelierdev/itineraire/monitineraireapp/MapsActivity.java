@@ -1,5 +1,6 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,6 +15,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -21,6 +24,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 import org.json.JSONException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -30,10 +34,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static android.location.Location.distanceBetween;
+import static com.atelierdev.itineraire.monitineraireapp.MainActivity.EXTRA_MONUMENT_ID;
+
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    public static final String EXTRA_TRAJET = "com.atelierdev.itineraire.monitineraireapp.trajet";
+    public String trajet = "Voici les étapes de votre trajet";
     private GoogleMap mMap;
 
     @Override
@@ -57,6 +65,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -68,6 +77,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String pointInt = intent.getStringExtra(MainActivity.EXTRA_POINTSUPP);
         String temps_disponible_h = intent.getStringExtra(MainActivity.TEMPS_DISPONIBLE_H);
         String temps_disponible_min = intent.getStringExtra(MainActivity.TEMPS_DISPONIBLE_MIN);
+
+        // Récupère la liste des types qui ont été sélectionné
+        List<String> types = new ArrayList<>();
+        if(MainActivity.type1)
+            types.add("%1%");
+        if(MainActivity.type2)
+            types.add("%2%");
+        if(MainActivity.type3)
+            types.add("%3%");
+        if(MainActivity.type4)
+            types.add("%4%");
+        if(MainActivity.type5)
+            types.add("%5%");
+        if(MainActivity.type6)
+            types.add("%6%");
+
+        if(LocalizationHandler.isGrantedPermission(this))
+        {
+            mMap.setMyLocationEnabled(true);
+        }
+
 
         // Transforme le point int en une liste pour pouvoir le passer au thread api
         List<String> listPointsInt = new ArrayList<>();
@@ -114,8 +144,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         List<LatLng> pointsPath = manageJson.getCoordinatesLatLng();
 
-        // set camera on start point
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsPath.get(0), 18));
+        //Regler la camera pour afficher tout le trajet
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(pointsPath.get(0));
+        builder.include(pointsPath.get(pointsPath.size()-1));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 20));
 
         putMarkerOnImportantPoints(pointsPath, pointInt);
 
@@ -165,30 +198,62 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         PolygonOptions rectOptions = new PolygonOptions().addAll(poly).strokeColor(Color.argb(0, 50, 0, 255)).fillColor(Color.argb(70, 50, 0, 255));
         Polygon polygon = mMap.addPolygon(rectOptions);
 
-        //Liste de monuments
-        List<LatLng> liste_monuments = new ArrayList<LatLng>();
-        List<Monument> allMonuments = Monument.listAll(Monument.class);
-        for (Monument monument : allMonuments) {
-            LatLng m = new LatLng(monument.getLat(), monument.getLon());
-            liste_monuments.add(m);
+
+        //Liste de monuments obtenu via appel à la base de données
+        List<Monument> allMonuments = new ArrayList<Monument>();
+        String[] types_arg = types.toArray(new String[0]);
+        String query = "SELECT * FROM Monument WHERE types LIKE ?"; //On écrit la requête à envoyer à la base de données
+        for(int i=1;i<types_arg.length;i++){
+            query += " OR types LIKE ?";
         }
+        query += " ORDER BY rating";
+        List<Monument> allMonumentsOfType = Monument.findWithQuery(Monument.class, query, types_arg);
+        Log.d("Monuments", String.valueOf(allMonumentsOfType.size()));
+        allMonuments.addAll(allMonumentsOfType);
 
-        List<LatLng> selected_monuments = new ArrayList<LatLng>();
+        List<Monument> selected_monuments = new ArrayList<Monument>();
 
+        //Dictionnaire pour associer les ids (valeur) des monuments à leur titre (clé) et les récupérer lors d'un clic sur l'étiquette
+        final HashMap<String, String> markerIds = new HashMap<>();
 
-        // Si le monument est dans le rectangle il est ajouté à la liste des monuments sélectionnés et son marqueur est vert (sinon il est jaune)
-        for (int i = 0; i < liste_monuments.size(); i++) {
-            if (PolyUtil.containsLocation(liste_monuments.get(i), poly, true)) {
-                mMap.addMarker(new MarkerOptions().position(liste_monuments.get(i)).title("Le point est dans la zone").icon(BitmapDescriptorFactory
+        //Ajoute un marqueur vert aux monuments qui sont dans la zone et un marqueur jaune sinon
+        for (int i = 0; i < allMonuments.size(); i++) {
+            Monument monument = allMonuments.get(i);
+            LatLng latlng = new LatLng(monument.getLat(), monument.getLon());
+            String monument_id_str = Integer.toString(monument.getMonumentId());
+            if (PolyUtil.containsLocation(latlng, poly, true)) {
+                mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                selected_monuments.add(liste_monuments.get(i));
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(latlng)
+                        .title(monument.getName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                markerIds.put(marker.getTitle(), monument_id_str);
+                selected_monuments.add(monument);
             } else {
-                mMap.addMarker(new MarkerOptions().position(liste_monuments.get(i)).title("Le point n'est PAS dans la zone").icon(BitmapDescriptorFactory
+                Marker marker = mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                markerIds.put(marker.getTitle(), monument_id_str);
             }
         }
-        Log.d("myTag2", "Monuments sélectionnés" + selected_monuments);
 
+        googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Intent intent = new Intent(getBaseContext(), DisplayInfoMonument.class);
+                intent.putExtra(EXTRA_MONUMENT_ID, markerIds.get(marker.getTitle()));
+                // Starting the  Activity
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void displaySteps(View view){
+        Intent intent = new Intent(getBaseContext(), DisplayStepsActivity.class);
+        intent.putExtra(EXTRA_TRAJET, trajet);
+        // Starting the  Activity
+        startActivity(intent);
     }
 
     private void setErrorMessage(String message) {
@@ -202,9 +267,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void putMarkerOnImportantPoints(List<LatLng> pointsPath, String wayPoint){
         // Ajoute un marqueur pour point de départ, arrivée et intermédiaire
-        mMap.addMarker(new MarkerOptions().position(pointsPath.get(0)).title("Point"));
+        mMap.addMarker(new MarkerOptions().position(pointsPath.get(0)).title("Départ"));
         int indexLastPoint = pointsPath.size() - 1;
-        mMap.addMarker(new MarkerOptions().position(pointsPath.get(indexLastPoint)).title("Point"));
+        mMap.addMarker(new MarkerOptions().position(pointsPath.get(indexLastPoint)).title("Arrivée"));
         //Ajoute un marqueur pour le point intérmédiaire
         if (!wayPoint.equals("")) {
             String[] arrayPointInt = wayPoint.split(",");
