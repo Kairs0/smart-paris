@@ -105,7 +105,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             listPointsInt.add(pointInt);
         }
 
-        // Apelle l'api. Voir documentation dans GoogleApiThread
+        // Apelle l'api direction. Voir documentation dans GoogleApiThread
         GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking", listPointsInt);
         Thread callThread = new Thread(api);
 
@@ -241,6 +241,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onInfoWindowClick(Marker marker) {
+                if(marker.getTitle().equals("Départ") || marker.getTitle().equals("Arrivée")){
+                    return;
+                }
+
                 Intent intent = new Intent(getBaseContext(), DisplayInfoMonument.class);
                 intent.putExtra(EXTRA_MONUMENT_ID, markerIds.get(marker.getTitle()));
                 // Starting the  Activity

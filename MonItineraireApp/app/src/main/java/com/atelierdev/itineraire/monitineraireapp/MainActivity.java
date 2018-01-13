@@ -423,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
         pointIntTxtView.setVisibility(value);
         pointBTxtView.setVisibility(value);
 //        txtViewMonument.setVisibility(value);
-        buttonAltPath.setVisibility(value);
+//        buttonAltPath.setVisibility(value);
         displayPath.setVisibility(value);
 //        infoMunum.setVisibility(value);
         checkBoxPos.setVisibility(value);
@@ -444,7 +444,6 @@ public class MainActivity extends AppCompatActivity {
         spinnermin = findViewById(R.id.dureemin);
         //Création d'une liste d'élément à mettre dans le Spinner
         List hourList = new ArrayList();
-        hourList.add("0h");
         hourList.add("1h");
         hourList.add("2h");
         hourList.add("3h");
