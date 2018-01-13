@@ -241,6 +241,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onInfoWindowClick(Marker marker) {
+                if(marker.getTitle().equals("Départ") || marker.getTitle().equals("Arrivée")){
+                    return;
+                }
+
                 Intent intent = new Intent(getBaseContext(), DisplayInfoMonument.class);
                 intent.putExtra(EXTRA_MONUMENT_ID, markerIds.get(marker.getTitle()));
                 // Starting the  Activity
