@@ -79,6 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String temps_disponible_min = intent.getStringExtra(MainActivity.TEMPS_DISPONIBLE_MIN);
 
         // Récupère la liste des types qui ont été sélectionné
+        //TODO: rendre plus lisible le nom des types
         List<String> types = new ArrayList<>();
         if(MainActivity.type1)
             types.add("%1%");
@@ -98,38 +99,118 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setMyLocationEnabled(true);
         }
 
+        //Liste de monuments obtenu via appel à la base de données
+        List<Monument> allMonuments = new ArrayList<Monument>();
+        String[] types_arg = types.toArray(new String[0]);
+        String query = "SELECT * FROM Monument WHERE types LIKE ?"; //On écrit la requête à envoyer à la base de données
+        for(int i=1;i<types_arg.length;i++){
+            query = query.concat(" OR types LIKE ?");
+        }
+        query = query.concat(" ORDER BY rating");
+        List<Monument> allMonumentsOfType = Monument.findWithQuery(Monument.class, query, types_arg);
+        Log.d("Monuments", String.valueOf(allMonumentsOfType.size()));
+        allMonuments.addAll(allMonumentsOfType);
+
 
         // Transforme le point int en une liste pour pouvoir le passer au thread api
+        // Deprecated (on ne propose plus le point intermédiaire)
         List<String> listPointsInt = new ArrayList<>();
         if (!pointInt.equals("")) {
             listPointsInt.add(pointInt);
         }
 
-        // Apelle l'api direction. Voir documentation dans GoogleApiThread
-        GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking", listPointsInt);
-        Thread callThread = new Thread(api);
+        /****
+         * CALCUL DU TRAJET avec algo:
+         * on récupère dans un premier temps l'ensemble des données nécessaires
+         */
+        int temps_souhaite_sec = Integer.parseInt(temps_disponible_h.replaceAll("h", "")) * 60 * 60 +
+                Integer.parseInt(temps_disponible_min.replaceAll("min", "")) * 60;
 
-
-        ExecutorService service = Executors.newSingleThreadExecutor();
-        try {
-            callThread.start();
-
-            // We set here the time maximum for waiting the result from api
-            Future<?> f = service.submit(callThread);
-            f.get(5, TimeUnit.SECONDS);
-
-            callThread.join();
-        } catch (InterruptedException|ExecutionException e) {
-            setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
-            return;
-        } catch (TimeoutException t){
-            setErrorMessage("La connection internet a été perdue durant le calcul du trajet.");
+        // On appelle une premiere fois l'api direction pour récupérer la durée du trajet sans
+        // dévier de l'itinéraire de base
+        String jsonTime = callApiDirectionAndGetJson(pointA, pointB, "walking", new ArrayList<String>());
+        if (jsonTime.equals("0")){
             return;
         }
+        GoogleApiResultManager managerTime = new GoogleApiResultManager(jsonTime);
+        managerTime.calculTime();
+        int duree_trajet_base = managerTime.getDurationInSeconds();
+
+        // On appelle l'api matrix pour pouvoir récupérer l'ensemble des tps de parcours entre points d'int
+
+        List<String> allOrigins = new ArrayList<>();
+        List<String> allDestinations = new ArrayList<>();
+        List<String> ordre = new ArrayList<>();
+
+        for (Monument m : allMonuments){
+            String latLngStr = String.valueOf(m.getLat()) + "," + String.valueOf(m.getLon());
+            allOrigins.add(latLngStr);
+            allDestinations.add(latLngStr);
+            ordre.add(latLngStr);
+        }
+
+        String jsonMatrix = callApiMatrixAndGetJson(allOrigins, allDestinations, "walking");
+        if (jsonMatrix.equals("0")){
+            return;
+        }
+        MatrixApiResultManager manageJsonMatrix = new MatrixApiResultManager(jsonMatrix);
+        try {
+            manageJsonMatrix.calculTime();
+        } catch (JSONException e){
+            setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
+            return;
+        }
+        List<List<Integer>> matrice_temps = manageJsonMatrix.getTimesResult();
+
+        // TODO: refactor (point A, B pas utile ?)
+        LatLng pointAcoord = new LatLng(Double.parseDouble(pointA.split(",")[0]), Double.parseDouble(pointA.split(",")[1]));
+        LatLng pointBcoord = new LatLng(Double.parseDouble(pointB.split(",")[0]), Double.parseDouble(pointB.split(",")[1]));
+
+        Trajet trajetCalcul = new Trajet(duree_trajet_base, temps_souhaite_sec, allMonuments, pointAcoord, pointBcoord,
+                matrice_temps, ordre);
+
+        List<Monument> monumentsTrajet = trajetCalcul.getTrajet();
+
+        List<String> wayPointsForApi = new ArrayList<>();
+//        wayPointsForApi.add(pointA);
+        for (Monument monument : monumentsTrajet) {
+            wayPointsForApi.add(String.valueOf(monument.getLat()) + "," + monument.getLon());
+        }
+//        wayPointsForApi.add(pointB);
+
+        String finalJsonDir = callApiDirectionAndGetJson(pointA, pointB, "walking", wayPointsForApi);
 
 
-        String result = api.getResult();
-        GoogleApiResultManager manageJson = new GoogleApiResultManager(result);
+
+
+
+
+//        // Apelle l'api direction. Voir documentation dans GoogleApiThread
+//        // TODO: change with real values obtened from traj class algo
+//        GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking", listPointsInt);
+//        Thread callThread = new Thread(api);
+//
+//
+//        ExecutorService service = Executors.newSingleThreadExecutor();
+//        try {
+//            callThread.start();
+//
+//            // We set here the time maximum for waiting the result from api
+//            Future<?> f = service.submit(callThread);
+//            f.get(5, TimeUnit.SECONDS);
+//
+//            callThread.join();
+//        } catch (InterruptedException|ExecutionException e) {
+//            setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
+//            return;
+//        } catch (TimeoutException t){
+//            setErrorMessage("La connection internet a été perdue durant le calcul du trajet.");
+//            return;
+//        }
+
+
+//        String result = api.getResult();
+        GoogleApiResultManager manageJson = new GoogleApiResultManager(finalJsonDir);
 
         try {
             if (!manageJson.isStatusOk()) {
@@ -144,7 +225,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         List<LatLng> pointsPath = manageJson.getCoordinatesLatLng();
 
-        //Regler la camera pour afficher tout le trajet
+        //Règle la camera pour afficher tout le trajet
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(pointsPath.get(0));
         builder.include(pointsPath.get(pointsPath.size()-1));
@@ -199,17 +280,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Polygon polygon = mMap.addPolygon(rectOptions);
 
 
-        //Liste de monuments obtenu via appel à la base de données
-        List<Monument> allMonuments = new ArrayList<Monument>();
-        String[] types_arg = types.toArray(new String[0]);
-        String query = "SELECT * FROM Monument WHERE types LIKE ?"; //On écrit la requête à envoyer à la base de données
-        for(int i=1;i<types_arg.length;i++){
-            query += " OR types LIKE ?";
-        }
-        query += " ORDER BY rating";
-        List<Monument> allMonumentsOfType = Monument.findWithQuery(Monument.class, query, types_arg);
-        Log.d("Monuments", String.valueOf(allMonumentsOfType.size()));
-        allMonuments.addAll(allMonumentsOfType);
+
 
         List<Monument> selected_monuments = new ArrayList<Monument>();
 
@@ -267,6 +338,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TextView error = findViewById(R.id.map_error_message);
         error.setText(message);
         error.setVisibility(View.VISIBLE);
+    }
+
+    private String callApiMatrixAndGetJson(List<String> origins, List<String> destinations, String mode){
+        MatrixApiThread api = new MatrixApiThread(origins, destinations, mode);
+        Thread callThread = new Thread(api);
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        String result;
+        try {
+            callThread.start();
+
+            // We set here the time maximum for waiting the result from api
+            Future<?> f = service.submit(callThread);
+            f.get(5, TimeUnit.SECONDS);
+
+            callThread.join();
+            result = api.getResult();
+        } catch (InterruptedException|ExecutionException e) {
+            setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
+            result = "0";
+        } catch (TimeoutException t){
+            setErrorMessage("La connection internet a été perdue durant le calcul du trajet.");
+            result = "0";
+        }
+        return result;
+    }
+
+    private String callApiDirectionAndGetJson(String pointA, String pointB, String mode,  List<String> waypoints){
+        GoogleApiThread api = new GoogleApiThread(pointA, pointB, mode, waypoints);
+        Thread callThread = new Thread(api);
+
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        String result;
+        try {
+            callThread.start();
+
+            // We set here the time maximum for waiting the result from api
+            Future<?> f = service.submit(callThread);
+            f.get(5, TimeUnit.SECONDS);
+
+            callThread.join();
+            result = api.getResult();
+        } catch (InterruptedException|ExecutionException e) {
+            setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
+            result = "0";
+        } catch (TimeoutException t){
+            setErrorMessage("La connection internet a été perdue durant le calcul du trajet.");
+            result = "0";
+        }
+        return result;
     }
 
     private void putMarkerOnImportantPoints(List<LatLng> pointsPath, String wayPoint){

@@ -13,20 +13,20 @@ import java.util.List;
 
 public class Trajet {
     //Variables, constructor, getter, setter
-    public int temps_parcours; //temps de parcours du trajet en considérant la visite des monuments (en s)
-    public int duree_souhaitee; //temps de parcours souhaite par l'utilisateur (en s)
+    private int temps_parcours; //temps de parcours du trajet en considérant la visite des monuments (en s)
+    private int duree_souhaitee; //temps de parcours souhaite par l'utilisateur (en s)
 
-    public List<Monument> monuments_interet; // les monuments de la zone, correspondant aux choix de l'utilisateur
+    private List<Monument> monuments_interet; // les monuments de la zone, correspondant aux choix de l'utilisateur
 
-    public LatLng A;
-    public LatLng B;
-    public List<Monument> trajet; //liste des monuments à visiter dans l'ordre
+    private LatLng A;
+    private LatLng B;
+    private List<Monument> trajet; //liste des monuments à visiter dans l'ordre
 
-    public List<Integer> temps_de_visite; //du trajet reellement effectue
-    public List<Integer> temps_sous_parcours; //du trajet reellement effectue
+    private List<Integer> temps_de_visite; //du trajet reellement effectue
+    private List<Integer> temps_sous_parcours; //du trajet reellement effectue
 
-    public List<List<Integer>> matrice_temps; // matrice de tous les temps de parcours entre les monuments
-    public List<String> ordre_matrice; //pour récuperer facilement les temps de la matrice precedente
+    private List<List<Integer>> matrice_temps; // matrice de tous les temps de parcours entre les monuments
+    private List<String> ordre_matrice; //pour récuperer facilement les temps de la matrice precedente
 
     // A, B, temps de parcours de A à B, listes de monuments, matrice des distances
     public Trajet(int tps_parcours, int duree_souhaitee,  List<Monument> monuments_interet,
@@ -43,13 +43,16 @@ public class Trajet {
         this.matrice_temps = matrice_temps;
         this.ordre_matrice = ordre_matrice;
         construction_trajet();
+    }
 
+    public List<Monument> getTrajet() {
+        return trajet;
     }
 
     //Methode pour ajouter un monument au trajet
     public void construction_trajet() {
         //TODO parametre de temps minimal pour continuer à chercher?
-        while ((this.temps_parcours < this.duree_souhaitee) && (this.monuments_interet.isEmpty() == false)){
+        while ((this.temps_parcours < this.duree_souhaitee) && (!this.monuments_interet.isEmpty())){
             //on prend le monument avec le plus grand interet de la zone
             Monument monument = this.monuments_interet.remove(0);
 
@@ -127,6 +130,4 @@ public class Trajet {
         int t = this.matrice_temps.get(a).get(b);
         return t;
     }
-
-
 }
