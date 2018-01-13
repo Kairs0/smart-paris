@@ -177,7 +177,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double distance_restante = temps_restant * vitesse_topo;
 
         //Convertit la distance restante en degrés (lat et long) 1 metre = 0.000009° environ
+        //Facteur multiplicateur pour la largeur du rectangle
         double coeff = 0.000009 * distance_restante / 2;
+        //Facteur multiplicateur pour prendre un rectangle plus long que la distance Origine-Destination (dépasse de 100 m de chaque coté)
+        double coeff_2= 0.000009 * 200;
 
         //Calcule les sommets du rectangle
         double ux = destination.latitude - origine.latitude;
@@ -186,10 +189,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double uy_unitaire = uy / (Math.sqrt(Math.pow(ux, 2) + Math.pow(uy, 2)));
         double ux_unitaire_normal = -uy_unitaire;
         double uy_unitaire_normal = ux_unitaire;
-        LatLng S1 = new LatLng(origine.latitude + coeff * ux_unitaire_normal, origine.longitude + coeff * uy_unitaire_normal);
-        LatLng S2 = new LatLng(origine.latitude - coeff * ux_unitaire_normal, origine.longitude - coeff * uy_unitaire_normal);
-        LatLng S3 = new LatLng(destination.latitude + coeff * ux_unitaire_normal, destination.longitude + coeff * uy_unitaire_normal);
-        LatLng S4 = new LatLng(destination.latitude - coeff * ux_unitaire_normal, destination.longitude - coeff * uy_unitaire_normal);
+        LatLng S1 = new LatLng(origine.latitude - coeff_2*ux_unitaire + coeff * ux_unitaire_normal, origine.longitude - coeff_2*uy_unitaire + coeff * uy_unitaire_normal);
+        LatLng S2 = new LatLng(origine.latitude - coeff_2*ux_unitaire - coeff * ux_unitaire_normal, origine.longitude - coeff_2*uy_unitaire - coeff * uy_unitaire_normal);
+        LatLng S3 = new LatLng(destination.latitude + coeff_2*ux_unitaire + coeff * ux_unitaire_normal, destination.longitude + coeff_2*uy_unitaire + coeff * uy_unitaire_normal);
+        LatLng S4 = new LatLng(destination.latitude + coeff_2*ux_unitaire - coeff * ux_unitaire_normal, destination.longitude + coeff_2*uy_unitaire - coeff * uy_unitaire_normal);
+
+        //Si la largeur du rectangle est supérieure à la distance entre origine et destination on va chercher aussi des monuments qui ne sont pas placés le long du trajet
+        float[] largeur_rectangle = new float[]{12};
+        distanceBetween(S1.latitude, S1.longitude, S2.latitude, S2.longitude, largeur_rectangle);
+        if (largeur_rectangle[0]>distance_vol_oiseau_metres[0]) {
+            coeff = 0.000009 * distance_restante / 4;
+            coeff_2= coeff;
+            LatLng S1b = new LatLng(origine.latitude - coeff_2*ux_unitaire + coeff * ux_unitaire_normal, origine.longitude - coeff_2*uy_unitaire + coeff * uy_unitaire_normal);
+            LatLng S2b = new LatLng(origine.latitude - coeff_2*ux_unitaire - coeff * ux_unitaire_normal, origine.longitude - coeff_2*uy_unitaire - coeff * uy_unitaire_normal);
+            LatLng S3b = new LatLng(destination.latitude + coeff_2*ux_unitaire + coeff * ux_unitaire_normal, destination.longitude + coeff_2*uy_unitaire + coeff * uy_unitaire_normal);
+            LatLng S4b = new LatLng(destination.latitude + coeff_2*ux_unitaire - coeff * ux_unitaire_normal, destination.longitude + coeff_2*uy_unitaire - coeff * uy_unitaire_normal);
+            S1=S1b;
+            S2=S2b;
+            S3=S3b;
+            S4=S4b;
+        }
         List<LatLng> poly = new ArrayList<LatLng>();
         poly.add(S1);
         poly.add(S2);
