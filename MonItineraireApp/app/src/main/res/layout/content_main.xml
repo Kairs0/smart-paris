@@ -156,15 +156,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <!--<Button-->
-            <!--android:id="@+id/calculItineraire"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_vertical|center_horizontal"-->
-            <!--android:onClick="calculTrajet"-->
-            <!--android:text="@string/calc_button" />-->
+
             <Button
                 android:id="@+id/alternative_path"
+                android:visibility="invisible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|center_horizontal"

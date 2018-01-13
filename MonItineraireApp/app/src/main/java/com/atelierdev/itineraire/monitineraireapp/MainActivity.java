@@ -423,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
         pointIntTxtView.setVisibility(value);
         pointBTxtView.setVisibility(value);
 //        txtViewMonument.setVisibility(value);
-        buttonAltPath.setVisibility(value);
+//        buttonAltPath.setVisibility(value);
         displayPath.setVisibility(value);
 //        infoMunum.setVisibility(value);
         checkBoxPos.setVisibility(value);
