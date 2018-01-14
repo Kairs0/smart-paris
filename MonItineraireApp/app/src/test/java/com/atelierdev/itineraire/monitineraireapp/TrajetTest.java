@@ -132,10 +132,10 @@ public class TrajetTest {
         List<Monument> monum = new ArrayList<>();
         Trajet trajet_nul = new Trajet(this.temps_parcours, 7200, monum, this.A, this.B, this.matrice_temps, this.ordre_matrice);
         assertTrue(trajet_nul.getTrajet().isEmpty());
-        assertTrue(trajet_nul.temps_sous_parcours.size()==1);
-        assertTrue(trajet_nul.temps_sous_parcours.get(0)==6000);
-        assertTrue(trajet_nul.temps_de_visite.isEmpty());
-        assertTrue(trajet_nul.temps_parcours==trajet_nul.temps_sous_parcours.get(0));
+        assertTrue(trajet_nul.getTemps_sous_parcours().size()==1);
+        assertTrue(trajet_nul.getTemps_sous_parcours().get(0)==6000);
+        assertTrue(trajet_nul.getTemps_de_visite().isEmpty());
+        assertTrue(trajet_nul.getTemps_parcours()==trajet_nul.getTemps_sous_parcours().get(0));
         assertTrue(trajet_nul.get_temps("A", "cathedrale") == 4860);
         assertTrue(trajet_nul.get_temps("cathedrale", "palais") == 2640);
         assertTrue(trajet_nul.get_temps("palais", "cathedrale") == 2640);
@@ -145,12 +145,12 @@ public class TrajetTest {
     @Test
     public void testTrajetLong(){
         Trajet trajet_long = new Trajet(this.temps_parcours, 3000000, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
-        assertTrue(trajet_long.duree_souhaitee>=trajet_long.temps_parcours);
-        assertTrue(trajet_long.temps_parcours==15660);
+        assertTrue(trajet_long.getDuree_souhaitee()>=trajet_long.getTemps_parcours());
+        assertTrue(trajet_long.getTemps_parcours()==15660);
 
         assertTrue(trajet_long.getTrajet().size()==5);
-        assertTrue(trajet_long.temps_de_visite.size()==5);
-        assertTrue(trajet_long.temps_sous_parcours.size()==6);
+        assertTrue(trajet_long.getTemps_de_visite().size()==5);
+        assertTrue(trajet_long.getTemps_sous_parcours().size()==6);
 
         assertTrue(trajet_long.getTrajet().get(0)==fontaine);
         assertTrue(trajet_long.getTrajet().get(1)==statue);
@@ -158,65 +158,65 @@ public class TrajetTest {
         assertTrue(trajet_long.getTrajet().get(3)==cascade);
         assertTrue(trajet_long.getTrajet().get(4)==cathedrale);
 
-        assertTrue(trajet_long.temps_sous_parcours.get(0)==1320);
-        assertTrue(trajet_long.temps_sous_parcours.get(1)==1500);
-        assertTrue(trajet_long.temps_sous_parcours.get(2)==780);
-        assertTrue(trajet_long.temps_sous_parcours.get(3)==2340);
-        assertTrue(trajet_long.temps_sous_parcours.get(4)==1500);
-        assertTrue(trajet_long.temps_sous_parcours.get(5)==1320);
+        assertTrue(trajet_long.getTemps_sous_parcours().get(0)==1320);
+        assertTrue(trajet_long.getTemps_sous_parcours().get(1)==1500);
+        assertTrue(trajet_long.getTemps_sous_parcours().get(2)==780);
+        assertTrue(trajet_long.getTemps_sous_parcours().get(3)==2340);
+        assertTrue(trajet_long.getTemps_sous_parcours().get(4)==1500);
+        assertTrue(trajet_long.getTemps_sous_parcours().get(5)==1320);
 
-        assertTrue(trajet_long.temps_de_visite.get(0)==2100);
-        assertTrue(trajet_long.temps_de_visite.get(1)==300);
-        assertTrue(trajet_long.temps_de_visite.get(2)==3000);
-        assertTrue(trajet_long.temps_de_visite.get(3)==300);
-        assertTrue(trajet_long.temps_de_visite.get(4)==1200);
+        assertTrue(trajet_long.getTemps_de_visite().get(0)==2100);
+        assertTrue(trajet_long.getTemps_de_visite().get(1)==300);
+        assertTrue(trajet_long.getTemps_de_visite().get(2)==3000);
+        assertTrue(trajet_long.getTemps_de_visite().get(3)==300);
+        assertTrue(trajet_long.getTemps_de_visite().get(4)==1200);
 
     }
 
     @Test
     public void testTrajetCourt(){
         Trajet trajet_court = new Trajet(this.temps_parcours, 9600, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
-        assertTrue(trajet_court.duree_souhaitee>=trajet_court.temps_parcours);
-        assertTrue(trajet_court.temps_parcours==9540);
+        assertTrue(trajet_court.getDuree_souhaitee()>=trajet_court.getTemps_parcours());
+        assertTrue(trajet_court.getTemps_parcours()==9540);
 
         assertTrue(trajet_court.getTrajet().size()==2);
-        assertTrue(trajet_court.temps_de_visite.size()==2);
-        assertTrue(trajet_court.temps_sous_parcours.size()==3);
+        assertTrue(trajet_court.getTemps_de_visite().size()==2);
+        assertTrue(trajet_court.getTemps_sous_parcours().size()==3);
 
         assertTrue(trajet_court.getTrajet().get(0)==palais);
         assertTrue(trajet_court.getTrajet().get(1)==cathedrale);
 
-        assertTrue(trajet_court.temps_sous_parcours.get(0)==2280);
-        assertTrue(trajet_court.temps_sous_parcours.get(1)==2640);
-        assertTrue(trajet_court.temps_sous_parcours.get(2)==1320);
+        assertTrue(trajet_court.getTemps_sous_parcours().get(0)==2280);
+        assertTrue(trajet_court.getTemps_sous_parcours().get(1)==2640);
+        assertTrue(trajet_court.getTemps_sous_parcours().get(2)==1320);
 
-        assertTrue(trajet_court.temps_de_visite.get(0)==3000);
-        assertTrue(trajet_court.temps_de_visite.get(1)==300);
+        assertTrue(trajet_court.getTemps_de_visite().get(0)==3000);
+        assertTrue(trajet_court.getTemps_de_visite().get(1)==300);
 
     }
 
     @Test
     public void testTrajetMoyen(){
         Trajet trajet_moyen = new Trajet(this.temps_parcours, 10000, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
-        assertTrue(trajet_moyen.duree_souhaitee>=trajet_moyen.temps_parcours);
-        assertTrue(trajet_moyen.temps_parcours==10000);
+        assertTrue(trajet_moyen.getDuree_souhaitee()>=trajet_moyen.getTemps_parcours());
+        assertTrue(trajet_moyen.getTemps_parcours()==10000);
 
         assertTrue(trajet_moyen.getTrajet().size()==3);
-        assertTrue(trajet_moyen.temps_de_visite.size()==3);
-        assertTrue(trajet_moyen.temps_sous_parcours.size()==4);
+        assertTrue(trajet_moyen.getTemps_de_visite().size()==3);
+        assertTrue(trajet_moyen.getTemps_sous_parcours().size()==4);
 
         assertTrue(trajet_moyen.getTrajet().get(0)==statue);
         assertTrue(trajet_moyen.getTrajet().get(1)==palais);
         assertTrue(trajet_moyen.getTrajet().get(2)==cathedrale);
 
-        assertTrue(trajet_moyen.temps_sous_parcours.get(0)==1860);
-        assertTrue(trajet_moyen.temps_sous_parcours.get(1)==780);
-        assertTrue(trajet_moyen.temps_sous_parcours.get(2)==2640);
-        assertTrue(trajet_moyen.temps_sous_parcours.get(3)==1320);
+        assertTrue(trajet_moyen.getTemps_sous_parcours().get(0)==1860);
+        assertTrue(trajet_moyen.getTemps_sous_parcours().get(1)==780);
+        assertTrue(trajet_moyen.getTemps_sous_parcours().get(2)==2640);
+        assertTrue(trajet_moyen.getTemps_sous_parcours().get(3)==1320);
 
-        assertTrue(trajet_moyen.temps_de_visite.get(0)==100);
-        assertTrue(trajet_moyen.temps_de_visite.get(1)==3000);
-        assertTrue(trajet_moyen.temps_de_visite.get(2)==300);
+        assertTrue(trajet_moyen.getTemps_de_visite().get(0)==100);
+        assertTrue(trajet_moyen.getTemps_de_visite().get(1)==3000);
+        assertTrue(trajet_moyen.getTemps_de_visite().get(2)==300);
 
     }
 }
