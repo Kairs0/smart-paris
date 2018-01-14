@@ -172,7 +172,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (trajetCalulcator.getTemps_de_visite().get(k-1)<= 300) {
                 this.trajet += " Prenez des photos, vous avez juste le temps!";
             }
-            this.trajet += "\n\nTemps de marche estimé : " + trajetCalulcator.getTemps_sous_parcours().get(k);
+            this.trajet += "\n\nTemps de marche estimé : " + trajetCalulcator.getTemps_sous_parcours().get(k)/60 + " min";
         }
 
         String finalJsonDir = callApiDirectionAndGetJson(pointA, pointB, "walking", wayPointsForApi);
