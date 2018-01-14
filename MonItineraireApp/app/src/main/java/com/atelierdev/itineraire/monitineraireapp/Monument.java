@@ -96,4 +96,6 @@ public class Monument extends SugarRecord<Monument>{
         this.rating = rating;
     }
 
+    public String LatLngtoString() { return (String.valueOf(this.lat) + ";" + String.valueOf(this.lon)); }
+
 }

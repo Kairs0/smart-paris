@@ -15,12 +15,14 @@ import java.util.List;
 
 public class TrajetTest {
 
-    private Monument fontaine = new Monument(0, "fontaine", 1, "1", 0.0, 0.0, 2, 1800);
-    private Monument palais = new Monument(1, "palais", 1, "1", 0.0, 0.0, 5, 2700);
-    private Monument cathedrale = new Monument(2, "cathedrale", 1, "1", 0.0, 0.0, 4, 900);
-    private Monument statue = new Monument(3, "statue", 1, "1", 0.0, 0.0, 2, 0);
-    private Monument cascade = new Monument(0, "cascade", 1, "1", 0.0, 0.0, 2, 0);
+    private Monument fontaine = new Monument(0, "fontaine", 1, "1", 2.0, 2.0, 2, 1800);
+    private Monument palais = new Monument(1, "palais", 1, "1", 3.0, 3.0, 5, 2700);
+    private Monument cathedrale = new Monument(2, "cathedrale", 1, "1", 4.0, 4.0, 4, 900);
+    private Monument statue = new Monument(3, "statue", 1, "1", 5.0, 5.0, 2, 0);
+    private Monument cascade = new Monument(0, "cascade", 1, "1", 6.0, 6.0, 2, 0);
 
+    private String A = "0.0;0.0";
+    private String B = "1.0;1.0";
     private List<Monument> monuments = new ArrayList<Monument>();
 
     private List<List<Integer>> matrice_temps = new ArrayList();
@@ -113,13 +115,13 @@ public class TrajetTest {
         this.matrice_temps.add(l7);
 
         //filling ordre_matrice with the names of the monuments in order
-        this.ordre_matrice.add("A");
-        this.ordre_matrice.add("B");
-        this.ordre_matrice.add("palais");
-        this.ordre_matrice.add("cathedrale");
-        this.ordre_matrice.add("cascade");
-        this.ordre_matrice.add("fontaine");
-        this.ordre_matrice.add("statue");
+        this.ordre_matrice.add("0.0;0.0");
+        this.ordre_matrice.add("1.0;1.0");
+        this.ordre_matrice.add(palais.LatLngtoString());
+        this.ordre_matrice.add(cathedrale.LatLngtoString());
+        this.ordre_matrice.add(cascade.LatLngtoString());
+        this.ordre_matrice.add(fontaine.LatLngtoString());
+        this.ordre_matrice.add(statue.LatLngtoString());
     }
 
 
@@ -127,21 +129,21 @@ public class TrajetTest {
     @Test
     public void testTrajetVide(){
         List<Monument> monum = new ArrayList<>();
-        Trajet trajet_nul = new Trajet(this.temps_parcours, 7200, monum, this.matrice_temps, this.ordre_matrice);
+        Trajet trajet_nul = new Trajet(this.temps_parcours, 7200, monum, this.A, this.B, this.matrice_temps, this.ordre_matrice);
         assertTrue(trajet_nul.getTrajet().isEmpty());
         assertTrue(trajet_nul.getTemps_sous_parcours().size()==1);
         assertTrue(trajet_nul.getTemps_sous_parcours().get(0)==6000);
         assertTrue(trajet_nul.getTemps_de_visite().isEmpty());
         assertTrue(trajet_nul.getTemps_parcours()==trajet_nul.getTemps_sous_parcours().get(0));
-        assertTrue(trajet_nul.get_temps("A", "cathedrale") == 4860);
-        assertTrue(trajet_nul.get_temps("cathedrale", "palais") == 2640);
-        assertTrue(trajet_nul.get_temps("palais", "cathedrale") == 2640);
-        assertTrue(trajet_nul.get_temps("cathedrale", "B") == 1320);
+        assertTrue(trajet_nul.get_temps("0.0;0.0",  cathedrale.LatLngtoString()) == 4860);
+        assertTrue(trajet_nul.get_temps(cathedrale.LatLngtoString(), palais.LatLngtoString()) == 2640);
+        assertTrue(trajet_nul.get_temps(palais.LatLngtoString(), cathedrale.LatLngtoString()) == 2640);
+        assertTrue(trajet_nul.get_temps(cathedrale.LatLngtoString(), "1.0;1.0") == 1320);
     }
 
     @Test
     public void testTrajetLong(){
-        Trajet trajet_long = new Trajet(this.temps_parcours, 3000000, this.monuments, this.matrice_temps, this.ordre_matrice);
+        Trajet trajet_long = new Trajet(this.temps_parcours, 3000000, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
         assertTrue(trajet_long.getDuree_souhaitee()>=trajet_long.getTemps_parcours());
         assertTrue(trajet_long.getTemps_parcours()==15660);
 
@@ -172,7 +174,7 @@ public class TrajetTest {
 
     @Test
     public void testTrajetCourt(){
-        Trajet trajet_court = new Trajet(this.temps_parcours, 9600, this.monuments, this.matrice_temps, this.ordre_matrice);
+        Trajet trajet_court = new Trajet(this.temps_parcours, 9600, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
         assertTrue(trajet_court.getDuree_souhaitee()>=trajet_court.getTemps_parcours());
         assertTrue(trajet_court.getTemps_parcours()==9540);
 
@@ -194,7 +196,7 @@ public class TrajetTest {
 
     @Test
     public void testTrajetMoyen(){
-        Trajet trajet_moyen = new Trajet(this.temps_parcours, 10000, this.monuments, this.matrice_temps, this.ordre_matrice);
+        Trajet trajet_moyen = new Trajet(this.temps_parcours, 10000, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
         assertTrue(trajet_moyen.getDuree_souhaitee()>=trajet_moyen.getTemps_parcours());
         assertTrue(trajet_moyen.getTemps_parcours()==10000);
 

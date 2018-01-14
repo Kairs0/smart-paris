@@ -16,6 +16,8 @@ public class Trajet {
     private int temps_parcours; //temps de parcours du trajet en considérant la visite des monuments (en s)
     private int duree_souhaitee; //temps de parcours souhaite par l'utilisateur (en s)
 
+    private String A;
+    private String B;
     private List<Monument> monuments_interet; // les monuments de la zone, correspondant aux choix de l'utilisateur
 
     private List<Monument> trajet; //liste des monuments à visiter dans l'ordre
@@ -32,6 +34,8 @@ public class Trajet {
 
     public List<Monument> getMonuments_interet() { return monuments_interet; }
 
+    public String getA() { return A; }
+    public String getB() { return B; }
     public List<Monument> getTrajet() {
         return trajet;
     }
@@ -44,9 +48,11 @@ public class Trajet {
 
     //constructor
     public Trajet(int tps_parcours, int duree_souhaitee,  List<Monument> monuments_interet,
-                       List<List<Integer>> matrice_temps, List<String> ordre_matrice){
+                       String A, String B, List<List<Integer>> matrice_temps, List<String> ordre_matrice){
         this.temps_parcours = tps_parcours;
         this.duree_souhaitee = duree_souhaitee;
+        this.A = A;
+        this.B = B;
         this.monuments_interet = monuments_interet;
         this.trajet = new ArrayList<>();
         this.temps_de_visite = new ArrayList<>();
@@ -71,17 +77,17 @@ public class Trajet {
             int tps2 = 0;
             int temps_min = 0;
             if (l == 0) {
-                tps1 = get_temps("A", monument.getName());
-                tps2 = get_temps(monument.getName(), "B");
+                tps1 = get_temps(this.A, monument.LatLngtoString());
+                tps2 = get_temps(monument.LatLngtoString(), this.B);
                 temps_min = tps1 + tps2 - this.temps_sous_parcours.get(0);
             }
             else{
-                tps1 = get_temps("A", monument.getName());
-                tps2 = get_temps(monument.getName(), this.trajet.get(0).getName());
+                tps1 = get_temps(this.A, monument.LatLngtoString());
+                tps2 = get_temps(monument.LatLngtoString(), this.trajet.get(0).LatLngtoString());
                 temps_min = tps1 + tps2 - this.temps_sous_parcours.get(0);
                 for (int m = 0; m < l - 1; m++) {
-                    int t1 = get_temps(this.trajet.get(m).getName(), monument.getName());
-                    int t2 = get_temps(monument.getName(), this.trajet.get(m + 1).getName());
+                    int t1 = get_temps(this.trajet.get(m).LatLngtoString(), monument.LatLngtoString());
+                    int t2 = get_temps(monument.LatLngtoString(), this.trajet.get(m + 1).LatLngtoString());
                     int t = t1 + t2 - this.temps_sous_parcours.get(m + 1);
                     if (t < temps_min) {
                         bat_pos = m + 1;
@@ -90,8 +96,8 @@ public class Trajet {
                         tps2 = t2;
                     }
                 }
-                int t1 = get_temps(this.trajet.get(l - 1).getName(), monument.getName());
-                int t2 = get_temps(monument.getName(), "B");
+                int t1 = get_temps(this.trajet.get(l - 1).LatLngtoString(), monument.LatLngtoString());
+                int t2 = get_temps(monument.LatLngtoString(), this.B);
                 int t = t1 + t2 - this.temps_sous_parcours.get(l);
                 if (t < temps_min) {
                     bat_pos = l;
@@ -143,10 +149,10 @@ public class Trajet {
         int b = 0;
         for(int i = 0; i < l; i++)
         {
-            if (this.ordre_matrice.get(i) == m1) {
+            if (this.ordre_matrice.get(i).equals(m1)) {
                 a = i;
             }
-            if (this.ordre_matrice.get(i) == m2) {
+            if (this.ordre_matrice.get(i).equals(m2)) {
                 b = i;
             }
         }
