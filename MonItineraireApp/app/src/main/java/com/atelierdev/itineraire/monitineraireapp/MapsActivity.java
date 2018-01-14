@@ -159,7 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Appelle a api direction avec trajet final
         List<String> wayPointsForApi = new ArrayList<>();
-        this.trajet += "\n\n\nTemps de marche total estimé : " + trajetCalulcator.getTemps_parcours()/60 + " min\n";
+        this.trajet += "\n\n\nTemps de parcours total estimé : " + trajetCalulcator.getTemps_parcours()/60 + " min\n";
         int k = 0;
         this.trajet += "\n\nTemps de marche estimé jusqu'à " + trajetCalulcator.getTrajet().get(0).getName() + " : "+ trajetCalulcator.getTemps_sous_parcours().get(k)/60 + " min";
         for (Monument monument : trajet) {
