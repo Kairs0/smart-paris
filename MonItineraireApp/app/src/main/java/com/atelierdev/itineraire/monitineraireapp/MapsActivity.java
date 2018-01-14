@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -303,6 +304,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TextView error = findViewById(R.id.map_error_message);
         error.setText(message);
         error.setVisibility(View.VISIBLE);
+        Button etapes = findViewById(R.id.button2);
+        etapes.setVisibility(View.GONE);
     }
 
     private void putMarkerOnImportantPoints(List<LatLng> pointsPath, String wayPoint){
