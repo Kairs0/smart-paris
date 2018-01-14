@@ -54,6 +54,7 @@ fabric.properties
 # Built application files
 *.apk
 *.ap_
+!smartParisDebug.apk
 
 # Files for the ART/Dalvik VM
 *.dex
