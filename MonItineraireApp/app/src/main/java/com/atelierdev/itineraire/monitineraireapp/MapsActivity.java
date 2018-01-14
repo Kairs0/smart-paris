@@ -102,6 +102,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Calcul du temps de trajet sans passer par des monuments
         int baseTime = getTimeBase(pointA, pointB, "walking");
 
+        // Temps souhaité par l'utilisateur
+        int temps_souhaite_sec = Integer.parseInt(temps_disponible_h.replaceAll("h", "")) * 60 * 60 +
+                Integer.parseInt(temps_disponible_min.replaceAll("min", "")) * 60;
+
+        if (baseTime > temps_souhaite_sec){
+            setErrorMessage("Vous avez spécifié un temps trop court pour effectuer le trajet.");
+            return;
+        }
+
         // Calul le rectangle d'intêret dans lequel l'utilisateur peut voir des batiments
         List<LatLng> rectangleInteret = calculRectangle(pointA, pointB, baseTime, temps_disponible_h, temps_disponible_min);
 
@@ -143,16 +152,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        // Temps souhaité par l'utilisateur
-        int temps_souhaite_sec = Integer.parseInt(temps_disponible_h.replaceAll("h", "")) * 60 * 60 +
-                Integer.parseInt(temps_disponible_min.replaceAll("min", "")) * 60;
-
-        // TODO: refactor (point A, B pas utile ?)
-        LatLng pointAcoord = new LatLng(Double.parseDouble(pointA.split(",")[0]), Double.parseDouble(pointA.split(",")[1]));
-        LatLng pointBcoord = new LatLng(Double.parseDouble(pointB.split(",")[0]), Double.parseDouble(pointB.split(",")[1]));
-
         // instancie la classe Trajet pour le calcul du trajet du touriste
-        Trajet trajetCalulcator = new Trajet(baseTime, temps_souhaite_sec, restrainedMonumentList, pointAcoord, pointBcoord, matrix, listCoords);
+        Trajet trajetCalulcator = new Trajet(baseTime, temps_souhaite_sec, restrainedMonumentList, matrix, listCoords);
 
         List<Monument> trajet = trajetCalulcator.getTrajet();
 

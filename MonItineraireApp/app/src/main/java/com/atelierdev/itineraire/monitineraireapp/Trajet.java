@@ -12,37 +12,45 @@ import java.util.List;
  */
 
 public class Trajet {
-    //Variables, constructor, getter, setter
-    public int temps_parcours; //temps de parcours du trajet en considérant la visite des monuments (en s)
-    public int duree_souhaitee; //temps de parcours souhaite par l'utilisateur (en s)
+    //Variables
+    private int temps_parcours; //temps de parcours du trajet en considérant la visite des monuments (en s)
+    private int duree_souhaitee; //temps de parcours souhaite par l'utilisateur (en s)
 
-    public List<Monument> monuments_interet; // les monuments de la zone, correspondant aux choix de l'utilisateur
+    private List<Monument> monuments_interet; // les monuments de la zone, correspondant aux choix de l'utilisateur
 
-    public LatLng A;
-    public LatLng B;
     private List<Monument> trajet; //liste des monuments à visiter dans l'ordre
 
-    public List<Integer> temps_de_visite; //du trajet reellement effectue
-    public List<Integer> temps_sous_parcours; //du trajet reellement effectue
+    private List<Integer> temps_de_visite; //du trajet reellement effectue
+    private List<Integer> temps_sous_parcours; //du trajet reellement effectue
 
-    public List<List<Integer>> matrice_temps; // matrice de tous les temps de parcours entre les monuments
-    public List<String> ordre_matrice; //pour récuperer facilement les temps de la matrice precedente
+    private List<List<Integer>> matrice_temps; // matrice de tous les temps de parcours entre les monuments
+    private List<String> ordre_matrice; //pour récuperer facilement les temps de la matrice precedente
+
+    //getters and setters
+    public int getTemps_parcours() { return temps_parcours; }
+    public int getDuree_souhaitee() { return duree_souhaitee; }
+
+    public List<Monument> getMonuments_interet() { return monuments_interet; }
 
     public List<Monument> getTrajet() {
         return trajet;
     }
 
-    // A, B, temps de parcours de A à B, listes de monuments, matrice des distances
+    public List<Integer> getTemps_de_visite() { return temps_de_visite; }
+    public List<Integer> getTemps_sous_parcours() { return temps_sous_parcours; }
+
+    public List<List<Integer>> getMatrice_temps() { return matrice_temps; }
+    public List<String> getOrdre_matrice() { return ordre_matrice; }
+
+    //constructor
     public Trajet(int tps_parcours, int duree_souhaitee,  List<Monument> monuments_interet,
-                       LatLng A, LatLng B, List<List<Integer>> matrice_temps, List<String> ordre_matrice){
+                       List<List<Integer>> matrice_temps, List<String> ordre_matrice){
         this.temps_parcours = tps_parcours;
         this.duree_souhaitee = duree_souhaitee;
         this.monuments_interet = monuments_interet;
-        this.A = A;
-        this.B = B;
         this.trajet = new ArrayList<>();
-        this.temps_de_visite = new ArrayList<Integer>();
-        this.temps_sous_parcours = new ArrayList<Integer>();
+        this.temps_de_visite = new ArrayList<>();
+        this.temps_sous_parcours = new ArrayList<>();
         this.temps_sous_parcours.add(tps_parcours);
         this.matrice_temps = matrice_temps;
         this.ordre_matrice = ordre_matrice;
@@ -52,7 +60,7 @@ public class Trajet {
 
     //Methode pour ajouter un monument au trajet
     public void construction_trajet() {
-        while ((this.temps_parcours < this.duree_souhaitee) && (this.monuments_interet.isEmpty() == false)){
+        while ((this.temps_parcours < this.duree_souhaitee) && (!this.monuments_interet.isEmpty())){
             //on prend le monument avec le plus grand interet de la zone
             Monument monument = this.monuments_interet.remove(0);
 
