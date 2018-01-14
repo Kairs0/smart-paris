@@ -30,7 +30,7 @@ tools:layout_editor_absoluteY="81dp">
                     android:layout_marginTop="42dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:textSize="40px"
+                    android:textSize="45px"
                     android:text="@string/result_path_2" />
 
             </LinearLayout>
