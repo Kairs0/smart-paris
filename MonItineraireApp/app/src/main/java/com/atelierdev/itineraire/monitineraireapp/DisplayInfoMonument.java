@@ -17,6 +17,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -46,7 +50,9 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
 
         engine = new TextToSpeech(this, this);
 
-        ExecutorService service = Executors.newSingleThreadExecutor();
+        getInfoMonumentThread.start();
+
+        /*ExecutorService service = Executors.newSingleThreadExecutor();
         try{
             getInfoMonumentThread.start();
 
@@ -61,7 +67,7 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
             UpdateTextView("Les informations n'ont pas été trouvées suite à un problème interne à l'application");
         } catch (TimeoutException e){
             UpdateTextView("La connection internet a été perdue durant la récupération des informations.");
-        }
+        }*/
     }
 
     public void UpdateTextView(String result) {
@@ -91,11 +97,43 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
             return ("Pas d'information");
         }
         String name = information.getString("name");
-        String address = information.getString("address");
 
         String rawdescription = information.getString("description");
         String description = android.text.Html.fromHtml(rawdescription).toString();
-        return ("Nom :" + name + "\n\nAdresse :" + address + "\n\nDescription :" + description);
+
+        String open_status = "";
+
+        // On récupère les infos sur les horaires si elles existent et on les compare à l'heure de consultation
+        try {
+            JSONObject calendars = information.getJSONObject("calendars");
+            Date currentTime = Calendar.getInstance().getTime();
+            String datenow = new SimpleDateFormat("yyyy-MM-dd").format(currentTime);
+            // récupère l'objet json "calendar" qui contient les horaires des deux prochaines semaines. Voir doc api.paris
+            JSONArray schedulenow = calendars.getJSONArray(datenow).getJSONArray(0);
+            SimpleDateFormat hh_mm_ss = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+            String opening = datenow + "-" + schedulenow.getString(0);
+            String closure = datenow + "-" + schedulenow.getString(1);
+            // Convertit les string en objet "date" pour pouvoir les comparer
+            Date opening_hour = hh_mm_ss.parse(opening);
+            Date closure_hour = hh_mm_ss.parse(closure);
+
+            // Vérifie si on se situe dans la bonne plage horaire
+            if(currentTime.compareTo(opening_hour) > 0 &&  currentTime.compareTo(closure_hour) < 0)
+            {
+                open_status = "Ouvert - Ferme à " + new SimpleDateFormat("HH:mm").format(closure_hour);
+            }
+            else if(currentTime.compareTo(opening_hour) > 0){
+                open_status = "Fermé - ouvre à " + new SimpleDateFormat("HH:mm").format(opening_hour);
+            }
+            else
+                open_status = "Fermé";
+        }catch(Exception e)
+        {
+            open_status = "Pas d'information sur les horaires";
+        }
+        finally {
+            return (name + "\n\n" + open_status + "\n\n" + description);
+        }
     }
 
 
@@ -131,7 +169,9 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
                     while ((output = br.readLine()) != null) {
                         sb.append(output);
                     }
-                    this.result = sb.toString();
+                    String rawResult = sb.toString();
+                    Log.d("Resultat", rawResult);
+                    this.result = GetStringFromGetEquipmentRequest(rawResult);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -140,10 +180,7 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
                     if (urlConnection != null) {
                         urlConnection.disconnect();
 
-                        Log.d("Resultat", result);
-
-                        String cleanResult = GetStringFromGetEquipmentRequest(result);
-                        UpdateTextView(cleanResult);
+                        UpdateTextView(result);
                     }
                 }
             } catch (Exception e) {
@@ -184,6 +221,25 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
     @Override
     public void onDestroy() {
         super.onDestroy();
+        engine.stop();
+        engine.shutdown();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        engine.stop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        engine = new TextToSpeech(this, this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
         engine.stop();
         engine.shutdown();
     }
