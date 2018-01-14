@@ -91,8 +91,8 @@ public class Trajet {
                 tps1 = get_temps(this.A, monument.LatLngtoString());
                 tps2 = get_temps(monument.LatLngtoString(), this.trajet.get(0).LatLngtoString());
                 temps_min = tps1 + tps2 - this.temps_sous_parcours.get(0);
-                Log.d("tps 1", String.valueOf(temps_min));
-                Log.d("tps 2", String.valueOf(temps_min));
+                Log.d("tps 1", String.valueOf(tps1));
+                Log.d("tps 2", String.valueOf(tps2));
                 Log.d("temps min", String.valueOf(temps_min));
                 for (int m = 0; m < l - 1; m++) {
                     int t1 = get_temps(this.trajet.get(m).LatLngtoString(), monument.LatLngtoString());
