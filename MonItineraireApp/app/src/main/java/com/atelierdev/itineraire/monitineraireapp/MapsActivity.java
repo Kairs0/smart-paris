@@ -159,7 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Appelle a api direction avec trajet final
         List<String> wayPointsForApi = new ArrayList<>();
-        this.trajet += "\n\nTemps de parcours total estimé : " + trajetCalulcator.getTemps_parcours()/60 + " min\n";
+        this.trajet += "Temps de parcours total estimé : " + trajetCalulcator.getTemps_parcours()/60 + " min\n";
         this.trajet+= "\n\n\nVoici les étapes de votre trajet :";
         int k = 0;
         this.trajet += "\n\nDépart";

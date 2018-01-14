@@ -43,7 +43,10 @@
                     android:id="@+id/resultatInformation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="42dp"
+                    android:layout_marginTop="62dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:textSize="40px"
                     android:text="@string/result_path_2" />
 
             </LinearLayout>
