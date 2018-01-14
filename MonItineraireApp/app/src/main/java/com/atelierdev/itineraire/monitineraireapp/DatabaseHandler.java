@@ -19,8 +19,17 @@ import java.util.List;
 
 public abstract class DatabaseHandler {
 
-    public static boolean Initialize(Context context){
-        Monument.deleteAll(Monument.class); //On supprime anciennes donnees
+    // Vérifie si la table est initialisée en effectuant une opération simple dessus
+    public static boolean isCreatedTable(){
+        try{
+            Monument.executeQuery("Select * From Monument");
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    public static void Initialize(Context context){
         AssetManager assetManager = context.getAssets(); //Pour recuperer fichier dans dossiers "assets"
 
         try{
@@ -58,8 +67,5 @@ public abstract class DatabaseHandler {
         for (Monument monument : testM) {
             Log.d("Monument ", monument.getId() + monument.getName());
         }*/
-
-
-        return true;
     }
 }

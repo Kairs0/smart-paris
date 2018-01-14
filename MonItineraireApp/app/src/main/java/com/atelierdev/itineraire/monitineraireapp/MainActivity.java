@@ -72,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Initialise la base de données (pour l'instant systématique mais voir à quelle frquence on le fait)
-        DatabaseHandler.Initialize(getBaseContext());
+        // Initialise la base de données si elle n'existe pas
+        if(DatabaseHandler.isCreatedTable())
+            DatabaseHandler.Initialize(getBaseContext());
         
         initSpinners();
 
