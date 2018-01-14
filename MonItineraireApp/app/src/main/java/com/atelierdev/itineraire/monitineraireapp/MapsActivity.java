@@ -120,8 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Récupère l'ensemble des monuments intéressants dans la zone d'interet
         List<Monument> relevantMonuments = getMonumentsInZone(allRelevantMonument, rectangleInteret);
-
-        // TODO: AUGMENTER VALEUR A PLUS DE BATIMENT SANS POUR AUTANT PETER L'API
+        
         // On s'intéresse aux 4 premiers monuments pour la contrainte de l'api matrix
         List<Monument> restrainedMonumentList;
         try {
