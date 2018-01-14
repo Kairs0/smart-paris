@@ -157,27 +157,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         List<Monument> trajet = trajetCalulcator.getTrajet();
 
-        // Appelle a api direction avec trajet final
         List<String> wayPointsForApi = new ArrayList<>();
-        this.trajet += "Temps de parcours total estimé : " + trajetCalulcator.getTemps_parcours()/60 + " min\n";
-        this.trajet+= "\n\n\nVoici les étapes de votre trajet :";
-        int k = 0;
-        this.trajet += "\n\nDépart";
-        this.trajet += "\n\nTemps de marche estimé jusqu'à " + trajetCalulcator.getTrajet().get(0).getName() + " : "+ trajetCalulcator.getTemps_sous_parcours().get(k)/60 + " min";
-        for (Monument monument : trajet) {
 
-            k += 1;
-            wayPointsForApi.add(String.valueOf(monument.getLat()) + "," + monument.getLon());
-            // On ajoute le monument à la liste d'étapes du trajet
-            this.trajet += "\n\nEtape " + k + ": " + monument.getName();
-            this.trajet += "\nTemps de visite estimé : " + trajetCalulcator.getTemps_de_visite().get(k-1)/60 + " min";
-            if (trajetCalulcator.getTemps_de_visite().get(k-1)<= 300) {
-                this.trajet += " Prenez des photos, vous avez juste le temps!";
+        if(trajet.size() != 0)
+        {
+            // Appelle a api direction avec trajet final
+            this.trajet += "Temps de parcours total estimé : " + trajetCalulcator.getTemps_parcours()/60 + " min\n";
+            this.trajet+= "\n\n\nVoici les étapes de votre trajet :";
+            int k = 0;
+            this.trajet += "\n\nDépart";
+            this.trajet += "\n\nTemps de marche estimé jusqu'à " + trajet.get(0).getName() + " : "+ trajetCalulcator.getTemps_sous_parcours().get(k)/60 + " min";
+            for (Monument monument : trajet) {
+
+                k += 1;
+                wayPointsForApi.add(String.valueOf(monument.getLat()) + "," + monument.getLon());
+                // On ajoute le monument à la liste d'étapes du trajet
+                this.trajet += "\n\nEtape " + k + ": " + monument.getName();
+                this.trajet += "\nTemps de visite estimé : " + trajetCalulcator.getTemps_de_visite().get(k-1)/60 + " min";
+                if (trajetCalulcator.getTemps_de_visite().get(k-1)<= 300) {
+                    this.trajet += " Prenez des photos, vous avez juste le temps!";
+                }
+                this.trajet += "\n\nTemps de marche estimé jusqu'à l'étape suivante : " + trajetCalulcator.getTemps_sous_parcours().get(k)/60 + " min";
             }
-            this.trajet += "\n\nTemps de marche estimé jusqu'à l'étape suivante : " + trajetCalulcator.getTemps_sous_parcours().get(k)/60 + " min";
+
+            this.trajet += "\n\nArrivée";
+        }
+        else{
+            this.trajet += "Aucun monument n'a pu être trouvé sur cet itinéraire";
         }
 
-        this.trajet += "\n\nArrivée";
 
         String finalJsonDir = callApiDirectionAndGetJson(pointA, pointB, "walking", wayPointsForApi);
 
