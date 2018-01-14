@@ -18,8 +18,6 @@ public class Trajet {
 
     private List<Monument> monuments_interet; // les monuments de la zone, correspondant aux choix de l'utilisateur
 
-    private LatLng A;
-    private LatLng B;
     private List<Monument> trajet; //liste des monuments à visiter dans l'ordre
 
     private List<Integer> temps_de_visite; //du trajet reellement effectue
@@ -34,8 +32,6 @@ public class Trajet {
 
     public List<Monument> getMonuments_interet() { return monuments_interet; }
 
-    public LatLng getA() { return A; }
-    public LatLng getB() { return B; }
     public List<Monument> getTrajet() {
         return trajet;
     }
@@ -48,7 +44,7 @@ public class Trajet {
 
     //constructor
     public Trajet(int tps_parcours, int duree_souhaitee,  List<Monument> monuments_interet,
-                       LatLng A, LatLng B, List<List<Integer>> matrice_temps, List<String> ordre_matrice){
+                       List<List<Integer>> matrice_temps, List<String> ordre_matrice){
         this.temps_parcours = tps_parcours;
         this.duree_souhaitee = duree_souhaitee;
         this.monuments_interet = monuments_interet;

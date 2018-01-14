@@ -23,9 +23,6 @@ public class TrajetTest {
 
     private List<Monument> monuments = new ArrayList<Monument>();
 
-    private LatLng A = new LatLng(0.0,0.0);
-    private LatLng B = new LatLng(1.0, 1.0);
-
     private List<List<Integer>> matrice_temps = new ArrayList();
     private List<String> ordre_matrice = new ArrayList<String>();
 
@@ -130,7 +127,7 @@ public class TrajetTest {
     @Test
     public void testTrajetVide(){
         List<Monument> monum = new ArrayList<>();
-        Trajet trajet_nul = new Trajet(this.temps_parcours, 7200, monum, this.A, this.B, this.matrice_temps, this.ordre_matrice);
+        Trajet trajet_nul = new Trajet(this.temps_parcours, 7200, monum, this.matrice_temps, this.ordre_matrice);
         assertTrue(trajet_nul.getTrajet().isEmpty());
         assertTrue(trajet_nul.getTemps_sous_parcours().size()==1);
         assertTrue(trajet_nul.getTemps_sous_parcours().get(0)==6000);
@@ -144,7 +141,7 @@ public class TrajetTest {
 
     @Test
     public void testTrajetLong(){
-        Trajet trajet_long = new Trajet(this.temps_parcours, 3000000, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
+        Trajet trajet_long = new Trajet(this.temps_parcours, 3000000, this.monuments, this.matrice_temps, this.ordre_matrice);
         assertTrue(trajet_long.getDuree_souhaitee()>=trajet_long.getTemps_parcours());
         assertTrue(trajet_long.getTemps_parcours()==15660);
 
@@ -175,7 +172,7 @@ public class TrajetTest {
 
     @Test
     public void testTrajetCourt(){
-        Trajet trajet_court = new Trajet(this.temps_parcours, 9600, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
+        Trajet trajet_court = new Trajet(this.temps_parcours, 9600, this.monuments, this.matrice_temps, this.ordre_matrice);
         assertTrue(trajet_court.getDuree_souhaitee()>=trajet_court.getTemps_parcours());
         assertTrue(trajet_court.getTemps_parcours()==9540);
 
@@ -197,7 +194,7 @@ public class TrajetTest {
 
     @Test
     public void testTrajetMoyen(){
-        Trajet trajet_moyen = new Trajet(this.temps_parcours, 10000, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
+        Trajet trajet_moyen = new Trajet(this.temps_parcours, 10000, this.monuments, this.matrice_temps, this.ordre_matrice);
         assertTrue(trajet_moyen.getDuree_souhaitee()>=trajet_moyen.getTemps_parcours());
         assertTrue(trajet_moyen.getTemps_parcours()==10000);
 
