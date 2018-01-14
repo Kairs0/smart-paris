@@ -10,15 +10,15 @@ import com.orm.SugarRecord;
 public class Monument extends SugarRecord<Monument>{
 
     //Variables, constructor, getter, setter
-    public long id; //clé primaire générée par sugar orm de manière auto-incrémentée
-    public int monument_id; //correspondant à l'id dans api.paris
-    public String name;
-    public int category; //catégorie dans api.paris
-    public String types; //un ou plusieurs types parmi les 6 qu'il a distingués
-    public double lat;
-    public double lon;
-    public int rating;  //note du monument selon notre classement
-    public int visitTime;   //si 0, monument non visitable
+    private long id; //clé primaire générée par sugar orm de manière auto-incrémentée
+    private int monument_id; //correspondant à l'id dans api.paris
+    private String name;
+    private int category; //catégorie dans api.paris
+    private String types; //un ou plusieurs types parmi les 6 qu'il a distingués
+    private double lat;
+    private double lon;
+    private int rating;  //note du monument selon notre classement
+    private int visitTime;   //si 0, monument non visitable
 
     public Monument(){
 
