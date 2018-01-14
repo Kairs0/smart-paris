@@ -89,7 +89,7 @@ public class GoogleApiThread implements Runnable {
             }
 
             String urlWaypoints = this.waypoints.size() == 0 ? "" :
-                    "&waypoints=" + tmpWaypoints;
+                    "&waypoints=optimize:true|" + tmpWaypoints;
 
             String fullUrl = baseUrl + urlOrigin + urlDestination + urlMode + urlWaypoints;
 
