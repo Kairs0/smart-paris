@@ -152,12 +152,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        // TODO: refactor (point A, B pas utile ?)
-        LatLng pointAcoord = new LatLng(Double.parseDouble(pointA.split(",")[0]), Double.parseDouble(pointA.split(",")[1]));
-        LatLng pointBcoord = new LatLng(Double.parseDouble(pointB.split(",")[0]), Double.parseDouble(pointB.split(",")[1]));
-
         // instancie la classe Trajet pour le calcul du trajet du touriste
-        Trajet trajetCalulcator = new Trajet(baseTime, temps_souhaite_sec, restrainedMonumentList, pointAcoord, pointBcoord, matrix, listCoords);
+        Trajet trajetCalulcator = new Trajet(baseTime, temps_souhaite_sec, restrainedMonumentList, matrix, listCoords);
 
         List<Monument> trajet = trajetCalulcator.getTrajet();
 
