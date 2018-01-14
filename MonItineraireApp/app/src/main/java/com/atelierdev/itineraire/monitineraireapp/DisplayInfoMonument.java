@@ -201,6 +201,8 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
 
     @Override
     public void onInit(int i) {
+        Log.d("mytag", "oninit");
+
         if (i == TextToSpeech.SUCCESS) {
             //Setting speech Language
             engine.setLanguage(Locale.FRENCH);
@@ -216,16 +218,13 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        engine.stop();
-        engine.shutdown();
-    }
-
-    @Override
     public void onPause() {
+        if(engine != null) {
+
+            engine.stop();
+            Log.d("mytag", "TTS stopped on pause");
+        }
         super.onPause();
-        engine.stop();
     }
 
     @Override
@@ -234,10 +233,15 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
         engine = new TextToSpeech(this, this);
     }
 
+
     @Override
-    public void onStop() {
-        super.onStop();
-        engine.stop();
+    protected void onDestroy()
+    {
         engine.shutdown();
+        Log.d("mytag", "TTS ondestroy shutdowned");
+        super.onDestroy();
+        Log.d("mytag", "TTS ondestroy destroyed");
+
+
     }
 }
