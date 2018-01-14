@@ -188,5 +188,24 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
         engine.shutdown();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        engine.stop();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        engine = new TextToSpeech(this, this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        engine.stop();
+        engine.shutdown();
+    }
+
 
 }
