@@ -153,12 +153,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        // TODO: refactor (point A, B pas utile ?)
-        LatLng pointAcoord = new LatLng(Double.parseDouble(pointA.split(",")[0]), Double.parseDouble(pointA.split(",")[1]));
-        LatLng pointBcoord = new LatLng(Double.parseDouble(pointB.split(",")[0]), Double.parseDouble(pointB.split(",")[1]));
-
         // instancie la classe Trajet pour le calcul du trajet du touriste
-        Trajet trajetCalulcator = new Trajet(baseTime, temps_souhaite_sec, restrainedMonumentList, pointAcoord, pointBcoord, matrix, listCoords);
+        Trajet trajetCalulcator = new Trajet(baseTime, temps_souhaite_sec, restrainedMonumentList, pointA, pointB, matrix, listCoords);
 
         List<Monument> trajet = trajetCalulcator.getTrajet();
 
@@ -166,11 +162,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         List<String> wayPointsForApi = new ArrayList<>();
         int k = 0;
         for (Monument monument : trajet) {
+
+            this.trajet += "\n\nTemps de marche estimé : " + trajetCalulcator.getTemps_sous_parcours().get(k);
             k += 1;
             wayPointsForApi.add(String.valueOf(monument.getLat()) + "," + monument.getLon());
             // On ajoute le monument à la liste d'étapes du trajet
             this.trajet += "\n\nEtape " + k + ": " + monument.getName();
-            //this.trajet += "\nTemps de visite estimé : " + trajetCalulcator.temps_de_visite.get(k-1)/60;
+            this.trajet += "\nTemps de visite estimé : " + trajetCalulcator.getTemps_de_visite().get(k-1)/60 + " min";
         }
 
         String finalJsonDir = callApiDirectionAndGetJson(pointA, pointB, "walking", wayPointsForApi);
@@ -397,14 +395,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int temps_disponible_h_int = Integer.parseInt(temps_disponible_h_numb);
         int temps_disponible_min_int = Integer.parseInt(temps_disponible_min_numb);
         int temps_disponible = temps_disponible_h_int * 3600 + temps_disponible_min_int * 60;
-        //Log.d("myTag2", "en secondes"+ temps_disponible_test);
         double temps_restant = temps_disponible - duree_trajet_direct;
         double distance_restante = temps_restant * vitesse_topo;
 
         //Convertit la distance restante en degrés (lat et long) 1 metre = 0.000009° environ
         //Facteur multiplicateur pour la largeur du rectangle
         double coeff = 0.000009 * distance_restante / 2;
-        //Facteur multiplicateur pour prendre un rectangle plus long que la distance Origine-Destination (dépasse de 100 m de chaque coté)
+        //Facteur multiplicateur pour prendre un rectangle plus long que la distance Origine-Destination
         double coeff_2= 0.000009 * 200;
 
         //Calcule les sommets du rectangle
