@@ -55,7 +55,7 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
             // 5 secondes ici
             f.get(5, TimeUnit.SECONDS);
 
-            getInfoMonumentThread.join();
+//            getInfoMonumentThread.join();
 
         } catch (InterruptedException|ExecutionException e){
             UpdateTextView("Les informations n'ont pas été trouvées suite à un problème interne à l'application");
@@ -164,14 +164,11 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
 
     @Override
     public void onInit(int i) {
-
-
         if (i == TextToSpeech.SUCCESS) {
             //Setting speech Language
             engine.setLanguage(Locale.FRENCH);
             engine.setPitch(1);
         }
-
         else {
             Toast.makeText(getApplicationContext(), "Impossible de lire le texte", Toast.LENGTH_SHORT).show();
         }
@@ -187,6 +184,4 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
         engine.stop();
         engine.shutdown();
     }
-
-
 }

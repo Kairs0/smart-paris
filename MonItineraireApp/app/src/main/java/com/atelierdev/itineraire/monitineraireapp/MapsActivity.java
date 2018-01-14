@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 import org.json.JSONException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -74,7 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Intent intent = getIntent();
         String pointA = intent.getStringExtra(MainActivity.EXTRA_POINTA);
         String pointB = intent.getStringExtra(MainActivity.EXTRA_POINTB);
-        String pointInt = intent.getStringExtra(MainActivity.EXTRA_POINTSUPP);
+        String pointInt = intent.getStringExtra(MainActivity.EXTRA_POINTSUPP); // DEPRECATED
         String temps_disponible_h = intent.getStringExtra(MainActivity.TEMPS_DISPONIBLE_H);
         String temps_disponible_min = intent.getStringExtra(MainActivity.TEMPS_DISPONIBLE_MIN);
 
@@ -98,19 +99,134 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setMyLocationEnabled(true);
         }
 
+        // Calcul du temps de trajet sans passer par des monuments
+        int baseTime = getTimeBase(pointA, pointB, "walking");
 
-        // Transforme le point int en une liste pour pouvoir le passer au thread api
-        List<String> listPointsInt = new ArrayList<>();
-        if (!pointInt.equals("")) {
-            listPointsInt.add(pointInt);
+        // Calul le rectangle d'intêret dans lequel l'utilisateur peut voir des batiments
+        List<LatLng> rectangleInteret = calculRectangle(pointA, pointB, baseTime, temps_disponible_h, temps_disponible_min);
+
+        // Recupère l'ensemble des monuments utile pour l'utilisateurs
+        List<Monument> allRelevantMonument = getMonumentsFromBdd(types);
+
+        // Récupère l'ensemble des monuments intéressants dans la zone d'interet
+        List<Monument> relevantMonuments = getMonumentsInZone(allRelevantMonument, rectangleInteret);
+
+        // TODO: AUGMENTER VALEUR A PLUS DE BATIMENT SANS POUR AUTANT PETER L'API
+        // On s'intéresse aux 4 premiers monuments pour la contrainte de l'api matrix
+        List<Monument> restrainedMonumentList = relevantMonuments.subList(0, 4);
+
+        // Construction de la liste des coordonnées de l'ensemble des points intéressant + pointA et B
+        List<String> listCoords = new ArrayList<>();
+        listCoords.add(pointA);
+        for (Monument m : restrainedMonumentList){
+            listCoords.add(String.valueOf(m.getLat()) + "," + String.valueOf(m.getLon()));
+        }
+        listCoords.add(pointB);
+
+        // Appelle l'api matrix et retourne la matrice des distances
+        List<List<Integer>> matrix = getMatrix(listCoords, listCoords, "walking");
+
+        // Temps souhaité par l'utilisateur
+        int temps_souhaite_sec = Integer.parseInt(temps_disponible_h.replaceAll("h", "")) * 60 * 60 +
+                Integer.parseInt(temps_disponible_min.replaceAll("min", "")) * 60;
+
+        // TODO: refactor (point A, B pas utile ?)
+        LatLng pointAcoord = new LatLng(Double.parseDouble(pointA.split(",")[0]), Double.parseDouble(pointA.split(",")[1]));
+        LatLng pointBcoord = new LatLng(Double.parseDouble(pointB.split(",")[0]), Double.parseDouble(pointB.split(",")[1]));
+
+        // instancie la classe Trajet pour le calcul du trajet du touriste
+        Trajet trajetCalulcator = new Trajet(baseTime, temps_souhaite_sec, restrainedMonumentList, pointAcoord, pointBcoord, matrix, listCoords);
+
+        List<Monument> trajet = trajetCalulcator.getTrajet();
+
+        // Appelle a api direction avec trajet final
+        List<String> wayPointsForApi = new ArrayList<>();
+        for (Monument monument : trajet) {
+            wayPointsForApi.add(String.valueOf(monument.getLat()) + "," + monument.getLon());
         }
 
-        // Apelle l'api direction. Voir documentation dans GoogleApiThread
-        GoogleApiThread api = new GoogleApiThread(pointA, pointB, "walking", listPointsInt);
+        String finalJsonDir = callApiDirectionAndGetJson(pointA, pointB, "walking", wayPointsForApi);
+
+        GoogleApiResultManager managerFinalWay = new GoogleApiResultManager(finalJsonDir);
+
+        try {
+            if (!managerFinalWay.isStatusOk()) {
+                setErrorMessage(managerFinalWay.getErrorMessage());
+                return;
+            }
+            managerFinalWay.ManageCoordinates();
+        } catch (JSONException e) {
+            setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
+            return;
+        }
+
+        List<LatLng> pointsPath = managerFinalWay.getCoordinatesLatLng();
+
+        // Trace la ligne, ...
+        InitalizeMapForPath(pointsPath);
+
+        //Dictionnaire pour associer les ids (valeur) des monuments à leur titre (clé) et les récupérer lors d'un clic sur l'étiquette
+        final HashMap<String, String> markerIds = new HashMap<>();
+
+        //Ajoute un marqueur vert aux monuments qui sont dans la zone et un marqueur jaune sinon
+        for (int i = 0; i < allRelevantMonument.size(); i++) {
+            Monument monument = allRelevantMonument.get(i);
+            LatLng latlng = new LatLng(monument.getLat(), monument.getLon());
+            String monument_id_str = Integer.toString(monument.getMonumentId());
+            if (PolyUtil.containsLocation(latlng, rectangleInteret, true)) {
+                mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(latlng)
+                        .title(monument.getName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                markerIds.put(marker.getTitle(), monument_id_str);
+//                selected_monuments.add(monument);
+            } else {
+                Marker marker = mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                markerIds.put(marker.getTitle(), monument_id_str);
+            }
+        }
+
+        googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                if(marker.getTitle().equals("Départ") || marker.getTitle().equals("Arrivée")){
+                    return;
+                }
+
+                Intent intent = new Intent(getBaseContext(), DisplayInfoMonument.class);
+                intent.putExtra(EXTRA_MONUMENT_ID, markerIds.get(marker.getTitle()));
+                // Starting the  Activity
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void InitalizeMapForPath(List<LatLng> pointsPath){
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(pointsPath.get(0));
+        builder.include(pointsPath.get(pointsPath.size()-1));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 20));
+
+        putMarkerOnImportantPoints(pointsPath, "");
+
+        PolylineOptions optionsMap = new PolylineOptions();
+        optionsMap.geodesic(true);
+        optionsMap.addAll(pointsPath);
+        optionsMap.width(5);
+        optionsMap.color(Color.BLUE);
+        mMap.addPolyline(optionsMap);
+    }
+
+    private String callApiDirectionAndGetJson(String pointA, String pointB, String mode,  List<String> waypoints){
+        GoogleApiThread api = new GoogleApiThread(pointA, pointB, mode, waypoints);
         Thread callThread = new Thread(api);
 
-
         ExecutorService service = Executors.newSingleThreadExecutor();
+        String result;
         try {
             callThread.start();
 
@@ -119,51 +235,128 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             f.get(5, TimeUnit.SECONDS);
 
             callThread.join();
+            result = api.getResult();
         } catch (InterruptedException|ExecutionException e) {
             setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
-            return;
+            result = "0";
         } catch (TimeoutException t){
             setErrorMessage("La connection internet a été perdue durant le calcul du trajet.");
-            return;
+            result = "0";
         }
+        return result;
+    }
+
+    private int getTimeBase(String pointA, String pointB, String mode){
+        String json = callApiDirectionAndGetJson(pointA, pointB, mode, new ArrayList<String>());
+        GoogleApiResultManager manager = new GoogleApiResultManager(json);
+        manager.calculTime();
+        return manager.getDurationInSeconds();
+    }
 
 
-        String result = api.getResult();
-        GoogleApiResultManager manageJson = new GoogleApiResultManager(result);
 
-        try {
-            if (!manageJson.isStatusOk()) {
-                setErrorMessage(manageJson.getErrorMessage());
-                return;
+    public void displaySteps(View view){
+        Intent intent = new Intent(getBaseContext(), DisplayStepsActivity.class);
+        intent.putExtra(EXTRA_TRAJET, trajet);
+        // Starting the  Activity
+        startActivity(intent);
+    }
+
+    private void setErrorMessage(String message) {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getView().setVisibility(View.GONE);
+        TextView error = findViewById(R.id.map_error_message);
+        error.setText(message);
+        error.setVisibility(View.VISIBLE);
+    }
+
+    private void putMarkerOnImportantPoints(List<LatLng> pointsPath, String wayPoint){
+        // Ajoute un marqueur pour point de départ, arrivée et intermédiaire
+        mMap.addMarker(new MarkerOptions().position(pointsPath.get(0)).title("Départ"));
+        int indexLastPoint = pointsPath.size() - 1;
+        mMap.addMarker(new MarkerOptions().position(pointsPath.get(indexLastPoint)).title("Arrivée"));
+        //Ajoute un marqueur pour le point intérmédiaire
+        if (!wayPoint.equals("")) {
+            String[] arrayPointInt = wayPoint.split(",");
+            LatLng pointInter = new LatLng(Double.parseDouble(arrayPointInt[0]), Double.parseDouble(wayPoint.split(",")[1]));
+            mMap.addMarker(new MarkerOptions().position(pointInter));
+        }
+    }
+
+    private List<Monument> getMonumentsInZone(List<Monument> allRelevantMonuments, List<LatLng> zone){
+        List<Monument> result = new ArrayList<>();
+        for(Monument m : allRelevantMonuments){
+            LatLng coordMonument = new LatLng(m.getLat(), m.getLon());
+            if(PolyUtil.containsLocation(coordMonument, zone, true)){
+                result.add(m);
             }
-            manageJson.ManageCoordinates();
-        } catch (JSONException e) {
-            setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
-            return;
+        }
+        return result;
+    }
+
+    private List<Monument> getMonumentsFromBdd(List<String> typesMonuments){
+        List<Monument> allMonuments = new ArrayList<Monument>();
+        String[] types_arg = typesMonuments.toArray(new String[0]);
+        String query = "SELECT * FROM Monument WHERE types LIKE ?"; //On écrit la requête à envoyer à la base de données
+        for(int i=1;i<types_arg.length;i++){
+            query = query.concat(" OR types LIKE ?");
         }
 
-        List<LatLng> pointsPath = manageJson.getCoordinatesLatLng();
+        query = query.concat(" ORDER BY rating");
+        List<Monument> allMonumentsOfType = Monument.findWithQuery(Monument.class, query, types_arg);
+        Log.d("Monuments", String.valueOf(allMonumentsOfType.size()));
+        allMonuments.addAll(allMonumentsOfType);
+        return allMonuments;
+    }
 
-        //Regler la camera pour afficher tout le trajet
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(pointsPath.get(0));
-        builder.include(pointsPath.get(pointsPath.size()-1));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 20));
+    private String callApiMatrixAndGetJson(List<String> origins, List<String> destinations, String mode){
+        MatrixApiThread api = new MatrixApiThread(origins, destinations, mode);
+        Thread callThread = new Thread(api);
+        ExecutorService service = Executors.newSingleThreadExecutor();
+        String result;
+        try {
+            callThread.start();
 
-        putMarkerOnImportantPoints(pointsPath, pointInt);
+            // We set here the time maximum for waiting the result from api
+            Future<?> f = service.submit(callThread);
+            f.get(5, TimeUnit.MINUTES);
 
-        PolylineOptions optionsMap = new PolylineOptions();
-        optionsMap.geodesic(true);
-        optionsMap.addAll(pointsPath);
-        optionsMap.width(5);
-        optionsMap.color(Color.BLUE);
-        mMap.addPolyline(optionsMap);
+            callThread.join();
+            result = api.getResult();
+        } catch (InterruptedException|ExecutionException e) {
+            setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
+            result = "0";
+        } catch (TimeoutException t){
+            setErrorMessage("La connection internet a été perdue durant le calcul du trajet.");
+            result = "0";
+        }
+        return result;
+    }
 
-        //Affiche le rectangle de sélection des monuments
-        manageJson.calculTime();
-        float duree_trajet_direct = manageJson.getDurationInSeconds();
-        LatLng origine = pointsPath.get(0);
-        LatLng destination = pointsPath.get(pointsPath.size() - 1);
+    private List<List<Integer>> getMatrix(List<String> origins, List<String> destinations, String mode){
+        String json = callApiMatrixAndGetJson(origins, destinations, mode);
+        MatrixApiResultManager manager = new MatrixApiResultManager(json);
+        try {
+            manager.calculTime();
+        } catch (JSONException e){
+            setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
+        }
+        return manager.getTimesResult();
+    }
+
+    private List<LatLng> calculRectangle(String pointA, String pointB, int timeBase, String temps_disponible_h, String temps_disponible_min){
+        float duree_trajet_direct = (float) timeBase;
+        // TODO : changer pour accepter autre chose que des strings en coordonées (adresse, ..)
+
+        String[] arrayPointA = pointA.split(",");
+        String[] arrayPointB = pointB.split(",");
+
+//        LatLng origine = pointsPath.get(0);
+        LatLng origine = new LatLng(Double.parseDouble(arrayPointA[0]), Double.parseDouble(arrayPointA[1]));
+//        LatLng destination = pointsPath.get(pointsPath.size() - 1);
+        LatLng destination = new LatLng(Double.parseDouble(arrayPointB[0]), Double.parseDouble(arrayPointB[1]));
+
         float[] distance_vol_oiseau_metres = new float[]{12};
         distanceBetween(origine.latitude, origine.longitude, destination.latitude, destination.longitude, distance_vol_oiseau_metres);
         double vitesse_topo = distance_vol_oiseau_metres[0] / duree_trajet_direct;
@@ -209,95 +402,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             S3=S3b;
             S4=S4b;
         }
-        List<LatLng> poly = new ArrayList<LatLng>();
-        poly.add(S1);
-        poly.add(S2);
-        poly.add(S4);
-        poly.add(S3);
-        PolygonOptions rectOptions = new PolygonOptions().addAll(poly).strokeColor(Color.argb(0, 50, 0, 255)).fillColor(Color.argb(70, 50, 0, 255));
-        Polygon polygon = mMap.addPolygon(rectOptions);
 
-
-        //Liste de monuments obtenu via appel à la base de données
-        List<Monument> allMonuments = new ArrayList<Monument>();
-        String[] types_arg = types.toArray(new String[0]);
-        String query = "SELECT * FROM Monument WHERE types LIKE ?"; //On écrit la requête à envoyer à la base de données
-        for(int i=1;i<types_arg.length;i++){
-            query += " OR types LIKE ?";
-        }
-        query += " ORDER BY rating";
-        List<Monument> allMonumentsOfType = Monument.findWithQuery(Monument.class, query, types_arg);
-        Log.d("Monuments", String.valueOf(allMonumentsOfType.size()));
-        allMonuments.addAll(allMonumentsOfType);
-
-        List<Monument> selected_monuments = new ArrayList<Monument>();
-
-        //Dictionnaire pour associer les ids (valeur) des monuments à leur titre (clé) et les récupérer lors d'un clic sur l'étiquette
-        final HashMap<String, String> markerIds = new HashMap<>();
-
-        //Ajoute un marqueur vert aux monuments qui sont dans la zone et un marqueur jaune sinon
-        for (int i = 0; i < allMonuments.size(); i++) {
-            Monument monument = allMonuments.get(i);
-            LatLng latlng = new LatLng(monument.getLat(), monument.getLon());
-            String monument_id_str = Integer.toString(monument.getMonumentId());
-            if (PolyUtil.containsLocation(latlng, poly, true)) {
-                mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(latlng)
-                        .title(monument.getName())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                markerIds.put(marker.getTitle(), monument_id_str);
-                selected_monuments.add(monument);
-            } else {
-                Marker marker = mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                markerIds.put(marker.getTitle(), monument_id_str);
-            }
-        }
-
-        googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                if(marker.getTitle().equals("Départ") || marker.getTitle().equals("Arrivée")){
-                    return;
-                }
-
-                Intent intent = new Intent(getBaseContext(), DisplayInfoMonument.class);
-                intent.putExtra(EXTRA_MONUMENT_ID, markerIds.get(marker.getTitle()));
-                // Starting the  Activity
-                startActivity(intent);
-            }
-        });
-    }
-
-    public void displaySteps(View view){
-        Intent intent = new Intent(getBaseContext(), DisplayStepsActivity.class);
-        intent.putExtra(EXTRA_TRAJET, trajet);
-        // Starting the  Activity
-        startActivity(intent);
-    }
-
-    private void setErrorMessage(String message) {
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getView().setVisibility(View.GONE);
-        TextView error = findViewById(R.id.map_error_message);
-        error.setText(message);
-        error.setVisibility(View.VISIBLE);
-    }
-
-    private void putMarkerOnImportantPoints(List<LatLng> pointsPath, String wayPoint){
-        // Ajoute un marqueur pour point de départ, arrivée et intermédiaire
-        mMap.addMarker(new MarkerOptions().position(pointsPath.get(0)).title("Départ"));
-        int indexLastPoint = pointsPath.size() - 1;
-        mMap.addMarker(new MarkerOptions().position(pointsPath.get(indexLastPoint)).title("Arrivée"));
-        //Ajoute un marqueur pour le point intérmédiaire
-        if (!wayPoint.equals("")) {
-            String[] arrayPointInt = wayPoint.split(",");
-            LatLng pointInter = new LatLng(Double.parseDouble(arrayPointInt[0]), Double.parseDouble(wayPoint.split(",")[1]));
-            mMap.addMarker(new MarkerOptions().position(pointInter));
-        }
+        List<LatLng> result = new ArrayList<>(
+                Arrays.asList(S1, S2, S3, S4)
+        );
+        return result;
     }
 }
