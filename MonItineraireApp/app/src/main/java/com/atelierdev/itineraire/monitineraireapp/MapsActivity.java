@@ -136,6 +136,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         List<Monument> monumentsOnPath = new ArrayList<>(restrainedMonumentList);
 
+
         // Construction de la liste des coordonnées de l'ensemble des points intéressant + pointA et B
         List<String> listCoords = new ArrayList<>();
         listCoords.add(pointA);
