@@ -274,7 +274,6 @@ public class MainActivity extends AppCompatActivity {
     public void chooseType1Click(View view){
         CheckBox checkBoxType1 = (CheckBox) findViewById(R.id.type1);
 
-        // TODO arnaud: check exceptions
         if (checkBoxType1.isChecked()){
             this.type1 = true;
         } else {
@@ -285,7 +284,6 @@ public class MainActivity extends AppCompatActivity {
     public void chooseType2Click(View view){
         CheckBox checkBoxType2 = (CheckBox) findViewById(R.id.type2);
 
-        // TODO arnaud: check exceptions
         if (checkBoxType2.isChecked()){
             this.type2 = true;
         } else {
@@ -296,7 +294,6 @@ public class MainActivity extends AppCompatActivity {
     public void chooseType3Click(View view){
         CheckBox checkBoxType3 = (CheckBox) findViewById(R.id.type3);
 
-        // TODO arnaud: check exceptions
         if (checkBoxType3.isChecked()){
             this.type3 = true;
         } else {
@@ -306,8 +303,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void chooseType4Click(View view){
         CheckBox checkBoxType4 = (CheckBox) findViewById(R.id.type4);
-
-        // TODO arnaud: check exceptions
         if (checkBoxType4.isChecked()){
             this.type4 = true;
         } else {
@@ -345,29 +340,6 @@ public class MainActivity extends AppCompatActivity {
      *
      */
 
-    // Check si la geoloc est active sur l'appareil de l'utilisateur
-    // Appelée uniquement sur onCreate
-    // TODO: voir si utile -> l'application peut elle être utilisée sans localisation?
-    /*private void isLocationEnabled() {
-        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            AlertDialog.Builder alertDialog=new AlertDialog.Builder(mContext);
-            alertDialog.setTitle("Activer la localisation");
-            alertDialog.setMessage("La localisation est désactivée dans vos paramètres. Merci de l'activer");
-            alertDialog.setPositiveButton("Paramètres de localisation", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
-                    Intent intent=new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(intent);
-                }
-            });
-            alertDialog.setNegativeButton("Annuler", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
-                    dialog.cancel();
-                }
-            });
-            AlertDialog alert=alertDialog.create();
-            alert.show();
-        }
-    }*/
 
     /**
      * Methode utilisée pour changer la visibilté de tous les éléments de la main page,
@@ -563,7 +535,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(Status status) {
-                // TODO: Handle the error.
+
             }
         });
 
@@ -575,7 +547,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(Status status) {
-                // TODO
+
             }
         });
 
@@ -624,8 +596,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // TODO Arnaud: call for litterals
             altText.setText(this.latitudeUser + "," + this.longitudeUser);
-//                String text = getString(R.string.display_value_location, this.latitudeUser, this.longitudeUser);
-//                altText.setText(text);
         }
     }
 

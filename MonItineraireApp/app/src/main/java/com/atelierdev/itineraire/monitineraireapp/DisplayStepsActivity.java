@@ -18,9 +18,4 @@ public class DisplayStepsActivity extends AppCompatActivity {
         textView.setText(trajet);
 
     }
-
-
-
-
-
 }
