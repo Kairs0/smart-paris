@@ -96,42 +96,44 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
         if (information == null) {
             return ("Pas d'information");
         }
-        JSONObject calendars = information.getJSONObject("calendars");
-        Date currentTime = Calendar.getInstance().getTime();
-        String datenow = new SimpleDateFormat("yyyy-MM-dd").format(currentTime);
+        String name = information.getString("name");
+
+        String rawdescription = information.getString("description");
+        String description = android.text.Html.fromHtml(rawdescription).toString();
 
         String open_status = "";
 
         // On récupère les infos sur les horaires si elles existent et on les compare à l'heure de consultation
         try {
+            JSONObject calendars = information.getJSONObject("calendars");
+            Date currentTime = Calendar.getInstance().getTime();
+            String datenow = new SimpleDateFormat("yyyy-MM-dd").format(currentTime);
             // récupère l'objet json "calendar" qui contient les horaires des deux prochaines semaines. Voir doc api.paris
             JSONArray schedulenow = calendars.getJSONArray(datenow).getJSONArray(0);
             SimpleDateFormat hh_mm_ss = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
             String opening = datenow + "-" + schedulenow.getString(0);
             String closure = datenow + "-" + schedulenow.getString(1);
+            // Convertit les string en objet "date" pour pouvoir les comparer
             Date opening_hour = hh_mm_ss.parse(opening);
             Date closure_hour = hh_mm_ss.parse(closure);
 
+            // Vérifie si on se situe dans la bonne plage horaire
             if(currentTime.compareTo(opening_hour) > 0 &&  currentTime.compareTo(closure_hour) < 0)
             {
-                open_status = "Ouvert aujourd'hui - Ferme à " + new SimpleDateFormat("HH:mm").format(opening_hour);
+                open_status = "Ouvert - Ferme à " + new SimpleDateFormat("HH:mm").format(closure_hour);
             }
-            else{
+            else if(currentTime.compareTo(opening_hour) > 0){
+                open_status = "Fermé - ouvre à " + new SimpleDateFormat("HH:mm").format(opening_hour);
+            }
+            else
                 open_status = "Fermé";
-            }
         }catch(Exception e)
         {
             open_status = "Pas d'information sur les horaires";
         }
-
-
-        String name = information.getString("name");
-
-        //JSONArray test123 = calendars.getJSONArray(datenow);
-
-        String rawdescription = information.getString("description");
-        String description = android.text.Html.fromHtml(rawdescription).toString();
-        return (name + "\n\n" + open_status + "\n\n" + description);
+        finally {
+            return (name + "\n\n" + open_status + "\n\n" + description);
+        }
     }
 
 
@@ -177,8 +179,6 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
                 } finally {
                     if (urlConnection != null) {
                         urlConnection.disconnect();
-
-
 
                         UpdateTextView(result);
                     }
