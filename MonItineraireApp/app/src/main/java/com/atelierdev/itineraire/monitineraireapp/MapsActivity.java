@@ -42,7 +42,7 @@ import static com.atelierdev.itineraire.monitineraireapp.MainActivity.EXTRA_MONU
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     public static final String EXTRA_TRAJET = "com.atelierdev.itineraire.monitineraireapp.trajet";
-    public String trajet = "Voici les étapes de votre trajet";
+    public String trajet = "Voici les étapes de votre trajet :";
     private GoogleMap mMap;
 
     @Override
@@ -141,8 +141,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Appelle a api direction avec trajet final
         List<String> wayPointsForApi = new ArrayList<>();
+        int k = 0;
         for (Monument monument : trajet) {
+            k += 1;
             wayPointsForApi.add(String.valueOf(monument.getLat()) + "," + monument.getLon());
+            // On ajoute le monument à la liste d'étapes du trajet
+            this.trajet += "\n\nEtape " + k + ": " + monument.getName();
+            //this.trajet += "\nTemps de visite estimé : " + trajetCalulcator.temps_de_visite.get(k-1)/60;
         }
 
         String finalJsonDir = callApiDirectionAndGetJson(pointA, pointB, "walking", wayPointsForApi);
@@ -302,8 +307,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for(int i=1;i<types_arg.length;i++){
             query = query.concat(" OR types LIKE ?");
         }
-
-        query = query.concat(" ORDER BY rating");
+        query = query.concat(" ORDER BY rating DESC");
         List<Monument> allMonumentsOfType = Monument.findWithQuery(Monument.class, query, types_arg);
         Log.d("Monuments", String.valueOf(allMonumentsOfType.size()));
         allMonuments.addAll(allMonumentsOfType);
