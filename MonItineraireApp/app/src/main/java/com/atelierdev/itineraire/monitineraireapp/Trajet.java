@@ -52,11 +52,9 @@ public class Trajet {
         this.temps_parcours = tps_parcours;
         this.duree_souhaitee = duree_souhaitee;
         this.monuments_interet = monuments_interet;
-        this.A = A;
-        this.B = B;
         this.trajet = new ArrayList<>();
-        this.temps_de_visite = new ArrayList<Integer>();
-        this.temps_sous_parcours = new ArrayList<Integer>();
+        this.temps_de_visite = new ArrayList<>();
+        this.temps_sous_parcours = new ArrayList<>();
         this.temps_sous_parcours.add(tps_parcours);
         this.matrice_temps = matrice_temps;
         this.ordre_matrice = ordre_matrice;
@@ -66,7 +64,7 @@ public class Trajet {
 
     //Methode pour ajouter un monument au trajet
     public void construction_trajet() {
-        while ((this.temps_parcours < this.duree_souhaitee) && (this.monuments_interet.isEmpty() == false)){
+        while ((this.temps_parcours < this.duree_souhaitee) && (!this.monuments_interet.isEmpty())){
             //on prend le monument avec le plus grand interet de la zone
             Monument monument = this.monuments_interet.remove(0);
 
