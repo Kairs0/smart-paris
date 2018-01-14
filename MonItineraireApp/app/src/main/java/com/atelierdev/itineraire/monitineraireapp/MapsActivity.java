@@ -134,8 +134,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-        List<Monument> monumentsOnPath = new ArrayList<>(restrainedMonumentList);
-
 
         // Construction de la liste des coordonnées de l'ensemble des points intéressant + pointA et B
         List<String> listCoords = new ArrayList<>();
@@ -192,7 +190,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         InitalizeMapForPath(pointsPath);
 
         //Dictionnaire pour associer les ids (valeur) des monuments à leur titre (clé) et les récupérer lors d'un clic sur l'étiquette
-        final HashMap<String, String> markerIds = putMarkersOnMonuments(allRelevantMonument, monumentsOnPath);
+        final HashMap<String, String> markerIds = putMarkersOnMonuments(allRelevantMonument, trajet);
 
         googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
 
