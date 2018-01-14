@@ -16,7 +16,7 @@ public class Monument extends SugarRecord<Monument>{
     public int monument_id; //correspondant à l'id dans api.paris
     public String name;
     public int category; //catégorie dans api.paris
-    public String types; //un ou plusieurs types parmi les 6 qu'in a distingués
+    public String types; //un ou plusieurs types parmi les 6 qu'il a distingués
     public double lat;
     public double lon;
     public int rating;  //note du monument selon notre classement
