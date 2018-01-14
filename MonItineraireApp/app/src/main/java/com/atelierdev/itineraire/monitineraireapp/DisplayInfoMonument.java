@@ -48,8 +48,6 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
 
         Thread getInfoMonumentThread = new ApiParisThread("ThreadInfoMonument", monument);
 
-        engine = new TextToSpeech(this, this);
-
         getInfoMonumentThread.start();
 
         /*ExecutorService service = Executors.newSingleThreadExecutor();
@@ -203,12 +201,12 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
     //Surcharge de l'initialisation de la synthèse vocale pour régler le language
     @Override
     public void onInit(int i) {
-        Log.d("mytag", "oninit");
 
         if (i == TextToSpeech.SUCCESS) {
             //Setting speech Language
             engine.setLanguage(Locale.FRENCH);
             engine.setPitch(1);
+
         }
         else {
             Toast.makeText(getApplicationContext(), "Impossible de lire le texte", Toast.LENGTH_SHORT).show();
@@ -226,7 +224,6 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
         if(engine != null) {
 
             engine.stop();
-            Log.d("mytag", "TTS stopped on pause");
         }
         super.onPause();
     }
