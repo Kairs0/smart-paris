@@ -189,6 +189,7 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
         }
     }
 
+    //Démarrer la lecture vocale des infos
     public void playText(View v) {
         TextView textView = findViewById(R.id.resultatInformation);
         String toSpeak=textView.getText().toString();
@@ -199,6 +200,7 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
 
     }
 
+    //Surcharge de l'initialisation de la synthèse vocale pour régler le language
     @Override
     public void onInit(int i) {
         Log.d("mytag", "oninit");
@@ -213,10 +215,12 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
         }
     }
 
+    //Arrêter la synthèse vocale
     public void stopPlaying(View view) {
         engine.stop();
     }
 
+    //Si l'activité est mise en pause (appui sur l'un des boutons de commande android) on stoppe la lecture
     @Override
     public void onPause() {
         if(engine != null) {
@@ -227,21 +231,18 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
         super.onPause();
     }
 
+    //Si l'activité était seulement en pause et qu'on y retourne (multitaches ou bouton acceuil) on réinitialise la synthèse vocale
     @Override
     public void onResume() {
         super.onResume();
         engine = new TextToSpeech(this, this);
     }
 
-
+    //Si l'activité est détruite (flèche précédent) on ferme la synthèse vocale
     @Override
     protected void onDestroy()
     {
         engine.shutdown();
-        Log.d("mytag", "TTS ondestroy shutdowned");
         super.onDestroy();
-        Log.d("mytag", "TTS ondestroy destroyed");
-
-
     }
 }
