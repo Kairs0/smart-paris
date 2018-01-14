@@ -143,8 +143,8 @@ public class TrajetTest {
     @Test
     public void testTrajetLong(){
         Trajet trajet_long = new Trajet(this.temps_parcours, 3000000, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
-        assertTrue(trajet_long.duree_souhaitee>trajet_long.temps_parcours);
-        assertTrue(trajet_long.temps_parcours==14160);
+        assertTrue(trajet_long.duree_souhaitee>=trajet_long.temps_parcours);
+        assertTrue(trajet_long.temps_parcours==15660);
 
         assertTrue(trajet_long.trajet.size()==5);
         assertTrue(trajet_long.temps_de_visite.size()==5);
@@ -163,19 +163,19 @@ public class TrajetTest {
         assertTrue(trajet_long.temps_sous_parcours.get(4)==1500);
         assertTrue(trajet_long.temps_sous_parcours.get(5)==1320);
 
-        assertTrue(trajet_long.temps_de_visite.get(0)==1800);
-        assertTrue(trajet_long.temps_de_visite.get(1)==0);
-        assertTrue(trajet_long.temps_de_visite.get(2)==2700);
-        assertTrue(trajet_long.temps_de_visite.get(3)==0);
-        assertTrue(trajet_long.temps_de_visite.get(4)==900);
+        assertTrue(trajet_long.temps_de_visite.get(0)==2100);
+        assertTrue(trajet_long.temps_de_visite.get(1)==300);
+        assertTrue(trajet_long.temps_de_visite.get(2)==3000);
+        assertTrue(trajet_long.temps_de_visite.get(3)==300);
+        assertTrue(trajet_long.temps_de_visite.get(4)==1200);
 
     }
 
     @Test
     public void testTrajetCourt(){
-        Trajet trajet_court = new Trajet(this.temps_parcours, 9100, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
-        assertTrue(trajet_court.duree_souhaitee>trajet_court.temps_parcours);
-        assertTrue(trajet_court.temps_parcours==8940);
+        Trajet trajet_court = new Trajet(this.temps_parcours, 9600, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
+        assertTrue(trajet_court.duree_souhaitee>=trajet_court.temps_parcours);
+        assertTrue(trajet_court.temps_parcours==9540);
 
         assertTrue(trajet_court.trajet.size()==2);
         assertTrue(trajet_court.temps_de_visite.size()==2);
@@ -188,16 +188,16 @@ public class TrajetTest {
         assertTrue(trajet_court.temps_sous_parcours.get(1)==2640);
         assertTrue(trajet_court.temps_sous_parcours.get(2)==1320);
 
-        assertTrue(trajet_court.temps_de_visite.get(0)==2700);
-        assertTrue(trajet_court.temps_de_visite.get(1)==0);
+        assertTrue(trajet_court.temps_de_visite.get(0)==3000);
+        assertTrue(trajet_court.temps_de_visite.get(1)==300);
 
     }
 
     @Test
     public void testTrajetMoyen(){
-        Trajet trajet_moyen = new Trajet(this.temps_parcours, 9500, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
-        assertTrue(trajet_moyen.duree_souhaitee>trajet_moyen.temps_parcours);
-        assertTrue(trajet_moyen.temps_parcours==9300);
+        Trajet trajet_moyen = new Trajet(this.temps_parcours, 10000, this.monuments, this.A, this.B, this.matrice_temps, this.ordre_matrice);
+        assertTrue(trajet_moyen.duree_souhaitee>=trajet_moyen.temps_parcours);
+        assertTrue(trajet_moyen.temps_parcours==10000);
 
         assertTrue(trajet_moyen.trajet.size()==3);
         assertTrue(trajet_moyen.temps_de_visite.size()==3);
@@ -212,9 +212,9 @@ public class TrajetTest {
         assertTrue(trajet_moyen.temps_sous_parcours.get(2)==2640);
         assertTrue(trajet_moyen.temps_sous_parcours.get(3)==1320);
 
-        assertTrue(trajet_moyen.temps_de_visite.get(0)==0);
-        assertTrue(trajet_moyen.temps_de_visite.get(1)==2700);
-        assertTrue(trajet_moyen.temps_de_visite.get(2)==0);
+        assertTrue(trajet_moyen.temps_de_visite.get(0)==100);
+        assertTrue(trajet_moyen.temps_de_visite.get(1)==3000);
+        assertTrue(trajet_moyen.temps_de_visite.get(2)==300);
 
     }
 }

@@ -48,7 +48,6 @@ public class Trajet {
 
     //Methode pour ajouter un monument au trajet
     public void construction_trajet() {
-        //TODO parametre de temps minimal pour continuer à chercher?
         while ((this.temps_parcours < this.duree_souhaitee) && (this.monuments_interet.isEmpty() == false)){
             //on prend le monument avec le plus grand interet de la zone
             Monument monument = this.monuments_interet.remove(0);
@@ -94,13 +93,28 @@ public class Trajet {
                 this.trajet.add(bat_pos, monument);
                 int t_visite = monument.getVisitTime();
                 if (this.temps_parcours + temps_min + t_visite < this.duree_souhaitee){
-                    this.temps_de_visite.add(bat_pos, t_visite);
-                    this.temps_parcours += temps_min + t_visite;
+                    //il y a le temps pour une visite
+                    if (this.temps_parcours + temps_min + t_visite + 300 < this.duree_souhaitee){
+                        //ajout de 5 min pour prendre des photos si il y a le temps
+                        //c'est surtout important pour les visites de temps nul dans la base de données
+                        this.temps_de_visite.add(bat_pos, 300 + t_visite);
+                        this.temps_parcours += temps_min + t_visite + 300;
+                    }
+                    else{
+                        this.temps_de_visite.add(bat_pos, this.duree_souhaitee - this.temps_parcours - temps_min);
+                        this.temps_parcours = this.duree_souhaitee;
+                    }
                 }
-                else {
-                    //TODO on met vraiment O ou 5 min pour les photos
-                    this.temps_de_visite.add(bat_pos, 0);
-                    this.temps_parcours += temps_min;
+                else { //pas le temps pour une visite
+                    if (this.temps_parcours + temps_min + 300 < this.duree_souhaitee){
+                        // ajout de 5min pour prendre des photos si il y a le temps
+                        this.temps_de_visite.add(bat_pos, 300);
+                        this.temps_parcours += temps_min + 300;
+                    }
+                    else {
+                        this.temps_de_visite.add(bat_pos, this.duree_souhaitee - this.temps_parcours - temps_min);
+                        this.temps_parcours = this.duree_souhaitee;
+                    }
                 }
                 this.temps_sous_parcours.remove(bat_pos);
                 this.temps_sous_parcours.add(bat_pos, tps2);
