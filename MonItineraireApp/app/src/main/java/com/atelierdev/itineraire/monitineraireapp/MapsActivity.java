@@ -391,14 +391,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int temps_disponible_h_int = Integer.parseInt(temps_disponible_h_numb);
         int temps_disponible_min_int = Integer.parseInt(temps_disponible_min_numb);
         int temps_disponible = temps_disponible_h_int * 3600 + temps_disponible_min_int * 60;
-        //Log.d("myTag2", "en secondes"+ temps_disponible_test);
         double temps_restant = temps_disponible - duree_trajet_direct;
         double distance_restante = temps_restant * vitesse_topo;
 
         //Convertit la distance restante en degrés (lat et long) 1 metre = 0.000009° environ
         //Facteur multiplicateur pour la largeur du rectangle
         double coeff = 0.000009 * distance_restante / 2;
-        //Facteur multiplicateur pour prendre un rectangle plus long que la distance Origine-Destination (dépasse de 100 m de chaque coté)
+        //Facteur multiplicateur pour prendre un rectangle plus long que la distance Origine-Destination
         double coeff_2= 0.000009 * 200;
 
         //Calcule les sommets du rectangle
