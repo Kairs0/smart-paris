@@ -102,6 +102,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Calcul du temps de trajet sans passer par des monuments
         int baseTime = getTimeBase(pointA, pointB, "walking");
 
+        // Temps souhaité par l'utilisateur
+        int temps_souhaite_sec = Integer.parseInt(temps_disponible_h.replaceAll("h", "")) * 60 * 60 +
+                Integer.parseInt(temps_disponible_min.replaceAll("min", "")) * 60;
+
+        if (baseTime > temps_souhaite_sec){
+            setErrorMessage("Vous avez spécifié un temps trop court pour effectuer le trajet.");
+            return;
+        }
+
         // Calul le rectangle d'intêret dans lequel l'utilisateur peut voir des batiments
         List<LatLng> rectangleInteret = calculRectangle(pointA, pointB, baseTime, temps_disponible_h, temps_disponible_min);
 
@@ -113,7 +122,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // TODO: AUGMENTER VALEUR A PLUS DE BATIMENT SANS POUR AUTANT PETER L'API
         // On s'intéresse aux 4 premiers monuments pour la contrainte de l'api matrix
-        List<Monument> restrainedMonumentList = relevantMonuments.subList(0, 4);
+        List<Monument> restrainedMonumentList;
+        try {
+            restrainedMonumentList = relevantMonuments.subList(0, 4);
+        } catch (IndexOutOfBoundsException e){
+            if (relevantMonuments.size() > 0){
+                int i_max = relevantMonuments.size() - 1;
+                restrainedMonumentList = relevantMonuments.subList(0, i_max);
+            } else {
+                restrainedMonumentList = new ArrayList<>();
+            }
+        }
+
+        List<Monument> monumentsOnPath = new ArrayList<>(restrainedMonumentList);
 
 
         // Construction de la liste des coordonnées de l'ensemble des points intéressant + pointA et B
@@ -127,9 +148,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Appelle l'api matrix et retourne la matrice des distances
         List<List<Integer>> matrix = getMatrix(listCoords, listCoords, "walking");
 
-        // Temps souhaité par l'utilisateur
-        int temps_souhaite_sec = Integer.parseInt(temps_disponible_h.replaceAll("h", "")) * 60 * 60 +
-                Integer.parseInt(temps_disponible_min.replaceAll("min", "")) * 60;
+        if(matrix.size() == 0){
+            setErrorMessage("La route n'a pas été trouvée suite à un problème interne à l'application");
+            return;
+        }
 
         // TODO: refactor (point A, B pas utile ?)
         LatLng pointAcoord = new LatLng(Double.parseDouble(pointA.split(",")[0]), Double.parseDouble(pointA.split(",")[1]));
@@ -172,28 +194,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         InitalizeMapForPath(pointsPath);
 
         //Dictionnaire pour associer les ids (valeur) des monuments à leur titre (clé) et les récupérer lors d'un clic sur l'étiquette
-        final HashMap<String, String> markerIds = new HashMap<>();
-
-        //Ajoute un marqueur vert aux monuments qui sont dans la zone et un marqueur jaune sinon
-        for (int i = 0; i < allRelevantMonument.size(); i++) {
-            Monument monument = allRelevantMonument.get(i);
-            LatLng latlng = new LatLng(monument.getLat(), monument.getLon());
-            String monument_id_str = Integer.toString(monument.getMonumentId());
-            if (PolyUtil.containsLocation(latlng, rectangleInteret, true)) {
-                mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(latlng)
-                        .title(monument.getName())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                markerIds.put(marker.getTitle(), monument_id_str);
-//                selected_monuments.add(monument);
-            } else {
-                Marker marker = mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
-                        .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
-                markerIds.put(marker.getTitle(), monument_id_str);
-            }
-        }
+        final HashMap<String, String> markerIds = putMarkersOnMonuments(allRelevantMonument, monumentsOnPath);
 
         googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
 
@@ -225,6 +226,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         optionsMap.width(5);
         optionsMap.color(Color.BLUE);
         mMap.addPolyline(optionsMap);
+    }
+
+    private HashMap<String, String> putMarkersOnMonuments(List<Monument> allRelevantMonument, List<Monument> monumentsPath){
+        HashMap<String, String> markerIds = new HashMap<>();
+
+        //Ajoute un marqueur vert aux monuments qui sont dans le trajet et un marqueur jaune sinon
+        for (int i = 0; i < allRelevantMonument.size(); i++) {
+            Monument monument = allRelevantMonument.get(i);
+            LatLng latlng = new LatLng(monument.getLat(), monument.getLon());
+            String monument_id_str = Integer.toString(monument.getMonumentId());
+            if (monumentsPath.contains(monument)) {
+                mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(latlng)
+                        .title(monument.getName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                markerIds.put(marker.getTitle(), monument_id_str);
+//                selected_monuments.add(monument);
+            } else {
+                Marker marker = mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
+                        .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                markerIds.put(marker.getTitle(), monument_id_str);
+            }
+        }
+        return  markerIds;
     }
 
     private String callApiDirectionAndGetJson(String pointA, String pointB, String mode,  List<String> waypoints){
@@ -325,7 +352,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // We set here the time maximum for waiting the result from api
             Future<?> f = service.submit(callThread);
-            f.get(5, TimeUnit.MINUTES);
+            f.get(15, TimeUnit.SECONDS);
 
             callThread.join();
             result = api.getResult();
