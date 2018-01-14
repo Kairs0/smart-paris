@@ -158,15 +158,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Appelle a api direction avec trajet final
         List<String> wayPointsForApi = new ArrayList<>();
+        this.trajet += "\n\n\nTemps de marche estimé : " + trajetCalulcator.getTemps_parcours()/60 + " min\n";
         int k = 0;
+        this.trajet += "\n\nTemps de marche estimé : " + trajetCalulcator.getTemps_sous_parcours().get(k)/60 + " min";
         for (Monument monument : trajet) {
 
-            this.trajet += "\n\nTemps de marche estimé : " + trajetCalulcator.getTemps_sous_parcours().get(k);
             k += 1;
             wayPointsForApi.add(String.valueOf(monument.getLat()) + "," + monument.getLon());
             // On ajoute le monument à la liste d'étapes du trajet
             this.trajet += "\n\nEtape " + k + ": " + monument.getName();
             this.trajet += "\nTemps de visite estimé : " + trajetCalulcator.getTemps_de_visite().get(k-1)/60 + " min";
+            if (trajetCalulcator.getTemps_de_visite().get(k-1)<= 300) {
+                this.trajet += " Prenez des photos, vous avez juste le temps!";
+            }
+            this.trajet += "\n\nTemps de marche estimé : " + trajetCalulcator.getTemps_sous_parcours().get(k);
         }
 
         String finalJsonDir = callApiDirectionAndGetJson(pointA, pointB, "walking", wayPointsForApi);
