@@ -1,6 +1,9 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
@@ -48,24 +51,11 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
 
         Thread getInfoMonumentThread = new ApiParisThread("ThreadInfoMonument", monument);
 
-        getInfoMonumentThread.start();
-
-        /*ExecutorService service = Executors.newSingleThreadExecutor();
-        try{
+        if(isOnline()){
             getInfoMonumentThread.start();
-
-            // On règle ici le tps max d'attente avant d'afficher l'erreur connection perdue
-            Future<?> f = service.submit(getInfoMonumentThread);
-            // 5 secondes ici
-            f.get(5, TimeUnit.SECONDS);
-
-//            getInfoMonumentThread.join();
-
-        } catch (InterruptedException|ExecutionException e){
-            UpdateTextView("Les informations n'ont pas été trouvées suite à un problème interne à l'application");
-        } catch (TimeoutException e){
+        } else {
             UpdateTextView("La connection internet a été perdue durant la récupération des informations.");
-        }*/
+        }
     }
 
     public void UpdateTextView(String result) {
@@ -241,5 +231,12 @@ public class DisplayInfoMonument extends AppCompatActivity implements TextToSpee
     {
         engine.shutdown();
         super.onDestroy();
+    }
+
+    private boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }

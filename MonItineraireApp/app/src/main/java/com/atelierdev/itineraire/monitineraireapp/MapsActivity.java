@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -134,8 +135,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-        List<Monument> monumentsOnPath = new ArrayList<>(restrainedMonumentList);
-
 
         // Construction de la liste des coordonnées de l'ensemble des points intéressant + pointA et B
         List<String> listCoords = new ArrayList<>();
@@ -160,15 +159,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Appelle a api direction avec trajet final
         List<String> wayPointsForApi = new ArrayList<>();
+        this.trajet += "\n\n\nTemps de marche estimé : " + trajetCalulcator.getTemps_parcours()/60 + " min\n";
         int k = 0;
+        this.trajet += "\n\nTemps de marche estimé : " + trajetCalulcator.getTemps_sous_parcours().get(k)/60 + " min";
         for (Monument monument : trajet) {
 
-            this.trajet += "\n\nTemps de marche estimé : " + trajetCalulcator.getTemps_sous_parcours().get(k);
             k += 1;
             wayPointsForApi.add(String.valueOf(monument.getLat()) + "," + monument.getLon());
             // On ajoute le monument à la liste d'étapes du trajet
             this.trajet += "\n\nEtape " + k + ": " + monument.getName();
             this.trajet += "\nTemps de visite estimé : " + trajetCalulcator.getTemps_de_visite().get(k-1)/60 + " min";
+            if (trajetCalulcator.getTemps_de_visite().get(k-1)<= 300) {
+                this.trajet += " Prenez des photos, vous avez juste le temps!";
+            }
+            this.trajet += "\n\nTemps de marche estimé : " + trajetCalulcator.getTemps_sous_parcours().get(k)/60 + " min";
         }
 
         String finalJsonDir = callApiDirectionAndGetJson(pointA, pointB, "walking", wayPointsForApi);
@@ -192,7 +196,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         InitalizeMapForPath(pointsPath);
 
         //Dictionnaire pour associer les ids (valeur) des monuments à leur titre (clé) et les récupérer lors d'un clic sur l'étiquette
-        final HashMap<String, String> markerIds = putMarkersOnMonuments(allRelevantMonument, monumentsOnPath);
+        final HashMap<String, String> markerIds = putMarkersOnMonuments(allRelevantMonument, trajet);
 
         googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
 
@@ -300,6 +304,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         TextView error = findViewById(R.id.map_error_message);
         error.setText(message);
         error.setVisibility(View.VISIBLE);
+        Button etapes = findViewById(R.id.button2);
+        etapes.setVisibility(View.GONE);
     }
 
     private void putMarkerOnImportantPoints(List<LatLng> pointsPath, String wayPoint){
