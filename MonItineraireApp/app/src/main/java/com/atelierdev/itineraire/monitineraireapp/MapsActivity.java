@@ -115,6 +115,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // On s'intéresse aux 4 premiers monuments pour la contrainte de l'api matrix
         List<Monument> restrainedMonumentList = relevantMonuments.subList(0, 4);
 
+
         // Construction de la liste des coordonnées de l'ensemble des points intéressant + pointA et B
         List<String> listCoords = new ArrayList<>();
         listCoords.add(pointA);
