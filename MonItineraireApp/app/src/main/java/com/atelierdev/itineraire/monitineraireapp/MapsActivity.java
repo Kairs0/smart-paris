@@ -246,7 +246,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .title(monument.getName())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 markerIds.put(marker.getTitle(), monument_id_str);
-//                selected_monuments.add(monument);
             } else {
                 Marker marker = mMap.addMarker(new MarkerOptions().position(latlng).title(monument.getName()).icon(BitmapDescriptorFactory
                         .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
@@ -383,14 +382,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private List<LatLng> calculRectangle(String pointA, String pointB, int timeBase, String temps_disponible_h, String temps_disponible_min){
         float duree_trajet_direct = (float) timeBase;
-        // TODO : changer pour accepter autre chose que des strings en coordonées (adresse, ..)
 
         String[] arrayPointA = pointA.split(",");
         String[] arrayPointB = pointB.split(",");
 
-//        LatLng origine = pointsPath.get(0);
         LatLng origine = new LatLng(Double.parseDouble(arrayPointA[0]), Double.parseDouble(arrayPointA[1]));
-//        LatLng destination = pointsPath.get(pointsPath.size() - 1);
         LatLng destination = new LatLng(Double.parseDouble(arrayPointB[0]), Double.parseDouble(arrayPointB[1]));
 
         float[] distance_vol_oiseau_metres = new float[]{12};

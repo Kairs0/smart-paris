@@ -313,7 +313,6 @@ public class MainActivity extends AppCompatActivity {
     public void chooseType5Click(View view){
         CheckBox checkBoxType5 = (CheckBox) findViewById(R.id.type5);
 
-        // TODO arnaud: check exceptions
         if (checkBoxType5.isChecked()){
             this.type5 = true;
         } else {
@@ -324,7 +323,6 @@ public class MainActivity extends AppCompatActivity {
     public void chooseType6Click(View view){
         CheckBox checkBoxType6 = (CheckBox) findViewById(R.id.type6);
 
-        // TODO arnaud: check exceptions
         if (checkBoxType6.isChecked()){
             this.type6 = true;
         } else {
@@ -594,7 +592,6 @@ public class MainActivity extends AppCompatActivity {
         if (this.longitudeUser == null || this.latitudeUser == null){
             altText.setText(R.string.localisation_impossible);
         } else {
-            // TODO Arnaud: call for litterals
             altText.setText(this.latitudeUser + "," + this.longitudeUser);
         }
     }
