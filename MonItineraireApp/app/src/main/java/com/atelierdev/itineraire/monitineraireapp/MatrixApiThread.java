@@ -87,7 +87,7 @@ public class MatrixApiThread implements Runnable {
             String urlOrigins = "&origins=" + myJoinFunction(this.origins, "%7C");
             String urlDestinations = "&destinations=" + myJoinFunction(this.destinations, "%7C");
             String urlMode = "&mode=" + this.mode;
-            String keyUrl = "&key=AIzaSyAvM3qTidrBVfKKLKs8XzJw2DWrnKTuTzE";
+            String keyUrl = "&key=AIzaSyC7-gcFgAR8yVCX0mxxdcLzXILe5msKxp0";
             String baseUrl = "https://maps.googleapis.com/maps/api/distancematrix/json?" +
                     urlMode + keyUrl;
 
