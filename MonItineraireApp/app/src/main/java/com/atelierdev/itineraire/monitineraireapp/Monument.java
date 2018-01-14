@@ -2,8 +2,6 @@ package com.atelierdev.itineraire.monitineraireapp;
 
 import com.orm.SugarRecord;
 
-import java.util.List;
-
 /**
  * Created by Guillaume on 18/12/2017.
  */
