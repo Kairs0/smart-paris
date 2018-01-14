@@ -1,8 +1,6 @@
 package com.atelierdev.itineraire.monitineraireapp;
 
 
-import android.util.Log;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -68,12 +66,10 @@ public class Trajet {
 
     //Methode pour ajouter un monument au trajet
     public void construction_trajet() {
-        Log.d("Temps parcours", String.valueOf(this.temps_parcours));
         while ((this.temps_parcours < this.duree_souhaitee) && (!this.monuments_interet.isEmpty())){
 
             //on prend le monument avec le plus grand interet de la zone
             Monument monument = this.monuments_interet.remove(0);
-            Log.d("Monument considéré :", monument.getName());
 
             //on calcule ou integrer le nouveau monument
             int l = this.trajet.size();
@@ -82,7 +78,6 @@ public class Trajet {
             int tps2 = 0;
             int temps_min = 0;
             if (l == 0) {
-                Log.d("", "C'est le premier monument !");
                 tps1 = get_temps(this.A, monument.LatLngtoString());
                 tps2 = get_temps(monument.LatLngtoString(), this.B);
                 temps_min = tps1 + tps2 - this.temps_sous_parcours.get(0);
@@ -91,16 +86,10 @@ public class Trajet {
                 tps1 = get_temps(this.A, monument.LatLngtoString());
                 tps2 = get_temps(monument.LatLngtoString(), this.trajet.get(0).LatLngtoString());
                 temps_min = tps1 + tps2 - this.temps_sous_parcours.get(0);
-                Log.d("tps 1", String.valueOf(tps1));
-                Log.d("tps 2", String.valueOf(tps2));
-                Log.d("temps min", String.valueOf(temps_min));
                 for (int m = 0; m < l - 1; m++) {
                     int t1 = get_temps(this.trajet.get(m).LatLngtoString(), monument.LatLngtoString());
                     int t2 = get_temps(monument.LatLngtoString(), this.trajet.get(m + 1).LatLngtoString());
                     int t = t1 + t2 - this.temps_sous_parcours.get(m + 1);
-                    Log.d("t1", String.valueOf(t1));
-                    Log.d("t2", String.valueOf(t2));
-                    Log.d("t", String.valueOf(t));
                     if (t < temps_min) {
                         bat_pos = m + 1;
                         temps_min = t;
@@ -111,9 +100,6 @@ public class Trajet {
                 int t1 = get_temps(this.trajet.get(l - 1).LatLngtoString(), monument.LatLngtoString());
                 int t2 = get_temps(monument.LatLngtoString(), this.B);
                 int t = t1 + t2 - this.temps_sous_parcours.get(l);
-                Log.d("tps 1 fin", String.valueOf(t1));
-                Log.d("tps 2 fin", String.valueOf(t2));
-                Log.d("tps min fin", String.valueOf(t));
                 if (t < temps_min) {
                     bat_pos = l;
                     temps_min = t;
@@ -122,15 +108,12 @@ public class Trajet {
                 }
             }
 
-            Log.d("Position du monument", String.valueOf(bat_pos));
             //on insere le monument au trajet si le temps le permet
             if (this.temps_parcours + temps_min < this.duree_souhaitee) {
-                Log.d("", "On insère le monument au trajet");
                 this.trajet.add(bat_pos, monument);
                 int t_visite = monument.getVisitTime();
                 if (this.temps_parcours + temps_min + t_visite < this.duree_souhaitee){
                     //il y a le temps pour une visite
-                    Log.d("", "Il y a le temps pour une visite");
                     if (this.temps_parcours + temps_min + t_visite + 300 < this.duree_souhaitee){
                         //ajout de 5 min pour prendre des photos si il y a le temps
                         //c'est surtout important pour les visites de temps nul dans la base de données
@@ -143,7 +126,6 @@ public class Trajet {
                     }
                 }
                 else { //pas le temps pour une visite
-                    Log.d("", "Pas le temps pour une visite");
                     if (this.temps_parcours + temps_min + 300 < this.duree_souhaitee){
                         // ajout de 5min pour prendre des photos si il y a le temps
                         this.temps_de_visite.add(bat_pos, 300);
@@ -164,7 +146,6 @@ public class Trajet {
     }
 
     public int get_temps(String m1, String m2){
-        int t = 2357;
         int l = this.ordre_matrice.size();
         int a = 0;
         int b = 0;
@@ -177,7 +158,7 @@ public class Trajet {
                 b = i;
             }
         }
-        t = this.matrice_temps.get(a).get(b);
+        int t = this.matrice_temps.get(a).get(b);
         return t;
     }
 

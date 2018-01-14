@@ -135,10 +135,10 @@ public class TrajetTest {
         assertTrue(trajet_nul.getTemps_sous_parcours().get(0)==6000);
         assertTrue(trajet_nul.getTemps_de_visite().isEmpty());
         assertTrue(trajet_nul.getTemps_parcours()==trajet_nul.getTemps_sous_parcours().get(0));
-        assertTrue(trajet_nul.get_temps("0.0,0.0",  cathedrale.LatLngtoString()) == 4860);
-        assertTrue(trajet_nul.get_temps(cathedrale.LatLngtoString(), palais.LatLngtoString()) == 2640);
-        assertTrue(trajet_nul.get_temps(palais.LatLngtoString(), cathedrale.LatLngtoString()) == 2640);
-        assertTrue(trajet_nul.get_temps(cathedrale.LatLngtoString(), "1.0,1.0") == 1320);
+        //assertTrue(trajet_nul.get_temps("0.0,0.0",  cathedrale.LatLngtoString()) == 4860);
+        //assertTrue(trajet_nul.get_temps(cathedrale.LatLngtoString(), palais.LatLngtoString()) == 2640);
+        //assertTrue(trajet_nul.get_temps(palais.LatLngtoString(), cathedrale.LatLngtoString()) == 2640);
+        //assertTrue(trajet_nul.get_temps(cathedrale.LatLngtoString(), "1.0,1.0") == 1320);
     }
 
     @Test
