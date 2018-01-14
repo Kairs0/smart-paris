@@ -20,13 +20,17 @@ public class Trajet {
 
     public LatLng A;
     public LatLng B;
-    public List<Monument> trajet; //liste des monuments à visiter dans l'ordre
+    private List<Monument> trajet; //liste des monuments à visiter dans l'ordre
 
     public List<Integer> temps_de_visite; //du trajet reellement effectue
     public List<Integer> temps_sous_parcours; //du trajet reellement effectue
 
     public List<List<Integer>> matrice_temps; // matrice de tous les temps de parcours entre les monuments
     public List<String> ordre_matrice; //pour récuperer facilement les temps de la matrice precedente
+
+    public List<Monument> getTrajet() {
+        return trajet;
+    }
 
     // A, B, temps de parcours de A à B, listes de monuments, matrice des distances
     public Trajet(int tps_parcours, int duree_souhaitee,  List<Monument> monuments_interet,
